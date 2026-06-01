@@ -101,11 +101,23 @@ def _resolve_operator(cli_operator: Optional[str]) -> str:
 
 # ---- Output directory ----------------------------------------------------------------
 
-def _resolve_output_dir(cli_output: Optional[str]) -> Path:
+def _resolve_output_dir(cli_output: Optional[str], ci_mode: bool = False) -> Path:
     if cli_output:
         return Path(cli_output)
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    return Path.cwd() / f"psadt_scan_{ts}"
+    if ci_mode:
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        return Path.cwd() / f"psadt_scan_{ts}"
+    
+    try:
+        name = input("\n[?] Enter the name for the report folder (will be saved in C:\\SecurePSADT\\<name>): ").strip()
+    except EOFError:
+        name = ""
+        
+    if not name:
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        name = f"psadt_scan_{ts}"
+        
+    return Path("C:\\SecurePSADT") / name
 
 
 # ---- Allowlist loader ----------------------------------------------------------------
@@ -514,7 +526,7 @@ def cmd_scan(args, logger) -> int:
         print(f"[✖] Package directory not found: {package_path}", file=sys.stderr)
         return 3
 
-    output_dir = _resolve_output_dir(args.output_dir)
+    output_dir = _resolve_output_dir(args.output_dir, args.ci)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     operator = _resolve_operator(args.operator)
