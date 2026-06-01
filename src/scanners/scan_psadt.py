@@ -1334,6 +1334,65 @@ class PSADTSecureScanner:
                 except re.error as exc:
                     logger.debug("Regex error %s: %s", pat_name, exc)
 
+        # -------------------------------------------------------------------------
+        # Dynamic Heuristic Credential Scanning (detect-secrets)
+        # -------------------------------------------------------------------------
+        if _DETECT_SECRETS_AVAILABLE:
+            try:
+                from detect_secrets.settings import transient_settings
+                from detect_secrets.core.secrets_collection import SecretsCollection
+
+                plugins_config = [
+                    {'name': 'KeywordDetector'},
+                    {'name': 'Base64HighEntropyString'},
+                    {'name': 'HexHighEntropyString'},
+                    {'name': 'PrivateKeyDetector'},
+                    {'name': 'JwtTokenDetector'}
+                ]
+
+                print("   [*] Running dynamic entropy analysis (detect-secrets)...")
+                with transient_settings({'plugins_used': plugins_config}):
+                    secrets = SecretsCollection()
+                    for file_path in self.package_path.rglob("*"):
+                        if file_path.is_file() and file_path.suffix.lower() in scan_extensions:
+                            secrets.scan_file(str(file_path))
+
+                    for file_path_str, secret_list in secrets.json().items():
+                        for secret in secret_list:
+                            rule_id = f"dynamic_secret_{secret['type'].replace(' ', '_').lower()}"
+                            issue = {
+                                "rule_id":     rule_id,
+                                "type":        "Credential",
+                                "subtype":     secret['type'],
+                                "file":        file_path_str,
+                                "line":        secret['line_number'],
+                                "pattern":     "detect-secrets",
+                                "severity":    "CRITICAL",
+                                "match":       f"High entropy string or pattern detected ({secret['type']})",
+                                "context":     "Hash: " + secret['hashed_secret'],
+                                "description": f"Dynamic credential detection: {secret['type']}",
+                                "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+                                "mitre_id":    "T1552.001",
+                                "cwe_id":      "CWE-798",
+                                "cvss":        self._compute_cvss_score("hardcoded_credential", {}),
+                                "compliance":  self._get_compliance_tags("hardcoded_credential"),
+                                "confidence":  0.95,
+                            }
+                            # Check if we already flagged this line statically to avoid duplicates
+                            duplicate = any(
+                                i["file"] == file_path_str and i["line"] == secret['line_number']
+                                for i in self.findings["credential_findings"]
+                            )
+                            if not duplicate:
+                                self.findings["issues"].append(issue)
+                                self.findings["credential_findings"].append(issue)
+                                self._update_summary("CRITICAL")
+                                fname = Path(file_path_str).name
+                                print(f"   [!] {rule_id} in {fname}:{secret['line_number']}")
+
+            except Exception as e:
+                logger.debug("detect-secrets scan failed: %s", e)
+
     # =========================================================================
     # Step 4: Malware Pattern Detection
     # =========================================================================
