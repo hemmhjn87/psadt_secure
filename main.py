@@ -62,9 +62,6 @@ BANNER = """
 +==================================================================+
 |  PSADT-SECURE v3.0  --  Defense-Grade Package Security Scanner  |
 |  NIST 800-53 | CMMC 2.0 | IEC 62443 | CIS v8 | MITRE ATT&CK    |
-|------------------------------------------------------------------|
-|  Developed by design in an innovative way by:                    |
-|  [ cyber hacker (HEM) ]                                          |
 +==================================================================+
 """
 
