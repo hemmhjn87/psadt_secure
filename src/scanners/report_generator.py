@@ -228,7 +228,7 @@ class ReportGenerator:
           IEC 62443-2-4 &nbsp;|&nbsp; CIS Controls v8
         </div>
         <div style="margin-top: 18px; text-align: center; font-family: monospace; font-size: 0.85rem; color: var(--accent); padding-top: 12px; border-top: 1px dashed var(--border);">
-          <span style="opacity: 0.5;">//</span> Developed by design in an innovative way by: <span style="color: #6dffb9; font-weight: bold; text-shadow: 0 0 5px rgba(109,255,185,0.5);">[ cyber hacker (HEM) ]</span>
+          <span style="opacity: 0.5;">//</span> Designed by <span style="color: #6dffb9; font-weight: bold; text-shadow: 0 0 5px rgba(109,255,185,0.5);">Hem</span>
         </div>
       </footer>
     </main>
