@@ -1,0 +1,22 @@
+# PSADT-Secure: PSADT v4 Security Scanner
+# Dedicated tool for Safran Digit Packaging Factory
+
+# Core dependencies
+pefile==2023.2.7
+detect-secrets==1.4.0
+yara-python==4.3.2
+semgrep==1.45.0
+
+# PowerShell interaction
+pypsrp==0.4.0
+winrm==0.4.0
+
+# Reporting & output
+jinja2==3.1.2
+tabulate==0.9.0
+colorama==0.4.6
+
+# Utilities
+pyyaml==6.0
+requests==2.31.0
+click==8.1.7

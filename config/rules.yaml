@@ -1,0 +1,132 @@
+# PSADT Security Rules Configuration
+# Custom rules for PSADT v4 package scanning
+
+CRITICAL_PATTERNS:
+  # Credential Storage
+  - id: hardcoded_password
+    pattern: |
+      $password\s*=\s*['"](.*)['"]\s*(?!#.*test|#.*demo)
+    severity: CRITICAL
+    description: "Hardcoded password detected"
+    remediation: "Move to SCCM Task Sequence Variable (Private)"
+    
+  - id: secure_string_weak
+    pattern: |
+      ConvertTo-SecureString.*-AsPlainText.*-Force
+    severity: CRITICAL
+    description: "SecureString with plaintext flag - password exposed"
+    remediation: "Never use -AsPlainText with -Force"
+    
+  # Privilege Escalation
+  - id: uac_bypass
+    pattern: |
+      Set-ItemProperty.*EnableLUA.*0|HKLM.*UAC.*disable
+    severity: CRITICAL
+    description: "UAC bypass detected"
+    remediation: "Remove UAC bypass - use SCCM elevation instead"
+    
+  - id: event_log_clear
+    pattern: |
+      Clear-EventLog|Remove-Item.*System32.*Logs|wevtutil.*cl
+    severity: CRITICAL
+    description: "Event log clearing - evidence destruction"
+    remediation: "Remove event log manipulation code"
+    
+  # Code Injection
+  - id: invoke_expression_dynamic
+    pattern: |
+      Invoke-Expression\s+\$
+    severity: CRITICAL
+    description: "Dynamic code execution - injection risk"
+    remediation: "Use -ScriptBlock with verified content only"
+
+HIGH_PATTERNS:
+  # Lateral Movement
+  - id: remote_execution
+    pattern: |
+      Invoke-Command.*-ComputerName\s+\$
+    severity: HIGH
+    description: "Remote code execution capability"
+    remediation: "Document business justification and network controls"
+    
+  - id: registry_manipulation
+    pattern: |
+      Set-ItemProperty.*HKLM\\Software|Get-ItemProperty.*HKLM
+    severity: HIGH
+    description: "Registry modification detected"
+    remediation: "Verify registry change is necessary and documented"
+    
+  - id: service_creation
+    pattern: |
+      New-Service\s+-Name
+    severity: HIGH
+    description: "Service creation without logging"
+    remediation: "Use SCCM service deployment or document in ticket"
+    
+  - id: external_download
+    pattern: |
+      DownloadString\(|System\.Net\.WebClient|Invoke-WebRequest.*-Uri\s+\$
+    severity: HIGH
+    description: "External content download"
+    remediation: "Whitelist URLs and verify HTTPS"
+    
+  - id: com_object_create
+    pattern: |
+      New-Object.*COM|GetObject\(.*WinHttp
+    severity: HIGH
+    description: "COM object creation - potential RCE"
+    remediation: "Verify COM object is necessary and legitimate"
+
+MEDIUM_PATTERNS:
+  - id: wmi_query
+    pattern: |
+      Get-WmiObject|Get-CimInstance
+    severity: MEDIUM
+    description: "WMI query detected"
+    remediation: "Document WMI usage for audit trail"
+    
+  - id: file_permission_change
+    pattern: |
+      icacls|Set-Acl|chmod
+    severity: MEDIUM
+    description: "File permission modification"
+    remediation: "Verify permission change is necessary"
+
+BINARY_PATTERNS:
+  - id: unsigned_executable
+    severity: HIGH
+    description: "Executable is not signed"
+    remediation: "Sign executable with company certificate"
+    
+  - id: suspicious_imports
+    severity: MEDIUM
+    description: "Binary imports potentially dangerous DLL"
+    imports: [cmd.exe, powershell.exe, rundll32.exe, regsvr32.exe, cscript.exe]
+    remediation: "Review binary source and compilation"
+    
+  - id: packed_binary
+    severity: HIGH
+    description: "Binary appears to be packed/obfuscated"
+    remediation: "Unpack binary or provide source code"
+
+CREDENTIAL_PATTERNS:
+  - id: connection_string_password
+    pattern: |
+      ConnectionString.*=.*Password|Server=.*User=.*Password=
+    severity: CRITICAL
+    description: "Database connection string with embedded password"
+    remediation: "Move to SCCM TS Variable or Azure Key Vault"
+    
+  - id: base64_encoded_secret
+    pattern: |
+      (password|secret|key|token)\s*=\s*['"][A-Za-z0-9+/]{20,}={0,2}['"]
+    severity: HIGH
+    description: "Base64-encoded secret (weak obfuscation)"
+    remediation: "Decode and move to secure storage; base64 is NOT encryption"
+    
+  - id: api_key_embedded
+    pattern: |
+      api_key|apikey|api-key|API_KEY\s*=\s*['"][A-Za-z0-9\-_]{20,}['"]
+    severity: CRITICAL
+    description: "API key embedded in package"
+    remediation: "Revoke key and move to Key Vault"
