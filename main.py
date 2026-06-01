@@ -62,6 +62,9 @@ BANNER = """
 +==================================================================+
 |  PSADT-SECURE v3.0  --  Defense-Grade Package Security Scanner  |
 |  NIST 800-53 | CMMC 2.0 | IEC 62443 | CIS v8 | MITRE ATT&CK    |
+|------------------------------------------------------------------|
+|  Developed by design in an innovative way by:                    |
+|  [ cyber hacker (HEM) ]                                          |
 +==================================================================+
 """
 
@@ -474,6 +477,8 @@ def _print_summary(findings: dict, output_dir: Path, ci_mode: bool):
     # Top 5 issues
     issues = sorted(findings.get("issues", []), key=lambda x: SEV_ORDER.get(x.get("severity", "INFO"), 99))
     if issues:
+        print("\n  [!] DEVELOPER ACTION:")
+        print(f"      To see the EXACT location of these risks, open: {output_dir / 'report.html'}")
         print("\n  TOP FINDINGS:")
         for issue in issues[:5]:
             sev     = issue.get("severity", "LOW")
