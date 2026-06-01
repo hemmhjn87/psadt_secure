@@ -1240,6 +1240,10 @@ class PSADTSecureScanner:
                 "pattern":  r"(?i)(password|pwd|passwd|pass)\s*[=:]\s*['\"]([^'\"]{8,})['\"]",
                 "severity": "CRITICAL",
             },
+            "unstructured_credential": {
+                "pattern":  r"(?i)\b(?:passwrd|password|passwd|credentials?|secret|pwd)\s*[=:\s>]*([A-Za-z0-9@#$%^&+=_]{6,})\b",
+                "severity": "HIGH",
+            },
             "api_key": {
                 "pattern":  r"(?i)(api[_-]?key|apikey|api_secret|access_token)\s*[=:]\s*['\"]([A-Za-z0-9\-_]{20,})['\"]",
                 "severity": "CRITICAL",
@@ -1284,7 +1288,7 @@ class PSADTSecureScanner:
 
         scan_extensions = {
             ".ps1", ".xml", ".ini", ".conf", ".config", ".psd1",
-            ".json", ".yaml", ".yml", ".bat", ".cmd", ".psm1", ".env",
+            ".json", ".yaml", ".yml", ".bat", ".cmd", ".psm1", ".env", ".txt"
         }
 
         for file_path in self.package_path.rglob("*"):
