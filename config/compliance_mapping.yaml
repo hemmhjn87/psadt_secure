@@ -1,0 +1,442 @@
+# PSADT-Secure Compliance Framework Mapping
+# Maps scanner rule IDs to specific control identifiers across multiple frameworks.
+# Frameworks covered:
+#   - NIST SP 800-53 Rev5
+#   - CMMC 2.0 (Cybersecurity Maturity Model Certification)
+#   - CIS Controls v8
+#   - IEC 62443-2-4 (Industrial Automation & Control Systems)
+#   - OWASP Top 10 2021
+#
+# Usage: Each scanner finding's rule_id is looked up here to populate
+# the compliance matrix in reports and auto-tag findings.
+#
+# Format version: 2026-01
+# Last updated: 2026-06-01
+
+framework_version: "2026-01"
+
+mappings:
+
+  # ---- Credential & Authentication Risks ----------------------------
+
+  hardcoded_credential:
+    nist_800_53: ["IA-5", "SA-11", "SI-7", "AC-3"]
+    cmmc_2:      ["IA.3.083", "SI.1.210", "SA.4.171"]
+    cis_v8:      ["CIS-3.11", "CIS-16.9"]
+    iec_62443:   ["SR_3.2", "SR_1.3"]
+    owasp:       ["A02:2021", "A07:2021"]
+    severity_floor: "CRITICAL"
+    description: "Hardcoded password or credential literal in script"
+
+  secure_string_plaintext:
+    nist_800_53: ["IA-5", "SC-28", "SI-12"]
+    cmmc_2:      ["IA.3.083", "SC.3.177"]
+    cis_v8:      ["CIS-3.11", "CIS-13.6"]
+    iec_62443:   ["SR_3.2", "SR_4.1"]
+    owasp:       ["A02:2021"]
+    severity_floor: "CRITICAL"
+    description: "ConvertTo-SecureString -AsPlainText -Force usage"
+
+  credential_creation:
+    nist_800_53: ["IA-5", "AC-2", "AC-3"]
+    cmmc_2:      ["IA.3.083", "AC.1.001"]
+    cis_v8:      ["CIS-5.1", "CIS-16.2"]
+    iec_62443:   ["SR_1.1", "SR_1.3"]
+    owasp:       ["A07:2021"]
+    severity_floor: "HIGH"
+    description: "PSCredential object construction with embedded credentials"
+
+  api_key:
+    nist_800_53: ["IA-5", "SC-28", "SA-11"]
+    cmmc_2:      ["IA.3.083", "SC.3.177"]
+    cis_v8:      ["CIS-3.11", "CIS-16.9"]
+    iec_62443:   ["SR_3.2", "SR_1.3"]
+    owasp:       ["A02:2021"]
+    severity_floor: "CRITICAL"
+    description: "Embedded API key or access token"
+
+  password_string:
+    nist_800_53: ["IA-5", "AC-3"]
+    cmmc_2:      ["IA.3.083"]
+    cis_v8:      ["CIS-3.11"]
+    iec_62443:   ["SR_1.3"]
+    owasp:       ["A02:2021"]
+    severity_floor: "CRITICAL"
+    description: "Password assignment to variable as plaintext"
+
+  private_key:
+    nist_800_53: ["IA-5", "SC-12", "SC-28"]
+    cmmc_2:      ["IA.3.083", "SC.3.177"]
+    cis_v8:      ["CIS-3.11", "CIS-13.6"]
+    iec_62443:   ["SR_3.2", "SR_4.1"]
+    owasp:       ["A02:2021"]
+    severity_floor: "CRITICAL"
+    description: "Private key material embedded in file"
+
+  aws_keys:
+    nist_800_53: ["IA-5", "SC-28", "SA-11"]
+    cmmc_2:      ["IA.3.083", "SC.3.177"]
+    cis_v8:      ["CIS-3.11", "CIS-16.9"]
+    iec_62443:   ["SR_1.3", "SR_3.2"]
+    owasp:       ["A02:2021"]
+    severity_floor: "CRITICAL"
+    description: "AWS access key ID embedded in code"
+
+  azure_keys:
+    nist_800_53: ["IA-5", "SC-28"]
+    cmmc_2:      ["IA.3.083", "SC.3.177"]
+    cis_v8:      ["CIS-3.11", "CIS-16.9"]
+    iec_62443:   ["SR_1.3"]
+    owasp:       ["A02:2021"]
+    severity_floor: "CRITICAL"
+    description: "Azure storage connection string with key embedded"
+
+  connection_string:
+    nist_800_53: ["IA-5", "SC-28", "SI-12"]
+    cmmc_2:      ["IA.3.083", "SC.3.177"]
+    cis_v8:      ["CIS-3.11", "CIS-13.6"]
+    iec_62443:   ["SR_3.2"]
+    owasp:       ["A02:2021"]
+    severity_floor: "CRITICAL"
+    description: "Database connection string with embedded password"
+
+  # ---- Execution & Code Injection -----------------------------------
+
+  invoke_expression:
+    nist_800_53: ["SI-3", "CM-7", "SA-11", "SI-10"]
+    cmmc_2:      ["SI.1.210", "CM.2.061", "SI.2.214"]
+    cis_v8:      ["CIS-2.5", "CIS-7.3"]
+    iec_62443:   ["SR_3.4", "SR_3.8"]
+    owasp:       ["A03:2021"]
+    severity_floor: "CRITICAL"
+    description: "Invoke-Expression with dynamic string evaluation"
+
+  script_block_manipulation:
+    nist_800_53: ["SI-3", "CM-7", "SA-11"]
+    cmmc_2:      ["SI.1.210", "CM.2.061"]
+    cis_v8:      ["CIS-2.5", "CIS-7.3"]
+    iec_62443:   ["SR_3.4"]
+    owasp:       ["A03:2021"]
+    severity_floor: "HIGH"
+    description: "Dynamic script block construction and invocation"
+
+  dotnet_reflection:
+    nist_800_53: ["SI-3", "CM-7", "SA-11"]
+    cmmc_2:      ["SI.1.210", "CM.2.061"]
+    cis_v8:      ["CIS-2.5", "CIS-7.3"]
+    iec_62443:   ["SR_3.4"]
+    owasp:       ["A03:2021"]
+    severity_floor: "HIGH"
+    description: ".NET reflection used to invoke methods or load assemblies"
+
+  com_object:
+    nist_800_53: ["SI-3", "CM-7", "SA-11"]
+    cmmc_2:      ["SI.1.210", "CM.2.061"]
+    cis_v8:      ["CIS-2.5", "CIS-7.3"]
+    iec_62443:   ["SR_3.4"]
+    owasp:       ["A03:2021"]
+    severity_floor: "HIGH"
+    description: "COM object instantiation (potential download / execution vector)"
+
+  rundll_execution:
+    nist_800_53: ["SI-3", "CM-7", "AU-12"]
+    cmmc_2:      ["SI.1.210", "CM.2.061"]
+    cis_v8:      ["CIS-2.5", "CIS-7.4"]
+    iec_62443:   ["SR_3.4", "SR_3.2"]
+    owasp:       ["A03:2021"]
+    severity_floor: "HIGH"
+    description: "rundll32 / regsvr32 / certutil used to execute remote content"
+
+  remote_execution:
+    nist_800_53: ["CM-7", "AC-17", "SC-7"]
+    cmmc_2:      ["CM.2.061", "AC.2.006"]
+    cis_v8:      ["CIS-12.2", "CIS-4.1"]
+    iec_62443:   ["SR_5.2", "SR_3.4"]
+    owasp:       ["A01:2021"]
+    severity_floor: "HIGH"
+    description: "WMI / WinRM / PSExec remote code execution"
+
+  # ---- Defense Evasion ----------------------------------------------
+
+  registry_manipulation:
+    nist_800_53: ["CM-7", "CM-6", "AU-2"]
+    cmmc_2:      ["CM.2.061", "CM.2.064", "AU.2.041"]
+    cis_v8:      ["CIS-4.1", "CIS-8.5"]
+    iec_62443:   ["SR_7.6", "SR_3.2"]
+    owasp:       ["A05:2021"]
+    severity_floor: "HIGH"
+    description: "HKLM registry key modification"
+
+  uac_bypass:
+    nist_800_53: ["AC-6", "CM-6", "SI-3"]
+    cmmc_2:      ["AC.1.001", "AC.2.006", "CM.2.061"]
+    cis_v8:      ["CIS-4.1", "CIS-5.4"]
+    iec_62443:   ["SR_2.1", "SR_1.2"]
+    owasp:       ["A01:2021"]
+    severity_floor: "CRITICAL"
+    description: "UAC bypass technique or UAC disabled in registry"
+
+  event_log_clearing:
+    nist_800_53: ["AU-9", "AU-3", "SI-7"]
+    cmmc_2:      ["AU.2.041", "AU.3.045", "AU.3.046"]
+    cis_v8:      ["CIS-8.2", "CIS-8.11"]
+    iec_62443:   ["SR_6.1", "SR_6.2"]
+    owasp:       ["A09:2021"]
+    severity_floor: "CRITICAL"
+    description: "Windows Event Log clearing or stopping EventLog service"
+
+  disabled_security:
+    nist_800_53: ["SI-3", "CM-7", "SI-4"]
+    cmmc_2:      ["SI.1.210", "CM.2.061"]
+    cis_v8:      ["CIS-10.1", "CIS-10.2"]
+    iec_62443:   ["SR_3.2", "SR_3.8"]
+    owasp:       ["A05:2021"]
+    severity_floor: "CRITICAL"
+    description: "Defender, AV, or security tool disablement"
+
+  obfuscation_detected:
+    nist_800_53: ["SI-3", "SA-11", "AU-12"]
+    cmmc_2:      ["SI.1.210", "SI.2.214"]
+    cis_v8:      ["CIS-2.5", "CIS-7.3"]
+    iec_62443:   ["SR_3.4", "SR_3.8"]
+    owasp:       ["A03:2021"]
+    severity_floor: "MEDIUM"
+    description: "Code obfuscation techniques detected (base64, char encoding, etc.)"
+
+  amsi_patch_memory:
+    nist_800_53: ["SI-3", "SI-7", "AU-12"]
+    cmmc_2:      ["SI.1.210", "SI.2.214"]
+    cis_v8:      ["CIS-10.1", "CIS-10.7"]
+    iec_62443:   ["SR_3.2", "SR_3.8"]
+    owasp:       ["A08:2021"]
+    severity_floor: "CRITICAL"
+    description: "AMSI (Antimalware Scan Interface) memory patch bypass"
+
+  amsi_reflection:
+    nist_800_53: ["SI-3", "SI-7", "AU-12"]
+    cmmc_2:      ["SI.1.210", "SI.2.214"]
+    cis_v8:      ["CIS-10.1", "CIS-10.7"]
+    iec_62443:   ["SR_3.2", "SR_3.8"]
+    owasp:       ["A08:2021"]
+    severity_floor: "CRITICAL"
+    description: "AMSI bypass via .NET reflection"
+
+  amsi_script_bypass:
+    nist_800_53: ["SI-3", "SI-7"]
+    cmmc_2:      ["SI.1.210", "SI.2.214"]
+    cis_v8:      ["CIS-10.1"]
+    iec_62443:   ["SR_3.2"]
+    owasp:       ["A08:2021"]
+    severity_floor: "CRITICAL"
+    description: "AMSI ScriptBlock bypass technique"
+
+  etw_tampering:
+    nist_800_53: ["AU-9", "SI-7", "AU-12"]
+    cmmc_2:      ["AU.2.041", "AU.3.045"]
+    cis_v8:      ["CIS-8.2", "CIS-8.11"]
+    iec_62443:   ["SR_6.1", "SR_6.2"]
+    owasp:       ["A09:2021"]
+    severity_floor: "CRITICAL"
+    description: "ETW (Event Tracing for Windows) provider tampering"
+
+  # ---- Lateral Movement ---------------------------------------------
+
+  lateral_movement:
+    nist_800_53: ["AC-17", "SC-7", "CM-7"]
+    cmmc_2:      ["AC.2.006", "SC.3.177", "CM.2.061"]
+    cis_v8:      ["CIS-12.2", "CIS-13.1"]
+    iec_62443:   ["SR_5.2", "SR_3.1"]
+    owasp:       ["A01:2021"]
+    severity_floor: "HIGH"
+    description: "Invoke-Command to remote computer names"
+
+  # ---- Credential Theft / Reconnaissance ---------------------------
+
+  credential_dumping:
+    nist_800_53: ["IA-5", "AC-3", "AU-12"]
+    cmmc_2:      ["IA.3.083", "AC.2.006", "AU.2.041"]
+    cis_v8:      ["CIS-5.1", "CIS-16.8"]
+    iec_62443:   ["SR_1.1", "SR_1.3"]
+    owasp:       ["A07:2021"]
+    severity_floor: "CRITICAL"
+    description: "Credential dumping tool reference (mimikatz, sekurlsa, lsadump)"
+
+  # ---- Persistence Mechanisms --------------------------------------
+
+  service_creation:
+    nist_800_53: ["CM-7", "AU-2", "AC-6"]
+    cmmc_2:      ["CM.2.061", "AU.2.041"]
+    cis_v8:      ["CIS-4.8", "CIS-8.2"]
+    iec_62443:   ["SR_7.6", "SR_3.2"]
+    owasp:       ["A05:2021"]
+    severity_floor: "MEDIUM"
+    description: "New Windows service creation"
+
+  scheduled_task:
+    nist_800_53: ["CM-7", "AU-2", "AC-6"]
+    cmmc_2:      ["CM.2.061", "AU.2.041"]
+    cis_v8:      ["CIS-4.8", "CIS-8.2"]
+    iec_62443:   ["SR_7.6"]
+    owasp:       ["A05:2021"]
+    severity_floor: "MEDIUM"
+    description: "Scheduled task registration for persistence"
+
+  wmi_event_subscription:
+    nist_800_53: ["CM-7", "AU-12", "SI-4"]
+    cmmc_2:      ["CM.2.061", "AU.2.041"]
+    cis_v8:      ["CIS-4.8", "CIS-8.2"]
+    iec_62443:   ["SR_6.2", "SR_3.2"]
+    owasp:       ["A05:2021"]
+    severity_floor: "HIGH"
+    description: "WMI event subscription (persistence mechanism)"
+
+  # ---- Command & Control / Download --------------------------------
+
+  external_download:
+    nist_800_53: ["CM-7", "SI-3", "SC-18"]
+    cmmc_2:      ["CM.2.061", "SI.1.210"]
+    cis_v8:      ["CIS-2.3", "CIS-9.2"]
+    iec_62443:   ["SR_3.2", "SR_2.4"]
+    owasp:       ["A08:2021"]
+    severity_floor: "HIGH"
+    description: "External download via WebClient, curl, wget, or Invoke-WebRequest"
+
+  c2_ip:
+    nist_800_53: ["SC-7", "SI-3", "AU-12"]
+    cmmc_2:      ["SC.3.177", "SI.1.210"]
+    cis_v8:      ["CIS-9.2", "CIS-13.1"]
+    iec_62443:   ["SR_5.2", "SR_3.2"]
+    owasp:       ["A08:2021"]
+    severity_floor: "CRITICAL"
+    description: "Direct HTTP/S connection to IP address (potential C2)"
+
+  # ---- LOLBin Abuse -----------------------------------------------
+
+  lolbin_certutil_decode:
+    nist_800_53: ["CM-7", "SI-3", "AU-12"]
+    cmmc_2:      ["CM.2.061", "SI.1.210"]
+    cis_v8:      ["CIS-2.5", "CIS-7.4"]
+    iec_62443:   ["SR_3.4", "SR_3.2"]
+    owasp:       ["A03:2021"]
+    severity_floor: "HIGH"
+    description: "certutil.exe used to download or decode content"
+
+  # ---- Malware Indicators -----------------------------------------
+
+  suspicious_strings:
+    nist_800_53: ["SI-3", "AU-12"]
+    cmmc_2:      ["SI.1.210"]
+    cis_v8:      ["CIS-10.1"]
+    iec_62443:   ["SR_3.2"]
+    owasp:       ["A08:2021"]
+    severity_floor: "CRITICAL"
+    description: "Known malware family keyword (botnet, trojan, ransomware, etc.)"
+
+  data_exfiltration:
+    nist_800_53: ["SI-3", "SC-7", "AU-12"]
+    cmmc_2:      ["SI.1.210", "SC.3.177"]
+    cis_v8:      ["CIS-13.1", "CIS-9.2"]
+    iec_62443:   ["SR_5.2"]
+    owasp:       ["A08:2021"]
+    severity_floor: "CRITICAL"
+    description: "Data exfiltration or ransomware indicator"
+
+  process_injection:
+    nist_800_53: ["SI-3", "AU-12", "CM-7"]
+    cmmc_2:      ["SI.1.210", "CM.2.061"]
+    cis_v8:      ["CIS-10.1", "CIS-10.7"]
+    iec_62443:   ["SR_3.2", "SR_3.8"]
+    owasp:       ["A08:2021"]
+    severity_floor: "CRITICAL"
+    description: "Process injection API reference (CreateRemoteThread, VirtualAllocEx, etc.)"
+
+  # ---- Binary-specific -------------------------------------------
+
+  unsigned_binary:
+    nist_800_53: ["SI-7", "SA-11", "CM-7"]
+    cmmc_2:      ["SI.2.214", "SA.4.171"]
+    cis_v8:      ["CIS-2.3", "CIS-10.5"]
+    iec_62443:   ["SR_3.2", "SR_4.1"]
+    owasp:       ["A08:2021"]
+    severity_floor: "HIGH"
+    description: "Binary lacks a valid Authenticode digital signature"
+
+  packed_binary:
+    nist_800_53: ["SI-3", "SI-7", "AU-12"]
+    cmmc_2:      ["SI.1.210", "SI.2.214"]
+    cis_v8:      ["CIS-10.1", "CIS-10.7"]
+    iec_62443:   ["SR_3.2", "SR_3.8"]
+    owasp:       ["A08:2021"]
+    severity_floor: "MEDIUM"
+    description: "High-entropy binary — may be packed or compressed (malware indicator)"
+
+  suspicious_import:
+    nist_800_53: ["SI-3", "CM-7", "SA-11"]
+    cmmc_2:      ["SI.1.210", "CM.2.061"]
+    cis_v8:      ["CIS-2.5", "CIS-7.3"]
+    iec_62443:   ["SR_3.4"]
+    owasp:       ["A08:2021"]
+    severity_floor: "MEDIUM"
+    description: "Binary imports potentially dangerous Win32 API functions"
+
+  # ---- Configuration Issues --------------------------------------
+
+  weak_password_policy:
+    nist_800_53: ["IA-5", "AC-2"]
+    cmmc_2:      ["IA.3.083"]
+    cis_v8:      ["CIS-5.2", "CIS-16.2"]
+    iec_62443:   ["SR_1.3", "SR_1.7"]
+    owasp:       ["A07:2021"]
+    severity_floor: "MEDIUM"
+    description: "Weak password policy configuration detected"
+
+  disabled_security_feature:
+    nist_800_53: ["SI-3", "CM-7"]
+    cmmc_2:      ["SI.1.210", "CM.2.061"]
+    cis_v8:      ["CIS-10.1"]
+    iec_62443:   ["SR_3.2"]
+    owasp:       ["A05:2021"]
+    severity_floor: "HIGH"
+    description: "Security feature explicitly disabled in configuration"
+
+# -----------------------------------------------------------------------
+# Default mapping for rules not explicitly listed above
+# Applied when a finding's rule_id has no entry in this file
+# -----------------------------------------------------------------------
+default_mapping:
+  nist_800_53: ["SI-3", "CM-7"]
+  cmmc_2:      ["SI.1.210"]
+  cis_v8:      ["CIS-2.5"]
+  iec_62443:   ["SR_3.2"]
+  owasp:       ["A05:2021"]
+  severity_floor: "MEDIUM"
+  description: "Unmapped security finding — manual review required"
+
+# -----------------------------------------------------------------------
+# Framework reference metadata
+# -----------------------------------------------------------------------
+framework_references:
+  nist_800_53:
+    name: "NIST SP 800-53 Rev5"
+    url: "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final"
+    version: "Rev5 (2020)"
+
+  cmmc_2:
+    name: "CMMC 2.0"
+    url: "https://www.acq.osd.mil/cmmc/"
+    version: "2.0 (2021)"
+
+  cis_v8:
+    name: "CIS Controls v8"
+    url: "https://www.cisecurity.org/controls/v8"
+    version: "v8 (2021)"
+
+  iec_62443:
+    name: "IEC 62443-2-4"
+    url: "https://www.iec.ch/iec62443"
+    version: "2015+AMD1:2017"
+
+  owasp:
+    name: "OWASP Top 10 2021"
+    url: "https://owasp.org/Top10/"
+    version: "2021"

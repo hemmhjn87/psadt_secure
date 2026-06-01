@@ -1,0 +1,121 @@
+# PSADT-Secure Allowlist Configuration
+# Exception management for approved security deviations
+# Policy: All exceptions require ticket number, justification, and approver
+# NEVER approve exceptions for: credential_dumping, amsi_patch_memory, malware_* patterns
+#
+# Format version: 1.0
+# Review cadence: Quarterly
+# Owner: Security Operations
+
+allowlist_version: "1.0"
+policy_version: "2026-01"
+last_reviewed: "2026-06-01"
+reviewed_by: "Security Operations"
+
+# Maximum exception validity period: 365 days
+# Exceptions with no expiry are treated as expired (rejected)
+# Exceptions are re-evaluated on each scan against active ticket status
+
+exceptions: []
+  # Example exception (uncomment and customize):
+  # - id: exc-001
+  #   rule_id: external_download
+  #   file_pattern: "Deploy-Application.ps1"
+  #   match_contains: "internal.company.com"   # Optional: only suppress if match contains this string
+  #   approved_by: "CISO_Name"
+  #   approved_date: "2026-01-15"
+  #   ticket: "CHG-12345"
+  #   expiry: "2026-12-31"
+  #   justification: >
+  #     Downloads from internal HTTPS endpoint only. TLS certificate pinned.
+  #     Network controls validated by SOC. Endpoint monitored by SIEM.
+  #   risk_accepted: "LOW - controlled internal endpoint"
+  #
+  # - id: exc-002
+  #   rule_id: registry_manipulation
+  #   file_pattern: "Deploy-Application.ps1"
+  #   match_contains: "HKLM:\\SOFTWARE\\Company\\App"
+  #   approved_by: "AppSec_Lead"
+  #   approved_date: "2026-02-10"
+  #   ticket: "CHG-23456"
+  #   expiry: "2026-08-10"
+  #   justification: >
+  #     Registry key required for application licensing.
+  #     Key is under HKLM\SOFTWARE\Company\ namespace only.
+  #     Reviewed by AppSec and approved for single-use write on install.
+  #   risk_accepted: "LOW - scoped registry write, no system keys"
+  #
+  # - id: exc-003
+  #   rule_id: invoke_expression
+  #   file_pattern: "AppDeploy-Toolkit.ps1"
+  #   match_contains: "$ExecutionContext.InvokeCommand"
+  #   approved_by: "CISO_Name"
+  #   approved_date: "2026-03-01"
+  #   ticket: "CHG-34567"
+  #   expiry: "2026-12-31"
+  #   justification: >
+  #     PSADT framework internal usage for dynamic script invocation.
+  #     Vendor-provided code with SHA-256 hash validation on every run.
+  #     AppLocker policy restricts execution to signed PSADT scripts only.
+  #   risk_accepted: "MEDIUM - framework code, hash-verified, AppLocker controlled"
+  #
+  # - id: exc-004
+  #   rule_id: service_creation
+  #   file_pattern: "Deploy-Application.ps1"
+  #   match_contains: "New-Service -Name 'CompanyMonitor'"
+  #   approved_by: "CISO_Name"
+  #   approved_date: "2026-04-01"
+  #   ticket: "CHG-45678"
+  #   expiry: "2026-10-01"
+  #   justification: >
+  #     Monitoring agent service required for compliance telemetry.
+  #     Service runs as NETWORK SERVICE (low-privilege). Auto-removal on
+  #     uninstall is implemented. Service binary is code-signed.
+  #   risk_accepted: "LOW - low-privilege service, signed binary, controlled deployment"
+
+# -----------------------------------------------------------------------
+# Patterns that can NEVER be allowlisted (non-negotiable blocks)
+# These represent absolute security controls — no exception mechanism exists.
+# Attempting to allowlist these patterns will cause the scanner to emit
+# a CRITICAL finding regardless of the allowlist entry.
+# -----------------------------------------------------------------------
+never_allowlist:
+  - credential_dumping         # mimikatz / sekurlsa / lsadump
+  - amsi_patch_memory          # AMSI memory patching
+  - amsi_reflection            # AMSI bypass via reflection
+  - amsi_script_bypass         # AMSI ScriptBlock bypass
+  - c2_ip                      # Hardcoded C2 IP addresses
+  - suspicious_strings         # botnet / trojan / ransomware strings
+  - data_exfiltration          # Data exfiltration patterns
+  - etw_tampering              # ETW provider manipulation
+  - malware_dropper            # Known dropper patterns
+  - process_hollowing          # Process hollowing signatures
+  - kernel_exploit             # Kernel exploit patterns
+
+# -----------------------------------------------------------------------
+# Exception validation rules (applied by scanner)
+# -----------------------------------------------------------------------
+validation:
+  require_fields:
+    - id
+    - rule_id
+    - approved_by
+    - approved_date
+    - ticket
+    - expiry
+    - justification
+    - risk_accepted
+
+  max_validity_days: 365
+
+  # Risk levels that require CISO sign-off (not just AppSec lead)
+  ciso_required_risk_levels:
+    - "HIGH"
+    - "CRITICAL"
+
+  # Ticket patterns that are accepted (regex)
+  valid_ticket_patterns:
+    - "^CHG-\\d{4,8}$"
+    - "^INC-\\d{4,8}$"
+    - "^RISK-\\d{4,8}$"
+    - "^EXMPT-\\d{4,8}$"

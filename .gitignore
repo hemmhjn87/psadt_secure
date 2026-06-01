@@ -1,0 +1,27 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Scan Outputs
+psadt_scan_*/
+tests/fixtures/test_scan_output/
+*.sarif
+*.html
+*.csv
+sbom.spdx
+sbom.cyclonedx.json
+
+# Keys and Secrets
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/

@@ -1,15 +1,15 @@
-# PSADT-Secure: PSADT v4 Security Scanner
-# Dedicated tool for Safran Digit Packaging Factory
+# PSADT-Secure v3.0: Defense-Grade PSADT Package Security Scanner
+# Validated for aerospace/defense organizational deployment
 
-# Core dependencies
+# Core security analysis
 pefile==2023.2.7
 detect-secrets==1.4.0
-yara-python==4.3.2
-semgrep==1.45.0
+
+# Cryptographic operations (ECDSA signing, manifest integrity)
+cryptography>=42.0.0
 
 # PowerShell interaction
 pypsrp==0.4.0
-winrm==0.4.0
 
 # Reporting & output
 jinja2==3.1.2
@@ -17,6 +17,16 @@ tabulate==0.9.0
 colorama==0.4.6
 
 # Utilities
-pyyaml==6.0
+pyyaml==6.0.1
 requests==2.31.0
+urllib3>=2.2.2
 click==8.1.7
+
+# XML processing (JUnit, SARIF validation)
+lxml>=5.0.0
+
+# Database (NVD cache)
+# sqlite3 is stdlib
+
+# Optional: YARA rule support
+# yara-python==4.3.1
