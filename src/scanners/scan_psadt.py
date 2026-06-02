@@ -855,14 +855,14 @@ class PSADTSecureScanner:
         })
 
         # ── Step 1: PowerShell advanced analysis ─────────────────────────────
-        print("\n[Step 1/8] Advanced PowerShell Script Analysis...")
+        print("\n[Step 1/9] Advanced PowerShell Script Analysis...")
         try:
             self._scan_powershell_scripts_advanced()
         except Exception as exc:
             logger.error("Step 1 failed: %s", exc)
 
         # ── Step 2: Binary analysis ───────────────────────────────────────────
-        print("[Step 2/8] Comprehensive Binary & Chain-of-Trust Analysis...")
+        print("[Step 2/9] Comprehensive Binary & Chain-of-Trust Analysis...")
         try:
             self._scan_binaries_advanced()
         except Exception as exc:
