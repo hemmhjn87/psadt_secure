@@ -869,46 +869,53 @@ class PSADTSecureScanner:
             logger.error("Step 2 failed: %s", exc)
 
         # ── Step 3: Credential detection ─────────────────────────────────────
-        print("[Step 3/8] Enhanced Credential & Data Leakage Detection...")
+        print("[Step 3/9] Enhanced Credential & Data Leakage Detection...")
         try:
             self._scan_credentials_advanced()
         except Exception as exc:
             logger.error("Step 3 failed: %s", exc)
 
-        # ── Step 4: Malware patterns ──────────────────────────────────────────
-        print("[Step 4/8] Malware Patterns & Obfuscation Detection...")
+        # ── Step 4: HemSpect Data Leakage Engine ─────────────────────────────
+        print("[Step 4/9] HemSpect Data Leakage Intelligence Sweep...")
+        try:
+            self._scan_data_leakage_hemspect()
+        except Exception as exc:
+            logger.error("Step 4 (HemSpect) failed: %s", exc)
+
+        # ── Step 5: Malware patterns ──────────────────────────────────────────
+        print("[Step 5/9] Malware Patterns & Obfuscation Detection...")
         try:
             self._scan_malware_patterns_advanced()
         except Exception as exc:
-            logger.error("Step 4 failed: %s", exc)
+            logger.error("Step 5 failed: %s", exc)
 
-        # ── Step 5: Configuration scanning ───────────────────────────────────
-        print("[Step 5/8] Configuration & Dependency Analysis...")
+        # ── Step 6: Configuration scanning ───────────────────────────────────
+        print("[Step 6/9] Configuration & Dependency Analysis...")
         try:
             self._scan_configurations_and_dependencies()
         except Exception as exc:
-            logger.error("Step 5 failed: %s", exc)
+            logger.error("Step 6 failed: %s", exc)
 
-        # ── Step 6: PSADT v4 specific cmdlet analysis ─────────────────────────
-        print("[Step 6/8] PSADT v4.1 Cmdlet & API Compliance Analysis...")
+        # ── Step 7: PSADT v4 specific cmdlet analysis ─────────────────────────
+        print("[Step 7/9] PSADT v4.1 Cmdlet & API Compliance Analysis...")
         try:
             self._scan_psadt_v4_cmdlets()
         except Exception as exc:
-            logger.error("Step 6 failed: %s", exc)
+            logger.error("Step 7 failed: %s", exc)
 
-        # ── Step 7: MSI/MSP/MSIX analysis ────────────────────────────────────
-        print("[Step 7/8] MSI/MSP/MSIX Custom Action Security Analysis...")
+        # ── Step 8: MSI/MSP/MSIX analysis ────────────────────────────────────
+        print("[Step 8/9] MSI/MSP/MSIX Custom Action Security Analysis...")
         try:
             self._scan_msi_packages()
         except Exception as exc:
-            logger.error("Step 7 failed: %s", exc)
+            logger.error("Step 8 failed: %s", exc)
 
-        # ── Step 8: Risk scoring + MITRE mapping ──────────────────────────────
-        print("[Step 8/8] Computing Risk Scores, MITRE Mapping & Generating Reports...")
+        # ── Step 9: Risk scoring + MITRE mapping ──────────────────────────────
+        print("[Step 9/9] Computing Risk Scores, MITRE Mapping & Generating Reports...")
         try:
             self._compute_risk_scores()
         except Exception as exc:
-            logger.error("Step 8 risk scoring failed: %s", exc)
+            logger.error("Step 9 risk scoring failed: %s", exc)
 
         # ── Apply allowlist BEFORE report generation ──────────────────────────
         active_issues, suppressed = self._apply_allowlist(self.findings["issues"])
@@ -1394,7 +1401,309 @@ class PSADTSecureScanner:
                 logger.debug("detect-secrets scan failed: %s", e)
 
     # =========================================================================
-    # Step 4: Malware Pattern Detection
+    # Step 4: HemSpect — Data Leakage Intelligence Engine
+    # =========================================================================
+
+    def _scan_data_leakage_hemspect(self) -> None:
+        """
+        HemSpect: A 3-tier data leakage intelligence engine.
+
+        Tier 1 — Extension Classifier: flags dangerous file types that should
+                 never exist inside a deployment package.
+        Tier 2 — Filename Heuristic: flags files whose names suggest they
+                 contain credentials, password lists, or key material.
+        Tier 3 — Deep Content Regex: scans text-readable files for connection
+                 strings, XML credentials, cloud tokens, and IT config secrets.
+        """
+        print("   [*] HemSpect engine initializing...")
+
+        hemspect_findings: List[Dict] = []
+
+        # =====================================================================
+        # Tier 1 — Extension Classifier (instant flag by file type)
+        # =====================================================================
+        DANGEROUS_EXTENSIONS: Dict[str, tuple] = {
+            # Credential stores & key material
+            ".kdbx":     ("KeePass Database",                "CRITICAL", "T1555.005"),
+            ".kdb":      ("KeePass v1 Database",             "CRITICAL", "T1555.005"),
+            ".keychain": ("macOS Keychain",                   "CRITICAL", "T1555.001"),
+            ".jks":      ("Java KeyStore",                    "CRITICAL", "T1552.004"),
+            ".keystore": ("Java/Android KeyStore",            "CRITICAL", "T1552.004"),
+            ".pfx":      ("PKCS#12 Certificate+Private Key",  "CRITICAL", "T1552.004"),
+            ".p12":      ("PKCS#12 Certificate Bundle",       "CRITICAL", "T1552.004"),
+            ".pem":      ("PEM Key/Certificate",              "HIGH",     "T1552.004"),
+            ".key":      ("Private Key File",                 "CRITICAL", "T1552.004"),
+            ".ppk":      ("PuTTY Private Key",                "CRITICAL", "T1552.004"),
+            ".asc":      ("PGP/GPG Armored Key",              "HIGH",     "T1552.004"),
+            # Email & mailbox files
+            ".ost":      ("Outlook Offline Data (email)",     "HIGH",     "T1114.001"),
+            ".pst":      ("Outlook Personal Storage (email)", "HIGH",     "T1114.001"),
+            ".eml":      ("Email Message File",               "MEDIUM",   "T1114.001"),
+            ".msg":      ("Outlook Message File",             "MEDIUM",   "T1114.001"),
+            # Database files
+            ".mdf":      ("SQL Server Primary Data File",     "CRITICAL", "T1005"),
+            ".ldf":      ("SQL Server Log File",              "HIGH",     "T1005"),
+            ".sdf":      ("SQL Server Compact Database",      "HIGH",     "T1005"),
+            ".sqlite":   ("SQLite Database",                  "MEDIUM",   "T1005"),
+            ".bak":      ("Database Backup File",             "HIGH",     "T1005"),
+            # RDP / VPN configs
+            ".rdp":      ("Remote Desktop Connection File",   "HIGH",     "T1021.001"),
+            ".rdg":      ("RD Connection Manager Group",      "HIGH",     "T1021.001"),
+            ".ovpn":     ("OpenVPN Configuration",            "HIGH",     "T1133"),
+            ".pcf":      ("Cisco VPN Client Profile",         "HIGH",     "T1133"),
+            # Memory dumps
+            ".dmp":      ("Memory/Crash Dump",                "CRITICAL", "T1003.001"),
+            ".vmem":     ("Virtual Memory Dump",              "CRITICAL", "T1003.001"),
+            ".vmdk":     ("VM Disk Image",                    "HIGH",     "T1005"),
+            # Shell history
+            ".bash_history": ("Bash Command History",         "HIGH",     "T1552.003"),
+            ".zsh_history":  ("Zsh Command History",          "HIGH",     "T1552.003"),
+        }
+
+        print("   [*] Tier 1: Extension classifier scanning...")
+        tier1_count = 0
+        for file_path in self.package_path.rglob("*"):
+            if not file_path.is_file():
+                continue
+            ext = file_path.suffix.lower()
+            if ext in DANGEROUS_EXTENSIONS:
+                desc, severity, mitre_id = DANGEROUS_EXTENSIONS[ext]
+                issue = {
+                    "rule_id":     f"hemspect_ext_{ext.lstrip('.')}",
+                    "type":        "DataLeakage",
+                    "subtype":     "DangerousFileType",
+                    "file":        str(file_path),
+                    "line":        0,
+                    "pattern":     "hemspect_extension",
+                    "severity":    severity,
+                    "match":       f"{desc} ({ext})",
+                    "context":     f"File size: {file_path.stat().st_size:,} bytes",
+                    "description": f"HemSpect: {desc} found in package — should never exist in a deployment",
+                    "remediation": f"Remove {file_path.name} from the package immediately. {desc} files must not ship in deployment packages.",
+                    "mitre_id":    mitre_id,
+                    "cwe_id":      "CWE-538",
+                    "cvss":        self._compute_cvss_score("hardcoded_credential", {}),
+                    "compliance":  self._get_compliance_tags("hardcoded_credential"),
+                    "confidence":  0.98,
+                }
+                hemspect_findings.append(issue)
+                tier1_count += 1
+                print(f"   [!] DANGEROUS FILE: {file_path.name} ({desc})")
+
+        # =====================================================================
+        # Tier 2 — Filename Heuristic (suspicious names)
+        # =====================================================================
+        SUSPICIOUS_NAME_PATTERNS: List[tuple] = [
+            (r"(?i)^(password|passwd|credentials?|creds|secrets?|login|accounts?)[\.\-_ ]",
+             "Credential-related filename",   "CRITICAL"),
+            (r"(?i)(password|passwd|creds|secrets?|accounts?)\.(txt|csv|xlsx?|docx?|log|xml|json)$",
+             "Credential file by name+ext",   "CRITICAL"),
+            (r"(?i)^(id_rsa|id_dsa|id_ecdsa|id_ed25519)(\.pub)?$",
+             "SSH Key File",                  "CRITICAL"),
+            (r"(?i)^\.?(gnupg|gpg|pgp)",
+             "GPG/PGP Key Material",          "HIGH"),
+            (r"(?i)^(web\.config|appsettings\.json|app\.config|connectionstrings\.config)$",
+             ".NET Config with Secrets",      "HIGH"),
+            (r"(?i)^(wp-config\.php|config\.php|database\.yml|settings\.py|\.env(\..+)?)$",
+             "Web App Config File",           "HIGH"),
+            (r"(?i)^(unattend|autounattend|sysprep)(\.xml|\.inf)$",
+             "Windows Unattend/Sysprep File", "CRITICAL"),
+            (r"(?i)^(shadow|passwd|htpasswd|\.htpasswd)$",
+             "Linux Auth File",              "CRITICAL"),
+            (r"(?i)^(ntds\.dit|sam|system|security)$",
+             "Windows SAM/NTDS Dump",        "CRITICAL"),
+            (r"(?i)(backup|dump|export).*\.(sql|bak|gz|tar|zip)$",
+             "Database Backup/Dump",         "HIGH"),
+            (r"(?i)^(known_hosts|authorized_keys)$",
+             "SSH Auth File",               "MEDIUM"),
+            (r"(?i)^(\.dockercfg|\.docker/config\.json|kubeconfig|\.kube/config)$",
+             "Container/K8s Credential",    "CRITICAL"),
+            (r"(?i)(token|apikey|api_key|secret_key|private_key|access_key)\.(txt|json|yaml|yml|xml|cfg|conf|ini)$",
+             "Token/API key file",          "CRITICAL"),
+        ]
+
+        print("   [*] Tier 2: Filename heuristic scanning...")
+        tier2_count = 0
+        for file_path in self.package_path.rglob("*"):
+            if not file_path.is_file():
+                continue
+            fname = file_path.name
+            for pattern, desc, severity in SUSPICIOUS_NAME_PATTERNS:
+                if re.search(pattern, fname):
+                    issue = {
+                        "rule_id":     "hemspect_filename",
+                        "type":        "DataLeakage",
+                        "subtype":     "SuspiciousFilename",
+                        "file":        str(file_path),
+                        "line":        0,
+                        "pattern":     "hemspect_filename",
+                        "severity":    severity,
+                        "match":       f"{desc}: {fname}",
+                        "context":     f"File size: {file_path.stat().st_size:,} bytes",
+                        "description": f"HemSpect: {desc} — suspicious filename detected",
+                        "remediation": f"Verify '{fname}' does not contain sensitive data. Remove from package if it does.",
+                        "mitre_id":    "T1552.001",
+                        "cwe_id":      "CWE-538",
+                        "cvss":        self._compute_cvss_score("hardcoded_credential", {}),
+                        "compliance":  self._get_compliance_tags("hardcoded_credential"),
+                        "confidence":  0.90,
+                    }
+                    # Avoid duplicate if Tier 1 already flagged this file
+                    if not any(f["file"] == str(file_path) for f in hemspect_findings):
+                        hemspect_findings.append(issue)
+                        tier2_count += 1
+                        print(f"   [!] SUSPECT NAME: {fname} ({desc})")
+                    break  # one match per file is enough
+
+        # =====================================================================
+        # Tier 3 — Deep Content Regex (connection strings, XML creds, tokens)
+        # =====================================================================
+        CONTENT_SCAN_EXTENSIONS = {
+            ".ps1", ".psm1", ".psd1", ".xml", ".config", ".json", ".yaml",
+            ".yml", ".ini", ".conf", ".cfg", ".txt", ".env", ".properties",
+            ".bat", ".cmd", ".vbs", ".js", ".py", ".pl", ".rb", ".sh",
+            ".php", ".asp", ".aspx", ".cs", ".java", ".cpp", ".h", ".log",
+            ".sql", ".toml", ".reg",
+        }
+
+        CONTENT_PATTERNS: Dict[str, tuple] = {
+            # SQL / Database connection strings
+            "sql_conn_string": (
+                r"(?i)(Data\s+Source|Server)\s*=\s*[^;\s]+.*?(?:password|pwd)\s*=\s*[^;\s]+",
+                "CRITICAL", "T1552.001", "SQL Connection String with embedded password"),
+            "oledb_conn_string": (
+                r"(?i)Provider\s*=\s*.*?(?:password|pwd)\s*=\s*[^;\s\"']+",
+                "CRITICAL", "T1552.001", "OLE DB Connection String with password"),
+            "mongodb_uri": (
+                r"mongodb(?:\+srv)?://[^:]+:[^@]+@[^/]+",
+                "CRITICAL", "T1552.001", "MongoDB URI with embedded credentials"),
+            "jdbc_conn_string": (
+                r"(?i)jdbc:[a-z]+://[^;\s]+.*?(?:password|pwd)\s*=\s*[^;\s\"']+",
+                "CRITICAL", "T1552.001", "JDBC Connection String with password"),
+            # XML credential elements
+            "xml_password_element": (
+                r"(?i)<\s*(?:password|passwd|pwd|secret|credential|apikey|api_key|token|connectionstring)\s*>[^<]{4,}</",
+                "CRITICAL", "T1552.001", "XML element containing credential value"),
+            "xml_password_attribute": (
+                r'(?i)(?:password|passwd|pwd|secret|token|apikey)\s*=\s*"[^"]{4,}"',
+                "HIGH", "T1552.001", "XML/Config attribute with credential value"),
+            # .NET machine keys & validation keys
+            "dotnet_machine_key": (
+                r"(?i)<machineKey\s.*?(?:validationKey|decryptionKey)\s*=\s*\"[A-Fa-f0-9]{32,}\"",
+                "CRITICAL", "T1552.001", ".NET Machine Key (allows session forgery)"),
+            # Windows Unattend credentials
+            "unattend_password": (
+                r"(?i)<(?:Password|AdministratorPassword|AutoLogon)>.*?<Value>[^<]+</Value>",
+                "CRITICAL", "T1552.001", "Windows Unattend/Sysprep embedded password"),
+            # PowerShell SecureString with plaintext
+            "ps_securestring_plaintext": (
+                r"(?i)ConvertTo-SecureString\s+['\"][^'\"]+['\"]\s+.*-AsPlainText",
+                "CRITICAL", "T1552.001", "ConvertTo-SecureString with plaintext input"),
+            # Cloud provider patterns
+            "gcp_service_account": (
+                r'"type"\s*:\s*"service_account".*?"private_key"\s*:',
+                "CRITICAL", "T1552.001", "GCP Service Account JSON key"),
+            "azure_client_secret": (
+                r"(?i)(?:client_secret|clientsecret|AZURE_CLIENT_SECRET)\s*[=:]\s*['\"][A-Za-z0-9\-_.~]{20,}['\"]",
+                "CRITICAL", "T1552.001", "Azure Client Secret / Service Principal"),
+            "azure_sas_token": (
+                r"(?i)(?:sv=|sig=|se=|sp=).*(?:sv=|sig=|se=|sp=)",
+                "HIGH", "T1552.001", "Azure SAS Token"),
+            # OAuth / Bearer tokens
+            "bearer_token": (
+                r"(?i)(?:Bearer|Authorization)\s*[:=]\s*['\"]?(?:eyJ|Bearer\s+eyJ)[A-Za-z0-9\-_.]+",
+                "CRITICAL", "T1528", "OAuth Bearer/JWT Token"),
+            # SMTP credentials
+            "smtp_credentials": (
+                r"(?i)(?:smtp|mail).*(?:(?:user|username)\s*[=:]\s*['\"][^'\"]+['\"].*(?:pass|password)\s*[=:]\s*['\"][^'\"]+['\"])",
+                "HIGH", "T1552.001", "SMTP/Mail credentials"),
+            # Generic DSN / connection
+            "dsn_string": (
+                r"(?i)(?:DSN|ODBC)\s*=\s*.*?(?:UID|USER)\s*=\s*[^;]+.*?(?:PWD|PASSWORD)\s*=\s*[^;\s]+",
+                "CRITICAL", "T1552.001", "DSN/ODBC connection string with credentials"),
+            # WiFi passwords in exported XML profiles
+            "wifi_password": (
+                r"(?i)<keyMaterial>[^<]{8,}</keyMaterial>",
+                "HIGH", "T1552.001", "WiFi password in exported profile"),
+            # Registry export with stored credentials
+            "reg_stored_credential": (
+                r'(?i)"(?:Password|Pwd|Secret|Token)"\s*=\s*"[^"]{6,}"',
+                "HIGH", "T1552.002", "Registry export with stored credential"),
+            # Docker / K8s secrets
+            "docker_auth": (
+                r'"auth"\s*:\s*"[A-Za-z0-9+/=]{20,}"',
+                "CRITICAL", "T1552.001", "Docker registry auth token (base64)"),
+        }
+
+        print("   [*] Tier 3: Deep content analysis scanning...")
+        tier3_count = 0
+        for file_path in self.package_path.rglob("*"):
+            if not file_path.is_file():
+                continue
+            if file_path.suffix.lower() not in CONTENT_SCAN_EXTENSIONS:
+                continue
+            # Skip very large files (>5MB) for performance
+            try:
+                if file_path.stat().st_size > 5 * 1024 * 1024:
+                    continue
+            except OSError:
+                continue
+
+            try:
+                content = file_path.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                continue
+
+            for pat_name, (pattern, severity, mitre_id, desc) in CONTENT_PATTERNS.items():
+                try:
+                    for match in re.finditer(pattern, content, re.IGNORECASE | re.DOTALL):
+                        line_num = content[: match.start()].count("\n") + 1
+                        matched_text = match.group(0)[:120]
+                        # Redact actual values for the report
+                        redacted = re.sub(
+                            r"((?:password|pwd|secret|token|key|sig)\s*[=:]\s*['\"]?)([^'\";,\s]{4})[^'\";,\s]*",
+                            r"\1\2****",
+                            matched_text,
+                            flags=re.IGNORECASE,
+                        )
+                        issue = {
+                            "rule_id":     f"hemspect_{pat_name}",
+                            "type":        "DataLeakage",
+                            "subtype":     "ContentMatch",
+                            "file":        str(file_path),
+                            "line":        line_num,
+                            "pattern":     f"hemspect_{pat_name}",
+                            "severity":    severity,
+                            "match":       redacted,
+                            "context":     self._get_context(content, match.start()),
+                            "description": f"HemSpect: {desc}",
+                            "remediation": f"Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+                            "mitre_id":    mitre_id,
+                            "cwe_id":      "CWE-798",
+                            "cvss":        self._compute_cvss_score("hardcoded_credential", {}),
+                            "compliance":  self._get_compliance_tags("hardcoded_credential"),
+                            "confidence":  0.95,
+                        }
+                        hemspect_findings.append(issue)
+                        tier3_count += 1
+                        fname = file_path.name
+                        print(f"   [!] {pat_name} in {fname}:{line_num}")
+                        break  # one match per pattern per file to reduce noise
+                except re.error as exc:
+                    logger.debug("HemSpect regex error %s: %s", pat_name, exc)
+
+        # =====================================================================
+        # Merge HemSpect findings into the main findings list
+        # =====================================================================
+        for issue in hemspect_findings:
+            self.findings["issues"].append(issue)
+            self._update_summary(issue["severity"])
+
+        total = len(hemspect_findings)
+        print(f"   [*] HemSpect complete: Tier1={tier1_count} Tier2={tier2_count} Tier3={tier3_count} (Total: {total})")
+
+    # =========================================================================
+    # Step 5: Malware Pattern Detection
     # =========================================================================
 
     def _scan_malware_patterns_advanced(self) -> None:
