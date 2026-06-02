@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PSADT-Secure Enterprise HTML Report Generator v3.0
+HemSpect Enterprise HTML Report Generator v3.0
 Produces single-page application reports for aerospace/defense security reviews.
 Design: Deep navy (#0a1628) / gold (#f0a500) / white – Boeing/Safran compliant.
 """
@@ -146,7 +146,7 @@ class ReportGenerator:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PSADT-Secure v{SCANNER_VERSION} — Security Report: {pkg_name}</title>
+  <title>HemSpect v{SCANNER_VERSION} — Security Report: {pkg_name}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -159,10 +159,9 @@ class ReportGenerator:
     <main class="main-content" id="main-content">
       <div class="report-header">
         <div class="header-left">
-          <div class="header-logo">🛡</div>
+          <div class="hemspect-logo-main">⚡ HemSpect<span>™</span></div>
           <div>
-            <h1 class="report-title">Security Assessment Report</h1>
-            <p class="report-subtitle">PSADT-Secure v{SCANNER_VERSION} — Defense-Grade Package Scanner</p>
+            <h1 class="report-title">DEFENSE-GRADE PACKAGE SECURITY SCANNER</h1>
           </div>
         </div>
         <div class="header-right">
@@ -224,7 +223,7 @@ class ReportGenerator:
 
       <footer class="report-footer">
         <div class="footer-row">
-          <span>PSADT-Secure v{SCANNER_VERSION}</span>
+          <span>HemSpect v{SCANNER_VERSION}</span>
           <span>Report Hash: <code>{report_hash[:32]}…</code></span>
           <span>Operator: {operator}</span>
           <span>{timestamp}</span>
@@ -348,9 +347,20 @@ body {
   gap: 20px;
 }
 .header-left { display: flex; align-items: center; gap: 18px; }
-.header-logo { font-size: 2.8rem; }
-.report-title { font-size: 1.5rem; font-weight: 800; color: var(--text); }
-.report-subtitle { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+.hemspect-logo-main {
+  font-size: 2.8rem; font-weight: 900; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #00ff88, #00d4ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; text-shadow: none;
+}
+.hemspect-logo-main span {
+  font-size: 0.65em; vertical-align: super; opacity: 0.7;
+  -webkit-text-fill-color: #00ff88;
+}
+.report-title { 
+  font-size: 0.85rem; font-weight: 600; color: #5a8ab5; 
+  letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px;
+}
 .header-right { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
 .meta-pill {
   display: flex; gap: 8px; align-items: center;
@@ -602,6 +612,19 @@ table.mitre-table {
 }
 .audit-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
 .audit-time { font-size: 0.72rem; color: var(--text-muted); font-family: monospace; }
+.sidebar-brand h3 { font-size: 1.3rem; margin-bottom: 5px; color: var(--accent); }
+.sidebar-brand p { font-size: 0.75rem; color: var(--text-muted); word-break: break-all; }
+.hemspect-logo-sidebar {
+  font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #00ff88, #00d4ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; text-shadow: none;
+  margin-bottom: 5px;
+}
+.hemspect-logo-sidebar span {
+  font-size: 0.65em; vertical-align: super; opacity: 0.7;
+  -webkit-text-fill-color: #00ff88;
+}
 .audit-actor { font-size: 0.78rem; font-weight: 700; color: var(--accent); }
 .audit-event { font-size: 0.72rem; color: var(--info);
   background: rgba(72,149,239,0.12); padding: 2px 8px; border-radius: 4px; }
@@ -703,7 +726,7 @@ table.mitre-table {
         return f"""
 <aside class="sidebar">
   <div class="sidebar-brand">
-    <h3>🛡 PSADT-Secure</h3>
+    <div class="hemspect-logo-sidebar">⚡ HemSpect<span>™</span></div>
     <p>v{SCANNER_VERSION} — {pkg}</p>
   </div>
   <ul class="sidebar-nav">

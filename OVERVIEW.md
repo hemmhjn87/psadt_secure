@@ -1,10 +1,10 @@
-# 🎯 NEW PROJECT: PSADT-Secure
+# 🎯 NEW PROJECT: HemSpect
 
 ## Overview
 
-**PSADT-Secure** is a **standalone, dedicated security scanner** for PSADT v4 packages used in enterprise SCCM deployments.
+**HemSpect** is a **standalone, dedicated security scanner** for PSADT v4 packages used in enterprise SCCM deployments.
 
-**Location**: `d:\project\psadt-secure`  
+**Location**: `d:\project\hemspect`  
 **Status**: ✅ Ready for Production  
 **Version**: 1.0  
 **Created**: May 27, 2026  
@@ -14,7 +14,7 @@
 ## 📊 What's Inside
 
 ```
-psadt-secure/
+hemspect/
 ├── 🐍 main.py                 (Entry point - run this!)
 ├── 📄 README.md               (Project overview)
 ├── 📄 QUICK_START.md          (5-minute guide)
@@ -37,7 +37,7 @@ psadt-secure/
 
 ### Step 1: Install
 ```bash
-cd d:\project\psadt-secure
+cd d:\project\hemspect
 pip install -r requirements.txt
 ```
 
@@ -138,9 +138,9 @@ Issues found:
 
 ---
 
-## 🎯 Comparison: PPE-Guard vs PSADT-Secure
+## 🎯 Comparison: PPE-Guard vs HemSpect
 
-| Aspect | PPE-Guard | PSADT-Secure |
+| Aspect | PPE-Guard | HemSpect |
 |--------|-----------|--------------|
 | **Purpose** | General CI/CD security | PSADT v4 specific |
 | **Focus** | PPE attacks + credentials | PSADT vulnerabilities |
@@ -151,7 +151,7 @@ Issues found:
 | **Complexity** | Enterprise | Focused |
 
 **Use PPE-Guard for**: General purpose security scanning  
-**Use PSADT-Secure for**: PSADT v4 packages specifically  
+**Use HemSpect for**: PSADT v4 packages specifically  
 
 ---
 
@@ -341,7 +341,7 @@ for /D %pkg in (C:\SCCM\Packages\*) do python main.py "%pkg"
 
 ## 🎊 Summary
 
-**PSADT-Secure** is a complete, production-ready security scanner for PSADT v4 packages. It integrates 4 powerful tools (pefile, detect-secrets, yara, semgrep) into a focused PSADT-specific solution.
+**HemSpect** is a complete, production-ready security scanner for PSADT v4 packages. It integrates 4 powerful tools (pefile, detect-secrets, yara, semgrep) into a focused PSADT-specific solution.
 
 **Perfect for**: Safran Digit Packaging Factory deployment pipeline
 

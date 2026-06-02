@@ -1,8 +1,8 @@
-# PPE-Guard vs PSADT-Secure: Which Tool to Use?
+# PPE-Guard vs HemSpect: Which Tool to Use?
 
 ## 📊 Comparison Matrix
 
-| Aspect | PPE-Guard | PSADT-Secure |
+| Aspect | PPE-Guard | HemSpect |
 |--------|-----------|--------------|
 | **Purpose** | General CI/CD security | PSADT v4 specific |
 | **Scan Type** | Broad enterprise scanning | Focused PSADT scanning |
@@ -26,7 +26,7 @@
 
 **Example**: Safran Corporate using for all software packages
 
-### Use **PSADT-Secure** When:
+### Use **HemSpect** When:
 - ✅ **Packaging PSADT v4 packages only**
 - ✅ Want fast, focused PSADT scanning
 - ✅ Need PSADT-specific rule sets
@@ -45,7 +45,7 @@ Safran Digit Packaging Factory Workflow:
 
 PSADT Package Created
         ↓
-   [PSADT-Secure]  ← FIRST: Fast PSADT-specific check
+   [HemSpect]  ← FIRST: Fast PSADT-specific check
         ↓
    APPROVED? → YES → [SCCM Deployment]
         ↓ NO
@@ -66,7 +66,7 @@ Optional Secondary Check:
 
 ### Security Detection
 
-| Detection Type | PPE-Guard | PSADT-Secure |
+| Detection Type | PPE-Guard | HemSpect |
 |---|---|---|
 | Hardcoded credentials | ✅ | ✅ |
 | Vulnerable dependencies | ✅ | ❌ |
@@ -80,7 +80,7 @@ Optional Secondary Check:
 
 ### Reporting
 
-| Type | PPE-Guard | PSADT-Secure |
+| Type | PPE-Guard | HemSpect |
 |---|---|---|
 | Executive dashboard | ✅ | ✅ |
 | Technical details | ✅ | ✅ |
@@ -91,7 +91,7 @@ Optional Secondary Check:
 
 ### Integration
 
-| Target | PPE-Guard | PSADT-Secure |
+| Target | PPE-Guard | HemSpect |
 |---|---|---|
 | SCCM | ✅ | ✅✅ (Native) |
 | GitHub Actions | ✅ | ✅ |
@@ -103,7 +103,7 @@ Optional Secondary Check:
 
 ## 🚀 Recommendation for Safran Digit
 
-### **Primary: PSADT-Secure**
+### **Primary: HemSpect**
 ```
 Why: 
   • All packages are PSADT v4
@@ -134,9 +134,9 @@ When:
 
 ## 💻 Quick Command Reference
 
-### PSADT-Secure (Fast)
+### HemSpect (Fast)
 ```bash
-python d:\project\psadt-secure\main.py "C:\Packages\MyApp"
+python d:\project\hemspect\main.py "C:\Packages\MyApp"
 ```
 Output: Decision in 2-10 minutes
 
@@ -150,7 +150,7 @@ Output: Full report in 10-30 minutes
 
 ## 📊 Performance Comparison
 
-| Scenario | PSADT-Secure | PPE-Guard |
+| Scenario | HemSpect | PPE-Guard |
 |----------|---|---|
 | Single PSADT package | 2-5 min | 5-15 min |
 | 10 PSADT packages | 20-50 min | 50-150 min |
@@ -163,13 +163,13 @@ Output: Full report in 10-30 minutes
 ```
 Scanning PSADT v4 package?
     ↓ YES
-    └─→ Use PSADT-Secure (Fast & Focused)
+    └─→ Use HemSpect (Fast & Focused)
     
     ↓ NO (Other package types)
     └─→ Use PPE-Guard (Comprehensive)
 
 Need both?
-    └─→ PSADT-Secure first (quality gate)
+    └─→ HemSpect first (quality gate)
         └─→ PPE-Guard second (compliance)
 ```
 
@@ -177,10 +177,10 @@ Need both?
 
 ## 🔧 Configuration
 
-### PSADT-Secure Config
+### HemSpect Config
 ```bash
 # Single file to customize
-d:\project\psadt-secure\config\rules.yaml
+d:\project\hemspect\config\rules.yaml
 ```
 Edit to add:
 - PSADT-specific patterns
@@ -203,7 +203,7 @@ d:\project\ppe-guard\config\
 ```
 Every PSADT Package Deployment:
 
-1st Layer: PSADT-Secure
+1st Layer: HemSpect
    ├─ Fast (5 min)
    ├─ PSADT-specific
    └─ APPROVE/REJECT decision
@@ -224,9 +224,9 @@ Every PSADT Package Deployment:
 
 ## 📈 Rollout Recommendation
 
-### Week 1: PSADT-Secure
+### Week 1: HemSpect
 ```
-- Deploy PSADT-Secure to packaging factory
+- Deploy HemSpect to packaging factory
 - Run on all new packages
 - Team training (1 hour)
 - Collect baseline findings
@@ -254,8 +254,8 @@ Every PSADT Package Deployment:
 
 | Need | Tool | Time | Reason |
 |------|------|------|--------|
-| PSADT quality gate | **PSADT-Secure** | 5 min | Fast, focused |
-| SCCM deployment check | **PSADT-Secure** | 5 min | PSADT-native |
+| PSADT quality gate | **HemSpect** | 5 min | Fast, focused |
+| SCCM deployment check | **HemSpect** | 5 min | PSADT-native |
 | Mixed packages | **PPE-Guard** | 15 min | Comprehensive |
 | Compliance audit | **PPE-Guard** | 30 min | Full coverage |
 | Both? | **Both** | 20 min | Best defense |
@@ -264,11 +264,11 @@ Every PSADT Package Deployment:
 
 ## 🎯 For Safran Digit Packaging Factory
 
-**IMMEDIATE**: Use **PSADT-Secure** for all PSADT v4 deployments
+**IMMEDIATE**: Use **HemSpect** for all PSADT v4 deployments
 
 **Command**:
 ```bash
-python d:\project\psadt-secure\main.py "C:\SCCM\Packages\YourApp"
+python d:\project\hemspect\main.py "C:\SCCM\Packages\YourApp"
 ```
 
 **Decision**: APPROVED → Deploy | REJECTED → Fix & Resubmit
@@ -277,4 +277,4 @@ python d:\project\psadt-secure\main.py "C:\SCCM\Packages\YourApp"
 
 **Created**: May 27, 2026  
 **Status**: Ready for Production  
-**Recommendation**: Start with PSADT-Secure TODAY
+**Recommendation**: Start with HemSpect TODAY

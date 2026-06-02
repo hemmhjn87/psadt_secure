@@ -1,10 +1,10 @@
-# PSADT-Secure: Quick Start Guide
+# HemSpect: Quick Start Guide
 
 ## 🚀 5-Minute Setup
 
 ### Step 1: Install (2 min)
 ```bash
-cd d:\project\psadt-secure
+cd d:\project\hemspect
 pip install -r requirements.txt
 ```
 

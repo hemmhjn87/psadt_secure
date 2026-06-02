@@ -1,4 +1,4 @@
-# PSADT-Secure v3.0 — SBOM Guide
+# HemSpect v3.0 — SBOM Guide
 
 > **Document**: Software Bill of Materials Guide  
 > **Version**: 3.0.0  
@@ -52,7 +52,7 @@ Structure:
   "serialNumber": "urn:uuid:...",
   "metadata": {
     "timestamp": "2026-06-01T00:00:00Z",
-    "tools": [{"vendor": "PSADT-Secure", "name": "PSADTSecureScanner", "version": "3.0"}],
+    "tools": [{"vendor": "HemSpect", "name": "HemSpectScanner", "version": "3.0"}],
     "component": {"type": "application", "name": "PackageName"}
   },
   "components": [
@@ -90,7 +90,7 @@ SPDXVersion: SPDX-2.3
 DataLicense: CC0-1.0
 SPDXID: SPDXRef-DOCUMENT
 DocumentName: PackageName-SBOM
-DocumentNamespace: urn:psadt-secure:PackageName:...
+DocumentNamespace: urn:hemspect:PackageName:...
 
 PackageName: setup.exe
 SPDXID: SPDXRef-setup-exe
@@ -240,7 +240,7 @@ python main.py scan <path> --no-network
    # Transfer to air-gapped system via approved transfer mechanism
    ```
 
-2. Import into PSADT-Secure local cache:
+2. Import into HemSpect local cache:
    ```powershell
    python main.py update-nvd-cache --input "nvdcve-2026.json.gz"
    ```

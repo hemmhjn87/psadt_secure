@@ -1,4 +1,4 @@
-# PSADT-Secure Allowlist Configuration
+# HemSpect Allowlist Configuration
 # Exception management for approved security deviations
 # Policy: All exceptions require ticket number, justification, and approver
 # NEVER approve exceptions for: credential_dumping, amsi_patch_memory, malware_* patterns

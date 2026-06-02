@@ -1,4 +1,4 @@
-# PSADT-Secure v3.0 — Compliance Standards Reference
+# HemSpect v3.0 — Compliance Standards Reference
 
 > **Classification**: UNCLASSIFIED // FOR OFFICIAL USE ONLY  
 > **Document Version**: 3.0.0  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Overview
 
-PSADT-Secure v3.0 is designed to meet the security vetting requirements of aerospace, defense, and critical-infrastructure organizations, including suppliers and subcontractors operating under:
+HemSpect v3.0 is designed to meet the security vetting requirements of aerospace, defense, and critical-infrastructure organizations, including suppliers and subcontractors operating under:
 
 - **Boeing** Enterprise Software Packaging Standards (BSPS)
 - **Safran** Digital Security Policy (DSP-SEC-001)
@@ -261,5 +261,5 @@ Each finding includes a CVSS v3.1 base score calculated using the following vect
 
 ---
 
-*Document maintained by: Security Operations — PSADT-Secure Project*  
+*Document maintained by: Security Operations — HemSpect Project*  
 *Review cycle: Quarterly or upon new CVE/ATT&CK framework release*

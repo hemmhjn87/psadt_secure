@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PSADT-Secure v3.0: Defense-Grade PSADT Package Security Scanner
+HemSpect v3.0: Defense-Grade PSADT Package Security Scanner
 Aerospace/Defense Enterprise Edition
 
 Industry-Level Features:
@@ -92,15 +92,15 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     datefmt="%Y-%m-%dT%H:%M:%S",
 )
-logger = logging.getLogger("psadt-secure")
+logger = logging.getLogger("hemspect")
 
 # ── NVD API endpoint ──────────────────────────────────────────────────────────
 NVD_API_BASE = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 SCANNER_VERSION = "3.0"
-SCANNER_INFO_URI = "https://github.com/psadt-secure/psadt-secure"
+SCANNER_INFO_URI = "https://github.com/hemspect/hemspect"
 
 
-class PSADTSecureScanner:
+class HemSpectScanner:
     """
     Defense-grade PSADT v4 security scanner.
 
@@ -323,7 +323,7 @@ class PSADTSecureScanner:
         config: Optional[Dict] = None,
     ):
         """
-        Initialise the PSADT-Secure scanner.
+        Initialise the HemSpect scanner.
 
         Parameters
         ----------
@@ -841,7 +841,7 @@ class PSADTSecureScanner:
         Returns the complete findings dictionary.
         """
         print("\n" + "=" * 90)
-        print("🔐 PSADT-SECURE v3.0: DEFENSE-GRADE PSADT PACKAGE SECURITY SCANNER")
+        print("🔐 HEMSPECT v3.0: DEFENSE-GRADE PSADT PACKAGE SECURITY SCANNER")
         print("   Powered by HemSpect™ Data Leakage Intelligence Engine")
         print("=" * 90)
         print(f"\n  Package  : {self.package_path.name}")
@@ -2442,7 +2442,7 @@ try {{
                 NVD_API_BASE,
                 params={"keywordSearch": component_name, "resultsPerPage": 5},
                 timeout=10,
-                headers={"User-Agent": f"PSADT-Secure/{SCANNER_VERSION}"},
+                headers={"User-Agent": f"HemSpect/{SCANNER_VERSION}"},
             )
             if resp.status_code == 200:
                 data = resp.json()
@@ -2574,7 +2574,7 @@ try {{
             "runs": [{
                 "tool": {
                     "driver": {
-                        "name":           "PSADT-Secure",
+                        "name":           "HemSpect",
                         "version":        SCANNER_VERSION,
                         "informationUri": SCANNER_INFO_URI,
                         "rules":          rules,
@@ -2651,7 +2651,7 @@ try {{
             rel_name = Path(fp).name
             tc = ET.SubElement(suite, "testcase")
             tc.set("name",      f"Security scan: {rel_name}")
-            tc.set("classname", "PSADTSecureScanner")
+            tc.set("classname", "HemSpectScanner")
             tc.set("file",      fp)
 
             for issue in file_issues.get(fp, []):
@@ -2792,7 +2792,7 @@ try {{
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSADT-Secure v{SCANNER_VERSION} Scan Report</title>
+    <title>HemSpect v{SCANNER_VERSION} Scan Report</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; }}
@@ -2834,7 +2834,7 @@ try {{
 <body>
 <div class="container">
   <div class="header">
-    <h1>🔐 PSADT-Secure v{SCANNER_VERSION} – Security Scan Report</h1>
+    <h1>🔐 HemSpect v{SCANNER_VERSION} – Security Scan Report</h1>
     <p>Defense-Grade PSADT Package Security Assessment</p>
     <p>Package: <strong>{self.findings['package']}</strong> &nbsp;|&nbsp; Operator: <strong>{self.operator}</strong></p>
     <p>Scan Timestamp: {scan_ts}</p>
@@ -2893,7 +2893,7 @@ try {{
   </div>
 
   <div class="footer">
-    <p>PSADT-Secure v{SCANNER_VERSION} | Defense-Grade PSADT Package Security Scanner</p>
+    <p>HemSpect v{SCANNER_VERSION} | Defense-Grade PSADT Package Security Scanner</p>
     <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Operator: {self.operator}</p>
   </div>
 </div>
@@ -3140,7 +3140,7 @@ try {{
         ]
 
         print("\n" + "=" * 90)
-        print("  PSADT-SECURE v3.0 – COMPREHENSIVE SCAN RESULTS")
+        print("  HEMSPECT v3.0 – COMPREHENSIVE SCAN RESULTS")
         print("=" * 90)
 
         print(f"\n📦 PACKAGE:   {self.findings['package']}")
@@ -3223,7 +3223,7 @@ def main():
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help", "help"):
         print(f"""
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║   PSADT-SECURE v{SCANNER_VERSION}: Defense-Grade PSADT Package Security Scanner   ║
+║   HEMSPECT v{SCANNER_VERSION}: Defense-Grade PSADT Package Security Scanner   ║
 ║   Aerospace/Defense Enterprise Edition                                       ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
@@ -3282,7 +3282,7 @@ EXIT CODES:
         sys.exit(2)
 
     try:
-        scanner  = PSADTSecureScanner(package_path, output_dir)
+        scanner  = HemSpectScanner(package_path, output_dir)
         findings = scanner.scan()
         scanner.print_summary()
 

@@ -1,6 +1,6 @@
-# 🧪 PSADT-Secure Testing Guide
+# 🧪 HemSpect Testing Guide
 
-Complete guide for running, testing, and integrating PSADT-Secure security scanner.
+Complete guide for running, testing, and integrating HemSpect security scanner.
 
 ---
 
@@ -27,7 +27,7 @@ Complete guide for running, testing, and integrating PSADT-Secure security scann
 
 ### Step 1: Navigate to Project
 ```bash
-cd d:\project\psadt-secure
+cd d:\project\hemspect
 ```
 
 ### Step 2: Install Dependencies
@@ -52,7 +52,7 @@ python main.py
 
 **Expected Output**:
 ```
-PSADT-Secure: PSADT v4 Security Scanner
+HemSpect: PSADT v4 Security Scanner
 
 Usage:
   python main.py <package_path> [output_dir]
@@ -379,7 +379,7 @@ Complete testing in 5 minutes:
 
 ```powershell
 # 1️⃣ Install (2 min)
-cd d:\project\psadt-secure
+cd d:\project\hemspect
 pip install -r requirements.txt
 
 # 2️⃣ Create vulnerable test package (1 min)
@@ -531,12 +531,12 @@ jobs:
       
       - name: Install dependencies
         run: |
-          cd psadt-secure
+          cd hemspect
           pip install -r requirements.txt
       
       - name: Scan package
         run: |
-          cd psadt-secure
+          cd hemspect
           python main.py "${{ github.workspace }}\package"
         continue-on-error: false
 ```
@@ -557,12 +557,12 @@ steps:
       versionSpec: '3.10'
 
   - script: |
-      cd psadt-secure
+      cd hemspect
       pip install -r requirements.txt
     displayName: 'Install dependencies'
 
   - script: |
-      cd psadt-secure
+      cd hemspect
       python main.py "$(Build.SourcesDirectory)\package"
     displayName: 'Scan PSADT package'
     failOnStderr: true
@@ -579,7 +579,7 @@ pipeline {
         stage('Setup') {
             steps {
                 bat '''
-                    cd psadt-secure
+                    cd hemspect
                     pip install -r requirements.txt
                 '''
             }
@@ -588,7 +588,7 @@ pipeline {
         stage('Scan') {
             steps {
                 bat '''
-                    cd psadt-secure
+                    cd hemspect
                     python main.py "%WORKSPACE%\\package"
                 '''
             }
@@ -598,7 +598,7 @@ pipeline {
     post {
         always {
             publishHTML([
-                reportDir: 'psadt-secure/psadt_scan_*',
+                reportDir: 'hemspect/psadt_scan_*',
                 reportFiles: 'report.html',
                 reportName: 'PSADT Security Report'
             ])
@@ -619,7 +619,7 @@ param(
 )
 
 # Run security scan
-$scanDir = "d:\project\psadt-secure"
+$scanDir = "d:\project\hemspect"
 Push-Location $scanDir
 
 python main.py $PackagePath

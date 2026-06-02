@@ -1,8 +1,8 @@
-# PSADT-Secure v2.0 - Enterprise Security Scanner Upgrade Complete ✅
+# HemSpect v2.0 - Enterprise Security Scanner Upgrade Complete ✅
 
 ## Summary of Changes
 
-Your PSADT-Secure project has been upgraded from a basic security scanner to an **industry-level enterprise cybersecurity analysis platform**. Here's what changed:
+Your HemSpect project has been upgraded from a basic security scanner to an **industry-level enterprise cybersecurity analysis platform**. Here's what changed:
 
 ---
 
@@ -269,7 +269,7 @@ Typical scanning times:
 ## 📚 Files Modified
 
 - `src/scanners/scan_psadt.py` - Complete rewrite (1100+ lines)
-  - Advanced PSADTSecureScanner class
+  - Advanced HemSpectScanner class
   - 7-step scanning process
   - Multiple analysis methods
   - Comprehensive reporting

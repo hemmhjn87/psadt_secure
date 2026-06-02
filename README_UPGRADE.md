@@ -1,8 +1,8 @@
-# ✅ PSADT-Secure Project Upgrade Complete
+# ✅ HemSpect Project Upgrade Complete
 
 ## Executive Summary
 
-Your PSADT-Secure project has been successfully upgraded from a **basic security scanner** to an **enterprise-grade cybersecurity analysis platform** (v2.0) that meets industry standards.
+Your HemSpect project has been successfully upgraded from a **basic security scanner** to an **enterprise-grade cybersecurity analysis platform** (v2.0) that meets industry standards.
 
 ---
 

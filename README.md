@@ -1,10 +1,10 @@
-# 🛡 PSADT-Secure v3.0
+# 🛡 HemSpect v3.0
 
 **Defense-Grade PSADT Package Security Scanner**
 
 > Compliance: NIST SP 800-53 Rev5 | CMMC 2.0 | IEC 62443-2-4 | CIS Controls v8 | MITRE ATT&CK
 
-PSADT-Secure is an enterprise security scanner purpose-built for organizations that deploy software using the **PowerShell App Deployment Toolkit (PSADT)**. It performs deep security analysis of deployment packages before they reach production endpoints — catching credential leaks, malware techniques, and compliance violations that antivirus and EDR solutions miss.
+HemSpect is an enterprise security scanner purpose-built for organizations that deploy software using the **PowerShell App Deployment Toolkit (PSADT)**. It performs deep security analysis of deployment packages before they reach production endpoints — catching credential leaks, malware techniques, and compliance violations that antivirus and EDR solutions miss.
 
 ---
 
@@ -57,14 +57,14 @@ pip install -r requirements.txt
 python main.py scan "C:\Packages\MyApp" --format all
 
 # Specify output directory
-python main.py scan "C:\Packages\MyApp" -o "C:\SecurePSADT\MyApp" --format all --sign-report
+python main.py scan "C:\Packages\MyApp" -o "C:\HemSpect\MyApp" --format all --sign-report
 ```
 
 ### Factory Scan (Batch Mode)
 
 ```powershell
 # Scan your entire package factory in one shot
-python main.py factory-scan "\\server\PackageFactory" -o "C:\SecurePSADT\FactoryReport"
+python main.py factory-scan "\\server\PackageFactory" -o "C:\HemSpect\FactoryReport"
 ```
 
 ---
@@ -79,7 +79,7 @@ python main.py scan <PACKAGE_PATH> [OPTIONS]
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-o`, `--output-dir` | Output directory for reports | `C:\SecurePSADT\<prompted>` |
+| `-o`, `--output-dir` | Output directory for reports | `C:\HemSpect\<prompted>` |
 | `-f`, `--format` | Output formats: `html,json,csv,sarif,junit,sbom,all` | `html,json,csv` |
 | `--sign-report` | Generate ECDSA-signed manifest | off |
 | `--signing-key` | Path to ECDSA private key PEM | ephemeral key |
@@ -99,7 +99,7 @@ python main.py factory-scan <FACTORY_PATH> [OPTIONS]
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-o`, `--output-dir` | Output directory for consolidated reports | `C:\SecurePSADT\factory_scan_TIMESTAMP` |
+| `-o`, `--output-dir` | Output directory for consolidated reports | `C:\HemSpect\factory_scan_TIMESTAMP` |
 | `--operator` | Operator name for audit log | system username |
 
 **Auto-discovery**: The factory scanner automatically identifies PSADT packages by looking for folders containing:
@@ -112,17 +112,17 @@ python main.py factory-scan <FACTORY_PATH> [OPTIONS]
 ### `verify` — Verify Signed Manifest
 
 ```powershell
-python main.py verify "C:\SecurePSADT\MyApp"
+python main.py verify "C:\HemSpect\MyApp"
 ```
 
 ### `workflow` — Manage Approval Workflow
 
 ```powershell
 # Analyst review
-python main.py workflow analyst-review "C:\SecurePSADT\MyApp" "Jane.Smith" --approve --notes "All FPs validated"
+python main.py workflow analyst-review "C:\HemSpect\MyApp" "Jane.Smith" --approve --notes "All FPs validated"
 
 # CISO approval
-python main.py workflow ciso-approve "C:\SecurePSADT\MyApp" "CEO.Name" "AUTH-20260601" --approve
+python main.py workflow ciso-approve "C:\HemSpect\MyApp" "CEO.Name" "AUTH-20260601" --approve
 ```
 
 ---
@@ -208,7 +208,7 @@ Scans file contents for:
 ## 📁 Project Structure
 
 ```
-psadt-secure/
+hemspect/
 ├── main.py                          # CLI entry point
 ├── requirements.txt                 # Python dependencies
 ├── config/
@@ -263,9 +263,9 @@ exceptions:
 
 ```powershell
 # Create a nightly scheduled task
-$action = New-ScheduledTaskAction -Execute "python" -Argument "main.py factory-scan \\server\PackageFactory -o C:\SecurePSADT\Nightly"
+$action = New-ScheduledTaskAction -Execute "python" -Argument "main.py factory-scan \\server\PackageFactory -o C:\HemSpect\Nightly"
 $trigger = New-ScheduledTaskTrigger -Daily -At "02:00AM"
-Register-ScheduledTask -TaskName "PSADT-Secure-Nightly" -Action $action -Trigger $trigger
+Register-ScheduledTask -TaskName "HemSpect-Nightly" -Action $action -Trigger $trigger
 ```
 
 ### CI/CD Integration (Azure DevOps)

@@ -1,4 +1,4 @@
-# PSADT-Secure: Installation & Setup Guide
+# HemSpect: Installation & Setup Guide
 
 ## System Requirements
 
@@ -12,8 +12,8 @@
 
 ```bash
 cd d:\project
-# Project already exists at d:\project\psadt-secure
-cd psadt-secure
+# Project already exists at d:\project\hemspect
+cd hemspect
 ```
 
 ## Step 2: Create Virtual Environment (Optional but Recommended)

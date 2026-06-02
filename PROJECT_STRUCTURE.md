@@ -1,7 +1,7 @@
-# PSADT-Secure: Project Structure
+# HemSpect: Project Structure
 
 ```
-psadt-secure/
+hemspect/
 │
 ├── 📄 README.md                    # Project overview
 ├── 📄 QUICK_START.md              # 5-minute quick start

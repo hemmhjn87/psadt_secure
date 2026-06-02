@@ -1,8 +1,8 @@
-# 🎉 PROJECT COMPLETE: PSADT-Secure
+# 🎉 PROJECT COMPLETE: HemSpect
 
 ## ✅ What Was Created
 
-**NEW STANDALONE PROJECT**: `d:\project\psadt-secure`  
+**NEW STANDALONE PROJECT**: `d:\project\hemspect`  
 **Purpose**: Dedicated PSADT v4 security scanner  
 **Status**: ✅ Production Ready  
 **Created**: May 27, 2026  
@@ -14,7 +14,7 @@
 ### Documentation (8 files)
 ```
 OVERVIEW.md                    (8.1 KB)  ← Start here first
-COMPARISON_WITH_PPE_GUARD.md   (6.5 KB)  ← PPE-Guard vs PSADT-Secure
+COMPARISON_WITH_PPE_GUARD.md   (6.5 KB)  ← PPE-Guard vs HemSpect
 QUICK_START.md                 (2.7 KB)  ← 5-minute guide
 README.md                      (4.3 KB)  ← Full documentation
 SETUP.md                       (2.8 KB)  ← Installation guide
@@ -49,7 +49,7 @@ reports/                                  ← Output location
 
 ### Step 1: Install Dependencies
 ```bash
-cd d:\project\psadt-secure
+cd d:\project\hemspect
 pip install -r requirements.txt
 ```
 *Time: 2-5 minutes*
@@ -153,7 +153,7 @@ Issues:
 | **README.md** | 10 min | Full feature documentation |
 | **SETUP.md** | 10 min | Installation & troubleshooting |
 | **PROJECT_STRUCTURE.md** | 5 min | Architecture & workflow |
-| **COMPARISON_WITH_PPE_GUARD.md** | 5 min | When to use PSADT-Secure vs PPE-Guard |
+| **COMPARISON_WITH_PPE_GUARD.md** | 5 min | When to use HemSpect vs PPE-Guard |
 
 **Recommended Reading Order**: OVERVIEW → QUICK_START → README
 
@@ -192,7 +192,7 @@ click==8.1.7                  (CLI)
 
 ## 💡 Key Differences from PPE-Guard
 
-| Aspect | PSADT-Secure | PPE-Guard |
+| Aspect | HemSpect | PPE-Guard |
 |--------|---|---|
 | **Focus** | PSADT v4 only | General purpose |
 | **Speed** | ⚡ 2-10 min | 10-30 min |
@@ -205,12 +205,12 @@ click==8.1.7                  (CLI)
 
 ## 🚀 Ready to Deploy
 
-The PSADT-Secure project is **100% complete and ready to use TODAY**.
+The HemSpect project is **100% complete and ready to use TODAY**.
 
 ### For Safran Digit:
 ```bash
 # Install
-cd d:\project\psadt-secure
+cd d:\project\hemspect
 pip install -r requirements.txt
 
 # Scan your PSADT packages
@@ -250,12 +250,12 @@ python main.py "C:\SCCM\Packages\YourApp"
 
 1. **Install** (5 min)
    ```bash
-   pip install -r d:\project\psadt-secure\requirements.txt
+   pip install -r d:\project\hemspect\requirements.txt
    ```
 
 2. **Scan** (2-10 min)
    ```bash
-   python d:\project\psadt-secure\main.py "C:\Packages\YourApp"
+   python d:\project\hemspect\main.py "C:\Packages\YourApp"
    ```
 
 3. **Review** (2 min)
@@ -272,7 +272,7 @@ python main.py "C:\SCCM\Packages\YourApp"
 
 ## 🎊 Summary
 
-✅ **New Project Created**: PSADT-Secure  
+✅ **New Project Created**: HemSpect  
 ✅ **Complete & Production-Ready**: Yes  
 ✅ **Ready to Deploy**: TODAY  
 ✅ **Documentation**: 8 guides  
@@ -284,7 +284,7 @@ python main.py "C:\SCCM\Packages\YourApp"
 
 ---
 
-**Next Step**: Read `d:\project\psadt-secure\OVERVIEW.md` for complete project overview.
+**Next Step**: Read `d:\project\hemspect\OVERVIEW.md` for complete project overview.
 
 Then: Run `python main.py "your_package_path"` to scan your first PSADT package.
 

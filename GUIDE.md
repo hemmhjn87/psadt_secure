@@ -1,4 +1,4 @@
-# PSADT-Secure v3.0 — User Guide
+# HemSpect v3.0 — User Guide
 
 ## Table of Contents
 
@@ -46,7 +46,7 @@ python main.py scan "C:\Packages\GoogleChrome" --format all
 
 The scanner will:
 1. Ask you for a report folder name (e.g., `ChromeReport`)
-2. Save all reports to `C:\SecurePSADT\ChromeReport\`
+2. Save all reports to `C:\HemSpect\ChromeReport\`
 3. Run all 9 scan steps including HemSpect
 4. Generate HTML, JSON, CSV, SARIF, JUnit, and SBOM reports
 
@@ -112,7 +112,7 @@ Use this when you need to scan your entire package factory at once (e.g., after 
 ### Running a Factory Scan
 
 ```powershell
-python main.py factory-scan "\\server\PackageFactory" -o "C:\SecurePSADT\FullAudit"
+python main.py factory-scan "\\server\PackageFactory" -o "C:\HemSpect\FullAudit"
 ```
 
 ### What It Does
@@ -135,10 +135,10 @@ Open `factory_report.html` to see:
 ```powershell
 # Windows Task Scheduler
 $action = New-ScheduledTaskAction -Execute "python" `
-  -Argument "main.py factory-scan \\server\Packages -o C:\SecurePSADT\Nightly" `
-  -WorkingDirectory "D:\project\psadt-secure"
+  -Argument "main.py factory-scan \\server\Packages -o C:\HemSpect\Nightly" `
+  -WorkingDirectory "D:\project\hemspect"
 $trigger = New-ScheduledTaskTrigger -Daily -At "02:00AM"
-Register-ScheduledTask -TaskName "PSADT-Secure-Nightly" -Action $action -Trigger $trigger
+Register-ScheduledTask -TaskName "HemSpect-Nightly" -Action $action -Trigger $trigger
 ```
 
 ---
@@ -178,7 +178,7 @@ Suppressed findings are still recorded in the report under "Suppressed Findings"
 
 ## 6. Approval Workflow
 
-PSADT-Secure implements a 3-stage approval workflow:
+HemSpect implements a 3-stage approval workflow:
 
 ```
 AUTO_SCAN → ANALYST_REVIEW → CISO_APPROVAL
@@ -191,20 +191,20 @@ When you run a scan, the scanner automatically determines if the package passes 
 
 ```powershell
 # Analyst approves (marks findings as false positives / accepted risk)
-python main.py workflow analyst-review "C:\SecurePSADT\MyApp" "Jane.Smith" --approve --notes "All findings verified as FP"
+python main.py workflow analyst-review "C:\HemSpect\MyApp" "Jane.Smith" --approve --notes "All findings verified as FP"
 
 # Analyst rejects (confirms findings are true positives)
-python main.py workflow analyst-review "C:\SecurePSADT\MyApp" "Jane.Smith" --reject --notes "Real credentials found"
+python main.py workflow analyst-review "C:\HemSpect\MyApp" "Jane.Smith" --reject --notes "Real credentials found"
 ```
 
 ### Stage 3: CISO Approval
 
 ```powershell
 # CISO approves deployment
-python main.py workflow ciso-approve "C:\SecurePSADT\MyApp" "CEO.Name" "AUTH-20260601" --approve
+python main.py workflow ciso-approve "C:\HemSpect\MyApp" "CEO.Name" "AUTH-20260601" --approve
 
 # CISO rejects deployment
-python main.py workflow ciso-approve "C:\SecurePSADT\MyApp" "CEO.Name" "AUTH-20260601" --reject
+python main.py workflow ciso-approve "C:\HemSpect\MyApp" "CEO.Name" "AUTH-20260601" --reject
 ```
 
 ---
@@ -214,7 +214,7 @@ python main.py workflow ciso-approve "C:\SecurePSADT\MyApp" "CEO.Name" "AUTH-202
 If you used `--sign-report`, the scanner generates an ECDSA-signed manifest. Anyone can verify it:
 
 ```powershell
-python main.py verify "C:\SecurePSADT\MyApp"
+python main.py verify "C:\HemSpect\MyApp"
 ```
 
 This confirms:
@@ -231,12 +231,12 @@ If a pentester used **Snaffler** (or similar) against your package factory and f
 ### Step 1: Run a Full Factory Scan
 
 ```powershell
-python main.py factory-scan "\\server\PackageFactory" -o "C:\SecurePSADT\AuditResponse" --operator "YourName"
+python main.py factory-scan "\\server\PackageFactory" -o "C:\HemSpect\AuditResponse" --operator "YourName"
 ```
 
 ### Step 2: Review the Dashboard
 
-Open `C:\SecurePSADT\AuditResponse\factory_report.html` and identify the worst packages.
+Open `C:\HemSpect\AuditResponse\factory_report.html` and identify the worst packages.
 
 ### Step 3: Fix the Top Offenders
 
@@ -259,7 +259,7 @@ Hand the auditors:
 
 ### What Makes This Better Than Snaffler
 
-| Snaffler | PSADT-Secure |
+| Snaffler | HemSpect |
 |----------|-------------|
 | Finds the problem | Finds + maps to MITRE/NIST/CMMC |
 | Raw text output | Interactive HTML dashboard |
@@ -276,7 +276,7 @@ Hand the auditors:
 The package directory doesn't contain `.ps1` files. This is normal for packages that only contain `.msi` installers.
 
 ### Unicode encoding errors
-PSADT-Secure automatically forces UTF-8 encoding. If you still see issues, set the environment variable:
+HemSpect automatically forces UTF-8 encoding. If you still see issues, set the environment variable:
 ```powershell
 $env:PYTHONIOENCODING = "utf-8"
 ```

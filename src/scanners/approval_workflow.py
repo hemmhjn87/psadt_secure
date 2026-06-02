@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PSADT-Secure Approval Workflow
+HemSpect Approval Workflow
 3-stage approval: AUTO_SCAN → ANALYST_REVIEW → CISO_APPROVAL
 Provides digital chain-of-custody for deployment authorization.
 

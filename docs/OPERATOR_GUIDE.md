@@ -1,4 +1,4 @@
-# PSADT-Secure v3.0 — Operator Guide
+# HemSpect v3.0 — Operator Guide
 
 > **Document**: Operator Procedures Manual  
 > **Version**: 3.0.0  
@@ -41,8 +41,8 @@ python main.py scan "C:\SCCM\Packages\MyApp_1.0" --ci --format sarif,junit
 ### Setup Steps
 
 ```powershell
-# 1. Clone or extract the PSADT-Secure package
-cd D:\Tools\psadt-secure
+# 1. Clone or extract the HemSpect package
+cd D:\Tools\hemspect
 
 # 2. Create virtual environment
 python -m venv .venv
@@ -53,7 +53,7 @@ pip install -r requirements.txt
 
 # 4. Verify installation
 python main.py --version
-# Expected: PSADT-Secure v3.0.0
+# Expected: HemSpect v3.0.0
 
 # 5. Optional: Set environment variables
 $env:PSADT_SCAN_OPERATOR = "YourName"    # Audit log operator ID
@@ -274,7 +274,7 @@ When a finding is a known false positive or has an accepted business justificati
   displayName: 'PSADT Security Scan'
   inputs:
     scriptSource: 'filePath'
-    scriptPath: '$(Build.SourcesDirectory)/tools/psadt-secure/main.py'
+    scriptPath: '$(Build.SourcesDirectory)/tools/hemspect/main.py'
     arguments: >
       scan "$(PACKAGE_PATH)"
       --ci
@@ -415,4 +415,4 @@ python main.py scan <path> --severity-threshold HIGH
 
 *Operator Guide maintained by: Security Operations*  
 *Questions: Contact your SOC team lead*  
-*PSADT-Secure Issues: Review project README.md*
+*HemSpect Issues: Review project README.md*

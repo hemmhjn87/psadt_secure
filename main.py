@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-PSADT-Secure v3.0: Defense-Grade PSADT Package Security Scanner
+HemSpect v3.0: Defense-Grade PSADT Package Security Scanner
 Enterprise security analysis for aerospace, defense, and critical infrastructure
 
 Compliance: NIST SP 800-53 Rev5 | CMMC 2.0 | IEC 62443-2-4 | CIS Controls v8
@@ -60,7 +60,7 @@ except ImportError:
 
 BANNER = """
 +==================================================================+
-|  PSADT-SECURE v3.0  --  Defense-Grade Package Security Scanner  |
+|  HEMSPECT v3.0  --  Defense-Grade Package Security Scanner  |
 |  NIST 800-53 | CMMC 2.0 | IEC 62443 | CIS v8 | MITRE ATT&CK    |
 |------------------------------------------------------------------|
 |  Powered by ⚡ HemSpect™ Data Leakage Intelligence Engine       |
@@ -87,7 +87,7 @@ def _setup_logging(ci_mode: bool) -> logging.Logger:
         level=level,
         stream=sys.stderr,
     )
-    return logging.getLogger("psadt-secure")
+    return logging.getLogger("hemspect")
 
 
 # ---- Operator resolution -------------------------------------------------------------
@@ -111,7 +111,7 @@ def _resolve_output_dir(cli_output: Optional[str], ci_mode: bool = False) -> Pat
         return Path.cwd() / f"psadt_scan_{ts}"
     
     try:
-        name = input("\n[?] Enter the name for the report folder (will be saved in C:\\SecurePSADT\\<name>): ").strip()
+        name = input("\n[?] Enter the name for the report folder (will be saved in C:\\HemSpect\\<name>): ").strip()
     except EOFError:
         name = ""
         
@@ -119,7 +119,7 @@ def _resolve_output_dir(cli_output: Optional[str], ci_mode: bool = False) -> Pat
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         name = f"psadt_scan_{ts}"
         
-    return Path("C:\\SecurePSADT") / name
+    return Path("C:\\HemSpect") / name
 
 
 # ---- Allowlist loader ----------------------------------------------------------------
@@ -232,7 +232,7 @@ def _export_sarif(findings: dict, output_dir: Path):
                 "id":   rule_id,
                 "name": rule_id,
                 "shortDescription": {"text": issue.get("pattern", rule_id)},
-                "helpUri": f"https://github.com/psadt-secure/wiki/{rule_id}",
+                "helpUri": f"https://github.com/hemspect/wiki/{rule_id}",
                 "properties": {
                     "tags": [severity],
                     "security-severity": {
@@ -272,10 +272,10 @@ def _export_sarif(findings: dict, output_dir: Path):
         "runs": [{
             "tool": {
                 "driver": {
-                    "name":    "PSADTSecureScanner",
+                    "name":    "HemSpectScanner",
                     "version": SCANNER_VERSION,
                     "rules":   list(rules.values()),
-                    "informationUri": "https://github.com/psadt-secure",
+                    "informationUri": "https://github.com/hemspect",
                 }
             },
             "results": results,
@@ -300,7 +300,7 @@ def _export_junit(findings: dict, output_dir: Path):
 
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
-        f'<testsuites name="PSADTSecureScan" tests="{len(issues)}" '
+        f'<testsuites name="HemSpectScan" tests="{len(issues)}" '
         f'failures="{failures}" errors="{errors}" timestamp="{ts}">',
         f'  <testsuite name="SecurityFindings" tests="{len(issues)}" '
         f'failures="{failures}" errors="{errors}">',
@@ -458,7 +458,7 @@ def _print_summary(findings: dict, output_dir: Path, ci_mode: bool):
         return
 
     print("\n" + "═" * 65)
-    print("  PSADT-SECURE v3.0 — SCAN RESULTS")
+    print("  HEMSPECT v3.0 — SCAN RESULTS")
     print("═" * 65)
     print(f"  Package    : {findings.get('package', 'Unknown')}")
     print(f"  Risk Score : {findings.get('risk_score', 0):.1f}/100")
@@ -523,7 +523,7 @@ def _exit_code(findings: dict, fail_on: List[str]) -> int:
 # ---- Subcommand: scan ---------------------------------------------------------------
 
 def cmd_scan(args, logger) -> int:
-    from scanners.scan_psadt import PSADTSecureScanner
+    from scanners.scan_psadt import HemSpectScanner
 
     package_path = Path(args.package_path)
     if not package_path.is_dir():
@@ -555,7 +555,7 @@ def cmd_scan(args, logger) -> int:
         if not args.ci:
             print("[1/5] Running security scan...")
 
-        scanner = PSADTSecureScanner(str(package_path), str(output_dir))
+        scanner = HemSpectScanner(str(package_path), str(output_dir))
         scanner.findings["operator"] = operator
         scanner.findings["scanner_version"] = f"{scanner.findings.get('scanner_version', '')} (CLI v{SCANNER_VERSION})"
 
@@ -827,7 +827,7 @@ def cmd_workflow(args, logger) -> int:
 
 FACTORY_BANNER = """
 +==================================================================+
-|  PSADT-SECURE v3.0  --  FACTORY SCAN MODE                       |
+|  HEMSPECT v3.0  --  FACTORY SCAN MODE                       |
 |  Batch scanning entire package factory with HemSpect engine      |
 +==================================================================+
 """
@@ -905,7 +905,7 @@ def _generate_factory_html(results: List[dict], output_dir: Path, operator: str,
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PSADT-Secure Factory Scan Report</title>
+  <title>HemSpect Factory Scan Report</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {{
@@ -1005,7 +1005,7 @@ def _generate_factory_html(results: List[dict], output_dir: Path, operator: str,
 </head>
 <body>
   <div class="factory-header">
-    <h1>PSADT-Secure Factory Scan Report</h1>
+    <h1>HemSpect Factory Scan Report</h1>
     <p>Package Factory: {root_path} &nbsp;|&nbsp; Scanned: {total_packages} packages &nbsp;|&nbsp; Generated: {timestamp} &nbsp;|&nbsp; Operator: {operator}</p>
   </div>
 
@@ -1033,7 +1033,7 @@ def _generate_factory_html(results: List[dict], output_dir: Path, operator: str,
   </div>
 
   <div class="factory-footer">
-    PSADT-Secure v{SCANNER_VERSION} &nbsp;|&nbsp; NIST SP 800-53 Rev5 &nbsp;|&nbsp; CMMC 2.0 &nbsp;|&nbsp; IEC 62443-2-4 &nbsp;|&nbsp; CIS Controls v8
+    HemSpect v{SCANNER_VERSION} &nbsp;|&nbsp; NIST SP 800-53 Rev5 &nbsp;|&nbsp; CMMC 2.0 &nbsp;|&nbsp; IEC 62443-2-4 &nbsp;|&nbsp; CIS Controls v8
     <br>
     <span style="opacity: 0.5;">//</span> Designed by <span class="hem">Hem</span>
   </div>
@@ -1047,7 +1047,7 @@ def _generate_factory_html(results: List[dict], output_dir: Path, operator: str,
 
 def cmd_factory_scan(args, logger) -> int:
     """Batch-scan an entire package factory directory."""
-    from scanners.scan_psadt import PSADTSecureScanner
+    from scanners.scan_psadt import HemSpectScanner
 
     root = Path(args.factory_path)
     if not root.is_dir():
@@ -1067,7 +1067,7 @@ def cmd_factory_scan(args, logger) -> int:
     print(f"  Packages  : {len(packages)} discovered")
 
     # Resolve output
-    output_dir = Path(args.output_dir) if args.output_dir else Path("C:\\SecurePSADT") / f"factory_scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    output_dir = Path(args.output_dir) if args.output_dir else Path("C:\\HemSpect") / f"factory_scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     output_dir.mkdir(parents=True, exist_ok=True)
     print(f"  Output    : {output_dir}")
 
@@ -1088,7 +1088,7 @@ def cmd_factory_scan(args, logger) -> int:
 
         start = time.time()
         try:
-            scanner = PSADTSecureScanner(str(pkg), str(pkg_out))
+            scanner = HemSpectScanner(str(pkg), str(pkg_out))
             findings = scanner.scan()
             duration = time.time() - start
 
@@ -1177,7 +1177,7 @@ def cmd_factory_scan(args, logger) -> int:
     # Print final summary
     print(f"""
 {'='*70}
-  PSADT-SECURE v{SCANNER_VERSION} — FACTORY SCAN COMPLETE
+  HEMSPECT v{SCANNER_VERSION} — FACTORY SCAN COMPLETE
 {'='*70}
   Factory    : {root}
   Packages   : {len(results)}
@@ -1198,9 +1198,9 @@ def cmd_factory_scan(args, logger) -> int:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="psadt-secure",
+        prog="hemspect",
         description=(
-            "PSADT-Secure v3.0 — Defense-Grade PSADT Package Security Scanner\n"
+            "HemSpect v3.0 — Defense-Grade PSADT Package Security Scanner\n"
             "Compliance: NIST SP 800-53 Rev5 | CMMC 2.0 | IEC 62443-2-4 | CIS Controls v8"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -1223,7 +1223,7 @@ Examples:
   python main.py scan C:\\Packages\\MyApp --ci --fail-on critical,high
 
   # Factory scan (batch scan entire package share)
-  python main.py factory-scan \\\\server\\PackageFactory -o C:\\SecurePSADT\\FactoryReport
+  python main.py factory-scan \\\\server\\PackageFactory -o C:\\HemSpect\\FactoryReport
 
   # Verify signed manifest
   python main.py verify C:\\Reports\\MyApp
@@ -1351,7 +1351,7 @@ Examples:
         dest="output_dir",
         metavar="DIR",
         default=None,
-        help="Output directory for consolidated reports (default: C:\\SecurePSADT\\factory_scan_TIMESTAMP)",
+        help="Output directory for consolidated reports (default: C:\\HemSpect\\factory_scan_TIMESTAMP)",
     )
     fs_p.add_argument(
         "--operator",

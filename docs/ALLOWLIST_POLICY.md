@@ -1,4 +1,4 @@
-# PSADT-Secure v3.0 — Allowlist Policy
+# HemSpect v3.0 — Allowlist Policy
 
 > **Document Type**: Security Policy  
 > **Version**: 1.0  
@@ -10,7 +10,7 @@
 
 ## 1. Purpose
 
-This policy establishes the framework for managing **exception allowlists** in PSADT-Secure scanning. An allowlist exception suppresses a specific scanner finding for a specific file, based on documented business justification and formal approval.
+This policy establishes the framework for managing **exception allowlists** in HemSpect scanning. An allowlist exception suppresses a specific scanner finding for a specific file, based on documented business justification and formal approval.
 
 Allowlisting is a **risk acceptance mechanism** — it does not eliminate the security risk; it documents that a qualified person has reviewed and accepted the risk with appropriate controls in place.
 
@@ -18,7 +18,7 @@ Allowlisting is a **risk acceptance mechanism** — it does not eliminate the se
 
 ## 2. Scope
 
-Applies to all PSADT v4 packages scanned with PSADT-Secure in any of the following environments:
+Applies to all PSADT v4 packages scanned with HemSpect in any of the following environments:
 - Pre-deployment security review
 - CI/CD pipeline integration
 - Periodic re-scanning of deployed packages

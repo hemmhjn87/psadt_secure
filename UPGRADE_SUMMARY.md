@@ -1,4 +1,4 @@
-# PSADT-Secure v2.0 - Enterprise-Grade Upgrade
+# HemSpect v2.0 - Enterprise-Grade Upgrade
 
 ## Major Enhancements (Version 2.0)
 

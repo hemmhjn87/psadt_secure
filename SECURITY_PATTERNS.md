@@ -1,4 +1,4 @@
-# Security Patterns Reference - PSADT-Secure v2.0
+# Security Patterns Reference - HemSpect v2.0
 
 ## PowerShell Security Patterns (20+)
 
