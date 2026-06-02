@@ -821,6 +821,377 @@ def cmd_workflow(args, logger) -> int:
         return 3
 
 
+# ---- Subcommand: factory-scan --------------------------------------------------------
+
+FACTORY_BANNER = """
++==================================================================+
+|  PSADT-SECURE v3.0  --  FACTORY SCAN MODE                       |
+|  Batch scanning entire package factory with HemSpect engine      |
++==================================================================+
+"""
+
+def _discover_packages(root: Path) -> List[Path]:
+    """Auto-discover PSADT packages inside a root directory."""
+    packages = []
+    for d in sorted(root.iterdir()):
+        if not d.is_dir():
+            continue
+        # A folder is a PSADT package if it contains any of these indicators
+        indicators = [
+            d / "Deploy-Application.ps1",
+            d / "Invoke-AppDeployToolkit.ps1",
+            d / "AppDeployToolkit",
+        ]
+        has_indicator = any(p.exists() for p in indicators)
+        # Also check for any .msi/.msix files
+        has_msi = any(d.glob("*.msi")) or any(d.glob("*.msix")) or any(d.glob("Installers/*.msi"))
+        # Or any .ps1 file at all
+        has_ps1 = any(d.glob("*.ps1"))
+        if has_indicator or has_msi or has_ps1:
+            packages.append(d)
+    return packages
+
+
+def _generate_factory_html(results: List[dict], output_dir: Path, operator: str, root_path: str):
+    """Generate a consolidated HTML dashboard for all scanned packages."""
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    total_packages = len(results)
+    total_findings = sum(r.get("total", 0) for r in results)
+    total_critical = sum(r.get("critical", 0) for r in results)
+    total_high = sum(r.get("high", 0) for r in results)
+    total_medium = sum(r.get("medium", 0) for r in results)
+    approved = sum(1 for r in results if r["status"] == "APPROVED")
+    rejected = sum(1 for r in results if r["status"] == "REJECTED")
+    review = sum(1 for r in results if r["status"] == "REVIEW_REQUIRED")
+
+    # Sort packages by risk score descending
+    sorted_results = sorted(results, key=lambda x: x.get("risk_score", 0), reverse=True)
+
+    # Build rows
+    rows_html = ""
+    for i, r in enumerate(sorted_results):
+        status = r["status"]
+        if status == "REJECTED":
+            status_cls = "factory-rejected"
+            status_icon = "&#10008;"
+        elif status == "REVIEW_REQUIRED":
+            status_cls = "factory-review"
+            status_icon = "&#9888;"
+        else:
+            status_cls = "factory-approved"
+            status_icon = "&#10004;"
+
+        risk_color = "#e63946" if r["risk_score"] >= 75 else "#f4a261" if r["risk_score"] >= 50 else "#e9c46a" if r["risk_score"] >= 25 else "#2a9d8f"
+
+        rows_html += f"""
+        <tr class="factory-row {status_cls}">
+          <td>{i+1}</td>
+          <td class="pkg-name">{r['package']}</td>
+          <td><span class="risk-pill" style="background:{risk_color};">{r['risk_score']:.0f}</span></td>
+          <td class="sev-cell sev-crit">{r['critical']}</td>
+          <td class="sev-cell sev-high">{r['high']}</td>
+          <td class="sev-cell sev-med">{r['medium']}</td>
+          <td class="sev-cell sev-low">{r.get('low', 0)}</td>
+          <td>{r['total']}</td>
+          <td><span class="status-badge {status_cls}">{status_icon} {status}</span></td>
+          <td class="duration">{r.get('duration', 0):.1f}s</td>
+          <td><a href="{r.get('report_path', '#')}" class="report-link">Open</a></td>
+        </tr>"""
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PSADT-Secure Factory Scan Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {{
+      --primary: #0a1628; --surface: #162032; --surface2: #1c2a42;
+      --accent: #f0a500; --danger: #e63946; --warning: #f4a261;
+      --success: #2a9d8f; --info: #4895ef; --border: #253a55;
+      --text: #e8edf5; --text-muted: #8ba0be;
+    }}
+    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{
+      font-family: 'Inter', sans-serif; background: var(--primary);
+      color: var(--text); line-height: 1.6; padding: 32px 48px;
+    }}
+    .factory-header {{
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px 36px; margin-bottom: 28px;
+    }}
+    .factory-header h1 {{
+      font-size: 1.6rem; font-weight: 800; color: var(--accent); margin-bottom: 4px;
+    }}
+    .factory-header p {{ font-size: 0.85rem; color: var(--text-muted); }}
+    .stats-grid {{
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }}
+    .stat-card {{
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px 20px; text-align: center;
+    }}
+    .stat-card.sc-rejected {{ border-top: 3px solid var(--danger); }}
+    .stat-card.sc-review {{ border-top: 3px solid var(--warning); }}
+    .stat-card.sc-approved {{ border-top: 3px solid var(--success); }}
+    .stat-card.sc-findings {{ border-top: 3px solid var(--info); }}
+    .stat-card.sc-critical {{ border-top: 3px solid var(--danger); }}
+    .stat-number {{
+      font-size: 2.2rem; font-weight: 800; line-height: 1;
+    }}
+    .stat-number.n-rejected {{ color: var(--danger); }}
+    .stat-number.n-review {{ color: var(--warning); }}
+    .stat-number.n-approved {{ color: var(--success); }}
+    .stat-number.n-findings {{ color: var(--info); }}
+    .stat-number.n-critical {{ color: var(--danger); }}
+    .stat-label {{
+      font-size: 0.72rem; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px;
+    }}
+    .table-wrap {{
+      overflow-x: auto; border-radius: 10px; border: 1px solid var(--border);
+    }}
+    table.factory-table {{
+      width: 100%; border-collapse: collapse; font-size: 0.82rem;
+    }}
+    .factory-table th {{
+      background: var(--surface); color: var(--accent); padding: 12px 14px;
+      text-align: left; font-weight: 700; font-size: 0.76rem;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }}
+    .factory-table td {{
+      padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }}
+    .factory-row:hover {{ background: rgba(240,165,0,0.05); }}
+    .factory-row.factory-rejected td:first-child {{ border-left: 3px solid var(--danger); }}
+    .factory-row.factory-review td:first-child {{ border-left: 3px solid var(--warning); }}
+    .factory-row.factory-approved td:first-child {{ border-left: 3px solid var(--success); }}
+    .pkg-name {{ font-weight: 600; color: var(--text); }}
+    .risk-pill {{
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-weight: 700; font-size: 0.78rem; color: #fff;
+    }}
+    .sev-cell {{ text-align: center; font-weight: 700; }}
+    .sev-crit {{ color: var(--danger); }}
+    .sev-high {{ color: var(--warning); }}
+    .sev-med {{ color: #e9c46a; }}
+    .sev-low {{ color: var(--success); }}
+    .status-badge {{
+      padding: 3px 10px; border-radius: 12px; font-size: 0.72rem;
+      font-weight: 700; letter-spacing: 0.05em;
+    }}
+    .status-badge.factory-rejected {{ background: rgba(230,57,70,0.2); color: #ff6b7a; }}
+    .status-badge.factory-review {{ background: rgba(244,162,97,0.2); color: #ffb87a; }}
+    .status-badge.factory-approved {{ background: rgba(42,157,143,0.2); color: #5dddd5; }}
+    .duration {{ font-family: monospace; color: var(--text-muted); }}
+    .report-link {{
+      color: var(--accent); text-decoration: none; font-weight: 600;
+    }}
+    .report-link:hover {{ text-decoration: underline; }}
+    .factory-footer {{
+      margin-top: 32px; padding: 16px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 10px;
+      font-size: 0.75rem; color: var(--text-muted); text-align: center;
+    }}
+    .factory-footer .hem {{
+      color: #6dffb9; font-weight: bold; text-shadow: 0 0 5px rgba(109,255,185,0.5);
+    }}
+  </style>
+</head>
+<body>
+  <div class="factory-header">
+    <h1>PSADT-Secure Factory Scan Report</h1>
+    <p>Package Factory: {root_path} &nbsp;|&nbsp; Scanned: {total_packages} packages &nbsp;|&nbsp; Generated: {timestamp} &nbsp;|&nbsp; Operator: {operator}</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card sc-findings"><div class="stat-number n-findings">{total_packages}</div><div class="stat-label">Packages Scanned</div></div>
+    <div class="stat-card sc-critical"><div class="stat-number n-critical">{total_findings}</div><div class="stat-label">Total Findings</div></div>
+    <div class="stat-card sc-rejected"><div class="stat-number n-rejected">{rejected}</div><div class="stat-label">Rejected</div></div>
+    <div class="stat-card sc-review"><div class="stat-number n-review">{review}</div><div class="stat-label">Review Required</div></div>
+    <div class="stat-card sc-approved"><div class="stat-number n-approved">{approved}</div><div class="stat-label">Approved</div></div>
+    <div class="stat-card sc-critical"><div class="stat-number n-critical">{total_critical}</div><div class="stat-label">Critical</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="factory-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Package</th><th>Risk</th>
+          <th>Crit</th><th>High</th><th>Med</th><th>Low</th><th>Total</th>
+          <th>Status</th><th>Time</th><th>Report</th>
+        </tr>
+      </thead>
+      <tbody>{rows_html}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="factory-footer">
+    PSADT-Secure v{SCANNER_VERSION} &nbsp;|&nbsp; NIST SP 800-53 Rev5 &nbsp;|&nbsp; CMMC 2.0 &nbsp;|&nbsp; IEC 62443-2-4 &nbsp;|&nbsp; CIS Controls v8
+    <br>
+    <span style="opacity: 0.5;">//</span> Designed by <span class="hem">Hem</span>
+  </div>
+</body>
+</html>"""
+
+    out_path = output_dir / "factory_report.html"
+    out_path.write_text(html, encoding="utf-8")
+    return out_path
+
+
+def cmd_factory_scan(args, logger) -> int:
+    """Batch-scan an entire package factory directory."""
+    from scanners.scan_psadt import PSADTSecureScanner
+
+    root = Path(args.factory_path)
+    if not root.is_dir():
+        print(f"[✖] Factory directory not found: {root}", file=sys.stderr)
+        return 3
+
+    print(FACTORY_BANNER)
+    print(f"  Factory   : {root}")
+
+    # Discover packages
+    packages = _discover_packages(root)
+    if not packages:
+        print(f"[✖] No PSADT packages found in: {root}", file=sys.stderr)
+        print("    (Looking for folders containing Deploy-Application.ps1, .msi files, or AppDeployToolkit)")
+        return 3
+
+    print(f"  Packages  : {len(packages)} discovered")
+
+    # Resolve output
+    output_dir = Path(args.output_dir) if args.output_dir else Path("C:\\SecurePSADT") / f"factory_scan_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    print(f"  Output    : {output_dir}")
+
+    operator = _resolve_operator(args.operator)
+    print(f"  Operator  : {operator}")
+    print(f"\n{'='*70}")
+
+    results = []
+    worst_exit = 0
+
+    for i, pkg in enumerate(packages, 1):
+        pkg_name = pkg.name
+        pkg_out = output_dir / pkg_name
+        pkg_out.mkdir(parents=True, exist_ok=True)
+
+        print(f"\n[{i}/{len(packages)}] Scanning: {pkg_name}")
+        print("-" * 50)
+
+        start = time.time()
+        try:
+            scanner = PSADTSecureScanner(str(pkg), str(pkg_out))
+            findings = scanner.scan()
+            duration = time.time() - start
+
+            summary = findings.get("summary", {})
+            status = summary.get("approval_status", "REVIEW_REQUIRED")
+            risk = float(findings.get("risk_score", 0))
+
+            result = {
+                "package":    pkg_name,
+                "path":       str(pkg),
+                "status":     status,
+                "risk_score": risk,
+                "critical":   summary.get("critical", 0),
+                "high":       summary.get("high", 0),
+                "medium":     summary.get("medium", 0),
+                "low":        summary.get("low", 0),
+                "total":      summary.get("total_issues", 0),
+                "duration":   duration,
+                "report_path": f"{pkg_name}/report.html",
+                "output_dir": str(pkg_out),
+            }
+            results.append(result)
+
+            # Determine exit code contribution
+            c = summary.get("critical", 0)
+            h = summary.get("high", 0)
+            if c > 0 or h > 0:
+                worst_exit = max(worst_exit, 2)
+            elif status == "REVIEW_REQUIRED":
+                worst_exit = max(worst_exit, 1)
+
+            status_icon = "✔" if status == "APPROVED" else "⚠" if status == "REVIEW_REQUIRED" else "✖"
+            print(f"  {status_icon} {pkg_name}: Risk={risk:.0f} C={c} H={h} M={summary.get('medium',0)} → {status} ({duration:.1f}s)")
+
+        except Exception as exc:
+            duration = time.time() - start
+            logger.error("Failed to scan %s: %s", pkg_name, exc)
+            results.append({
+                "package":    pkg_name,
+                "path":       str(pkg),
+                "status":     "SCAN_ERROR",
+                "risk_score": 0,
+                "critical": 0, "high": 0, "medium": 0, "low": 0, "total": 0,
+                "duration":   duration,
+                "report_path": "#",
+                "output_dir": str(pkg_out),
+            })
+            worst_exit = max(worst_exit, 3)
+            print(f"  ✖ {pkg_name}: SCAN ERROR — {exc}")
+
+    # Generate consolidated outputs
+    print(f"\n{'='*70}")
+    print(f"\n[*] Generating consolidated factory report...")
+
+    # Consolidated HTML
+    html_path = _generate_factory_html(results, output_dir, operator, str(root))
+    print(f"  [✓] Factory HTML dashboard: {html_path}")
+
+    # Consolidated JSON
+    consolidated = {
+        "factory_path": str(root),
+        "scan_timestamp": datetime.now(timezone.utc).isoformat(),
+        "operator": operator,
+        "total_packages": len(results),
+        "total_findings": sum(r["total"] for r in results),
+        "total_critical": sum(r["critical"] for r in results),
+        "total_high": sum(r["high"] for r in results),
+        "approved": sum(1 for r in results if r["status"] == "APPROVED"),
+        "rejected": sum(1 for r in results if r["status"] == "REJECTED"),
+        "review_required": sum(1 for r in results if r["status"] == "REVIEW_REQUIRED"),
+        "packages": results,
+    }
+    json_path = output_dir / "factory_results.json"
+    json_path.write_text(json.dumps(consolidated, indent=2), encoding="utf-8")
+    print(f"  [✓] Factory JSON results:  {json_path}")
+
+    # Consolidated CSV
+    csv_path = output_dir / "factory_results.csv"
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["package", "status", "risk_score", "critical", "high", "medium", "low", "total", "duration", "path"])
+        writer.writeheader()
+        for r in sorted(results, key=lambda x: x["risk_score"], reverse=True):
+            writer.writerow({k: r.get(k, "") for k in writer.fieldnames})
+    print(f"  [✓] Factory CSV results:   {csv_path}")
+
+    # Print final summary
+    print(f"""
+{'='*70}
+  PSADT-SECURE v{SCANNER_VERSION} — FACTORY SCAN COMPLETE
+{'='*70}
+  Factory    : {root}
+  Packages   : {len(results)}
+  Findings   : {sum(r['total'] for r in results)}
+
+  🔴 REJECTED        : {sum(1 for r in results if r['status'] == 'REJECTED')}
+  🟠 REVIEW REQUIRED : {sum(1 for r in results if r['status'] == 'REVIEW_REQUIRED')}
+  🟢 APPROVED        : {sum(1 for r in results if r['status'] == 'APPROVED')}
+
+  Output     : {output_dir}
+{'='*70}
+""")
+
+    return worst_exit
+
+
 # ---- Argument parser ----------------------------------------------------------------
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -848,6 +1219,9 @@ Examples:
 
   # CI/CD mode (JSON to stdout, minimal noise)
   python main.py scan C:\\Packages\\MyApp --ci --fail-on critical,high
+
+  # Factory scan (batch scan entire package share)
+  python main.py factory-scan \\\\server\\PackageFactory -o C:\\SecurePSADT\\FactoryReport
 
   # Verify signed manifest
   python main.py verify C:\\Reports\\MyApp
@@ -959,6 +1333,32 @@ Examples:
         help="Comma-separated severity levels that cause non-zero exit (default: critical,high)",
     )
 
+    # ---- factory-scan subcommand ----
+    fs_p = sub.add_parser(
+        "factory-scan",
+        help="Batch-scan an entire package factory directory",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    fs_p.add_argument(
+        "factory_path",
+        metavar="FACTORY_PATH",
+        help="Root directory of the package factory (e.g. \\\\server\\PackageFactory)",
+    )
+    fs_p.add_argument(
+        "--output-dir", "-o",
+        dest="output_dir",
+        metavar="DIR",
+        default=None,
+        help="Output directory for consolidated reports (default: C:\\SecurePSADT\\factory_scan_TIMESTAMP)",
+    )
+    fs_p.add_argument(
+        "--operator",
+        dest="operator",
+        metavar="NAME",
+        default=None,
+        help="Operator name for audit log",
+    )
+
     # ---- verify subcommand ----
     verify_p = sub.add_parser(
         "verify",
@@ -1020,6 +1420,8 @@ def main() -> int:
 
     if args.command == "scan":
         return cmd_scan(args, logger)
+    elif args.command == "factory-scan":
+        return cmd_factory_scan(args, logger)
     elif args.command == "verify":
         return cmd_verify(args, logger)
     elif args.command == "workflow":
@@ -1031,3 +1433,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
