@@ -1,4 +1,4 @@
-# HemSpect v3.0: Defense-Grade PSADT Package Security Scanner
+# HemSpect v3.0: Package Security Scanner
 # Validated for aerospace/defense organizational deployment
 
 # Core security analysis

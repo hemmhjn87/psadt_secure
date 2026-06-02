@@ -161,7 +161,7 @@ class ReportGenerator:
         <div class="header-left">
           <div class="hemspect-logo-main">⚡ HemSpect<span>™</span></div>
           <div>
-            <h1 class="report-title">DEFENSE-GRADE PACKAGE SECURITY SCANNER</h1>
+            <h1 class="report-title">PACKAGE SECURITY SCANNER</h1>
           </div>
         </div>
         <div class="header-right">

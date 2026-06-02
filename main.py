@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-HemSpect v3.0: Defense-Grade PSADT Package Security Scanner
+HemSpect v3.0: Package Security Scanner
 Enterprise security analysis for aerospace, defense, and critical infrastructure
 
 Compliance: NIST SP 800-53 Rev5 | CMMC 2.0 | IEC 62443-2-4 | CIS Controls v8
@@ -60,7 +60,7 @@ except ImportError:
 
 BANNER = """
 +==================================================================+
-|  HEMSPECT v3.0  --  Defense-Grade Package Security Scanner  |
+|  HEMSPECT v3.0  --  Package Security Scanner  |
 |  NIST 800-53 | CMMC 2.0 | IEC 62443 | CIS v8 | MITRE ATT&CK    |
 |------------------------------------------------------------------|
 |  Powered by ⚡ HemSpect™ Data Leakage Intelligence Engine       |
@@ -1200,7 +1200,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="hemspect",
         description=(
-            "HemSpect v3.0 — Defense-Grade PSADT Package Security Scanner\n"
+            "HemSpect v3.0 — Package Security Scanner\n"
             "Compliance: NIST SP 800-53 Rev5 | CMMC 2.0 | IEC 62443-2-4 | CIS Controls v8"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,

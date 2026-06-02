@@ -1,6 +1,6 @@
 # 🛡 HemSpect v3.0
 
-**Defense-Grade PSADT Package Security Scanner**
+**Package Security Scanner**
 
 > Compliance: NIST SP 800-53 Rev5 | CMMC 2.0 | IEC 62443-2-4 | CIS Controls v8 | MITRE ATT&CK
 

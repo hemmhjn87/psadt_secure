@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HemSpect v3.0: Defense-Grade PSADT Package Security Scanner
+HemSpect v3.0: Package Security Scanner
 Aerospace/Defense Enterprise Edition
 
 Industry-Level Features:
@@ -102,7 +102,7 @@ SCANNER_INFO_URI = "https://github.com/hemspect/hemspect"
 
 class HemSpectScanner:
     """
-    Defense-grade PSADT v4 security scanner.
+    PSADT v4 security scanner.
 
     Instantiate with a package directory path and optional output directory.
     Call scan() to execute all analysis steps and generate reports.
@@ -841,7 +841,7 @@ class HemSpectScanner:
         Returns the complete findings dictionary.
         """
         print("\n" + "=" * 90)
-        print("🔐 HEMSPECT v3.0: DEFENSE-GRADE PSADT PACKAGE SECURITY SCANNER")
+        print("🔐 HEMSPECT v3.0: PACKAGE SECURITY SCANNER")
         print("   Powered by HemSpect™ Data Leakage Intelligence Engine")
         print("=" * 90)
         print(f"\n  Package  : {self.package_path.name}")
@@ -2835,7 +2835,7 @@ try {{
 <div class="container">
   <div class="header">
     <h1>🔐 HemSpect v{SCANNER_VERSION} – Security Scan Report</h1>
-    <p>Defense-Grade PSADT Package Security Assessment</p>
+    <p>PSADT Package Security Assessment</p>
     <p>Package: <strong>{self.findings['package']}</strong> &nbsp;|&nbsp; Operator: <strong>{self.operator}</strong></p>
     <p>Scan Timestamp: {scan_ts}</p>
   </div>
@@ -2893,7 +2893,7 @@ try {{
   </div>
 
   <div class="footer">
-    <p>HemSpect v{SCANNER_VERSION} | Defense-Grade PSADT Package Security Scanner</p>
+    <p>HemSpect v{SCANNER_VERSION} | Package Security Scanner</p>
     <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Operator: {self.operator}</p>
   </div>
 </div>
@@ -3223,7 +3223,7 @@ def main():
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help", "help"):
         print(f"""
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║   HEMSPECT v{SCANNER_VERSION}: Defense-Grade PSADT Package Security Scanner   ║
+║   HEMSPECT v{SCANNER_VERSION}: Package Security Scanner   ║
 ║   Aerospace/Defense Enterprise Edition                                       ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
