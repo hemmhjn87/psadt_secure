@@ -133,6 +133,7 @@ class ReportGenerator:
         sec_exec      = self._section_exec_summary()
         sec_risk      = self._section_risk_assessment()
         sec_compliance= self._section_compliance_matrix()
+        sec_hemspect  = self._section_hemspect()
         sec_findings  = self._section_findings_explorer()
         sec_mitre     = self._section_mitre_heatmap()
         sec_sbom      = self._section_sbom()
@@ -184,6 +185,11 @@ class ReportGenerator:
       <section id="sec-compliance" class="report-section">
         <h2 class="section-title"><span class="section-icon">📋</span> Compliance Matrix</h2>
         {sec_compliance}
+      </section>
+
+      <section id="sec-hemspect" class="report-section">
+        <h2 class="section-title"><span class="section-icon">⚡</span> HemSpect™ Data Leakage</h2>
+        {sec_hemspect}
       </section>
 
       <section id="sec-findings" class="report-section">
@@ -680,6 +686,7 @@ table.mitre-table {
             ("sec-executive",  "📊", "Executive Summary"),
             ("sec-risk",       "🎯", "Risk Assessment"),
             ("sec-compliance", "📋", "Compliance Matrix"),
+            ("sec-hemspect",   "⚡", "HemSpect™ Engine"),
             ("sec-findings",   "🔍", "Findings Explorer"),
             ("sec-mitre",      "🗺", "MITRE ATT&CK"),
             ("sec-sbom",       "📦", "SBOM Inventory"),
@@ -703,6 +710,160 @@ table.mitre-table {
 {items_html}
   </ul>
 </aside>"""
+
+    # ------------------------------------------------------------------ #
+    #  Section: HemSpect™ Data Leakage Intelligence Engine                   #
+    # ------------------------------------------------------------------ #
+
+    def _section_hemspect(self) -> str:
+        """Build the HemSpect branded data leakage intelligence section."""
+        issues = self._issues
+        # Filter HemSpect findings
+        hs_findings = [i for i in issues if i.get("type") == "DataLeakage" or str(i.get("rule_id", "")).startswith("hemspect_")]
+        tier1 = [f for f in hs_findings if f.get("subtype") == "DangerousFileType"]
+        tier2 = [f for f in hs_findings if f.get("subtype") == "SuspiciousFilename"]
+        tier3 = [f for f in hs_findings if f.get("subtype") == "ContentMatch"]
+        total = len(hs_findings)
+
+        # Status determination
+        if total == 0:
+            status_html = '<span class="hemspect-status hemspect-clean">✔ CLEAN — No data leakage detected</span>'
+        else:
+            crit = sum(1 for f in hs_findings if f.get("severity") == "CRITICAL")
+            high = sum(1 for f in hs_findings if f.get("severity") == "HIGH")
+            status_html = f'<span class="hemspect-status hemspect-alert">⚠ {total} DATA LEAKAGE ISSUE(S) — {crit} Critical, {high} High</span>'
+
+        # Build findings rows
+        rows = ""
+        for f in hs_findings:
+            sev = f.get("severity", "MEDIUM")
+            sev_cls = f"sev-{sev.lower()}"
+            file_name = Path(f.get("file", "")).name
+            rows += f"""<tr>
+              <td><span class="sev-badge {sev_cls}">{sev}</span></td>
+              <td>{f.get("subtype", "Unknown")}</td>
+              <td class="mono">{file_name}</td>
+              <td>{f.get("match", "")[:80]}</td>
+              <td>{f.get("description", "")}</td>
+            </tr>"""
+
+        findings_table = ""
+        if rows:
+            findings_table = f"""
+<table class="hemspect-table">
+  <thead><tr><th>Severity</th><th>Tier</th><th>File</th><th>Match</th><th>Description</th></tr></thead>
+  <tbody>{rows}</tbody>
+</table>"""
+
+        return f"""
+<style>
+  .hemspect-card {{
+    background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 50%, #0a1628 100%);
+    border: 1px solid #1a3a5c; border-radius: 14px; padding: 28px 32px;
+    margin-bottom: 24px; position: relative; overflow: hidden;
+  }}
+  .hemspect-card::before {{
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #00ff88, #00d4ff, #8b5cf6, #00ff88);
+    background-size: 200% auto;
+    animation: hemspect-glow 3s ease-in-out infinite;
+  }}
+  @keyframes hemspect-glow {{
+    0% {{ background-position: 0% center; }}
+    50% {{ background-position: 200% center; }}
+    100% {{ background-position: 0% center; }}
+  }}
+  .hemspect-brand {{
+    display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+  }}
+  .hemspect-logo {{
+    font-size: 2rem; font-weight: 900; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #00ff88, #00d4ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; text-shadow: none;
+  }}
+  .hemspect-logo span {{
+    font-size: 0.65em; vertical-align: super; opacity: 0.7;
+    -webkit-text-fill-color: #00ff88;
+  }}
+  .hemspect-tagline {{
+    font-size: 0.78rem; color: #5a8ab5; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }}
+  .hemspect-tiers {{
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin: 20px 0;
+  }}
+  .hemspect-tier {{
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: 16px 18px; text-align: center;
+  }}
+  .hemspect-tier-num {{
+    font-size: 1.8rem; font-weight: 800; line-height: 1;
+  }}
+  .hemspect-tier.ht-ext .hemspect-tier-num {{ color: #ff6b6b; }}
+  .hemspect-tier.ht-name .hemspect-tier-num {{ color: #ffd93d; }}
+  .hemspect-tier.ht-deep .hemspect-tier-num {{ color: #6bcb77; }}
+  .hemspect-tier-label {{
+    font-size: 0.7rem; font-weight: 600; color: #7a9fc2;
+    text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px;
+  }}
+  .hemspect-status {{
+    display: inline-block; padding: 6px 16px; border-radius: 20px;
+    font-weight: 700; font-size: 0.82rem; letter-spacing: 0.04em;
+  }}
+  .hemspect-clean {{
+    background: rgba(42,157,143,0.15); color: #5dddd5;
+    border: 1px solid rgba(42,157,143,0.3);
+  }}
+  .hemspect-alert {{
+    background: rgba(230,57,70,0.15); color: #ff6b7a;
+    border: 1px solid rgba(230,57,70,0.3);
+  }}
+  .hemspect-table {{
+    width: 100%; border-collapse: collapse; font-size: 0.8rem;
+    margin-top: 18px;
+  }}
+  .hemspect-table th {{
+    background: rgba(0,212,255,0.08); color: #00d4ff; padding: 10px 12px;
+    text-align: left; font-weight: 700; font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    border-bottom: 1px solid rgba(0,212,255,0.15);
+  }}
+  .hemspect-table td {{
+    padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #c0d0e0;
+  }}
+  .hemspect-table tr:hover {{ background: rgba(0,255,136,0.04); }}
+  .hemspect-table .mono {{ font-family: 'Fira Code', monospace; font-size: 0.78rem; color: #f0a500; }}
+</style>
+
+<div class="hemspect-card">
+  <div class="hemspect-brand">
+    <div class="hemspect-logo">⚡ HemSpect<span>™</span></div>
+    <div class="hemspect-tagline">Data Leakage Intelligence Engine</div>
+  </div>
+
+  <div class="hemspect-tiers">
+    <div class="hemspect-tier ht-ext">
+      <div class="hemspect-tier-num">{len(tier1)}</div>
+      <div class="hemspect-tier-label">Tier 1 — Extensions</div>
+    </div>
+    <div class="hemspect-tier ht-name">
+      <div class="hemspect-tier-num">{len(tier2)}</div>
+      <div class="hemspect-tier-label">Tier 2 — Filenames</div>
+    </div>
+    <div class="hemspect-tier ht-deep">
+      <div class="hemspect-tier-num">{len(tier3)}</div>
+      <div class="hemspect-tier-label">Tier 3 — Deep Content</div>
+    </div>
+  </div>
+
+  {status_html}
+
+  {findings_table}
+</div>
+"""
 
     # ------------------------------------------------------------------ #
     #  Section: Executive Summary                                          #

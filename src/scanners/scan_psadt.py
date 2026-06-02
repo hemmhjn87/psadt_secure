@@ -842,6 +842,7 @@ class PSADTSecureScanner:
         """
         print("\n" + "=" * 90)
         print("🔐 PSADT-SECURE v3.0: DEFENSE-GRADE PSADT PACKAGE SECURITY SCANNER")
+        print("   Powered by HemSpect™ Data Leakage Intelligence Engine")
         print("=" * 90)
         print(f"\n  Package  : {self.package_path.name}")
         print(f"  Path     : {self.package_path}")
@@ -1415,6 +1416,10 @@ class PSADTSecureScanner:
         Tier 3 — Deep Content Regex: scans text-readable files for connection
                  strings, XML credentials, cloud tokens, and IT config secrets.
         """
+        print("   ┌──────────────────────────────────────────────────┐")
+        print("   │  ⚡ HemSpect™ — Data Leakage Intelligence Engine  │")
+        print("   │     Tier1: Extension | Tier2: Name | Tier3: Deep  │")
+        print("   └──────────────────────────────────────────────────┘")
         print("   [*] HemSpect engine initializing...")
 
         hemspect_findings: List[Dict] = []
@@ -1700,7 +1705,12 @@ class PSADTSecureScanner:
             self._update_summary(issue["severity"])
 
         total = len(hemspect_findings)
-        print(f"   [*] HemSpect complete: Tier1={tier1_count} Tier2={tier2_count} Tier3={tier3_count} (Total: {total})")
+        if total > 0:
+            print(f"   [⚡] HemSpect ALERT: {total} data leakage issue(s) found!")
+        else:
+            print(f"   [⚡] HemSpect: No data leakage detected.")
+        print(f"   [*] HemSpect summary: Tier1={tier1_count} Tier2={tier2_count} Tier3={tier3_count} (Total: {total})")
+        print("   └── HemSpect sweep complete.")
 
     # =========================================================================
     # Step 5: Malware Pattern Detection
