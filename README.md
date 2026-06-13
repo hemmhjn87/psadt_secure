@@ -220,9 +220,7 @@ hemspect/
 │       ├── report_generator.py      # Enterprise HTML report generator
 │       ├── sbom_generator.py        # CycloneDX + SPDX SBOM generator
 │       └── approval_workflow.py     # 3-stage approval workflow
-└── tests/
-    └── fixtures/
-        └── test_package/            # Built-in test package
+
 ```
 
 ---

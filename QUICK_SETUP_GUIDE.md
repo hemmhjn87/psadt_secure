@@ -10,7 +10,7 @@ pip install -r requirements.txt
 
 ### Step 2: Scan Package (2 min)
 ```bash
-python src/scanners/scan_psadt.py "C:\SCCM\Packages\MyPackage"
+python main.py scan "C:\SCCM\Packages\MyPackage"
 ```
 
 ### Step 3: Review Report (1 min)
@@ -25,20 +25,20 @@ open psadt_scan_[timestamp]/report.html
 
 ### Scan with custom output directory
 ```bash
-python src/scanners/scan_psadt.py "C:\Packages\App" "C:\Reports"
+python main.py scan "C:\Packages\App" -o "C:\Reports"
 ```
 
 ### Scan all packages
 ```bash
 for pkg in C:\SCCM\Packages\*; do
   echo "Scanning: $pkg"
-  python src/scanners/scan_psadt.py "$pkg"
+  python main.py scan "$pkg"
 done
 ```
 
 ### Integration with CI/CD
 ```bash
-python src/scanners/scan_psadt.py "$1" && echo "APPROVED" || echo "REJECTED"
+python main.py scan "$1" && echo "APPROVED" || echo "REJECTED"
 ```
 
 ---
@@ -113,7 +113,7 @@ Run PowerShell as Administrator.
 
 | Command | Purpose |
 |---------|---------|
-| `scan_psadt.py <path>` | Scan single package |
+| `python main.py scan <path>` | Scan single package |
 | `report.html` | View results in browser |
 | `findings.json` | Machine-readable results |
 | Exit code 0 | APPROVED |
