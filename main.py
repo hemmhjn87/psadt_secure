@@ -111,15 +111,15 @@ def _make_banner() -> str:
     R    = '\033[0m'    # reset
     B    = '\033[1m'    # bold
     DIM  = '\033[2m'    # dim  / shadow depth
-    CY1  = '\033[96m'   # bright cyan  — nearest plane  (highest glow)
-    CY2  = '\033[36m'   # cyan         — mid plane
-    CY3  = '\033[34m'   # blue         — deep shadow
-    CY4  = '\033[94m'   # bright blue  — accent / subtitle
+    CY1  = '\033[92m'   # bright green  — nearest plane  (highest glow)
+    CY2  = '\033[32m'   # green         — mid plane
+    CY3  = '\033[32m'   # green         — deep shadow (with DIM)
+    CY4  = '\033[92m'   # bright green  — accent / subtitle
 
-    # ── HEMSPECT in figlet "Double" block-art — 6-row cyan glow gradient ─────
-    #    Row 1-2 → bright cyan bold  (closest to viewer, hottest glow)
-    #    Row 3-4 → regular cyan      (mid-field)
-    #    Row 5-6 → dim blue          (receding into holographic mist)
+    # ── HEMSPECT in figlet "Double" block-art — 6-row green glow gradient ─────
+    #    Row 1-2 → bright green bold  (closest to viewer, hottest glow)
+    #    Row 3-4 → regular green      (mid-field)
+    #    Row 5-6 → dim green          (receding into holographic mist)
     _art = [
         f"{CY1}{B}  \u2588\u2588\u256d  \u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d\u2588\u2588\u2588\u256d   \u2588\u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u256d \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d \u2588\u2588\u2588\u2588\u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d{R}",
         f"{CY1}{B}  \u2588\u2588\u2551  \u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u2588\u2588\u2588\u2588\u256d \u2588\u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u256d\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u255a\u2550\u2550\u2588\u2588\u2554\u2550\u2550\u255d{R}",
@@ -130,45 +130,18 @@ def _make_banner() -> str:
     ]
 
     # ── Decorative elements ───────────────────────────────────────────────────
-    _W  = 70
-    SEP = f"  {CY1}\u25c8{CY2}{'━' * (_W - 2)}{CY1}\u25c8{R}"
-    SEP2= f"  {CY3}\u25c8{CY3}{'─' * (_W - 2)}{CY3}\u25c8{R}"
     PTC = (
         f"  {DIM}{CY3}"
         f"\u00b7 \u00b7 \u00b7   \u00b7  \u00b7 \u00b7    \u00b7      "
         f"\u00b7  \u00b7 \u00b7    \u00b7   \u00b7  \u00b7 \u00b7    \u00b7   \u00b7   \u00b7 \u00b7 \u00b7"
         f"{R}"
     )
-    SUB = (
-        f"  {CY4}\u2b21  {CY2}ANTI-GRAVITY SECURITY LAB"
-        f"{R}  {CY3}\u00b7{R}  "
-        f"{CY2}HOLOGRAPHIC INTELLIGENCE ENGINE  "
-        f"{CY4}\u2b21{R}"
-    )
-    INF = f"  {CY1}\u26a1 {CY2}Powered by HemSpect\u2122 Data Leakage Intelligence Engine  \u00b7  v3.0{R}"
-    TGS = (
-        f"  {DIM}{CY3}\u25b8 "
-        f"{CY2}NIST 800-53  {CY3}\u25c8  "
-        f"{CY2}CMMC 2.0  {CY3}\u25c8  "
-        f"{CY2}IEC 62443  {CY3}\u25c8  "
-        f"{CY2}CIS v8  {CY3}\u25c8  "
-        f"{CY2}MITRE ATT&CK{R}"
-    )
 
     return (
         "\n"
         f"{PTC}\n"
         "\n"
-        f"{SEP}\n"
-        f"{SUB}\n"
-        f"{SEP}\n"
-        "\n"
         + "\n".join(_art) + "\n"
-        "\n"
-        f"{SEP2}\n"
-        f"{INF}\n"
-        f"{TGS}\n"
-        f"{SEP2}\n"
         "\n"
         f"{PTC}\n"
     )
