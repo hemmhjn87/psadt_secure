@@ -16,7 +16,56 @@ reviewed_by: "Security Operations"
 # Exceptions with no expiry are treated as expired (rejected)
 # Exceptions are re-evaluated on each scan against active ticket status
 
-exceptions: []
+exceptions:
+  - id: exc-framework-01
+    rule_id: privilege_escalation_api
+    file_pattern: "*/PSAppDeployToolkit.psm1"
+    approved_by: "hemen"
+    approved_date: "2026-06-13"
+    ticket: "EXMPT-0001"
+    expiry: "2027-06-13"
+    justification: "PSADT v4 framework — required for elevation logic"
+    risk_accepted: "LOW - framework logic"
+
+  - id: exc-framework-02
+    rule_id: xml_password_attribute
+    file_pattern: "*/PSADT.ClientServer.Client*.exe.config"
+    approved_by: "hemen"
+    approved_date: "2026-06-13"
+    ticket: "EXMPT-0002"
+    expiry: "2027-06-13"
+    justification: "PSADT v4 IPC config — framework artifact, not packager credential"
+    risk_accepted: "LOW - framework logic"
+
+  - id: exc-framework-03
+    rule_id: dynamic_secret_hex_high_entropy_string
+    file_pattern: "*/PSADT.ClientServer.Client*.exe.config"
+    approved_by: "hemen"
+    approved_date: "2026-06-13"
+    ticket: "EXMPT-0003"
+    expiry: "2027-06-13"
+    justification: "PSADT v4 framework hash — not a real secret"
+    risk_accepted: "LOW - framework logic"
+
+  - id: exc-framework-04
+    rule_id: obfuscation_detected
+    file_pattern: "*/strings.psd1"
+    approved_by: "hemen"
+    approved_date: "2026-06-13"
+    ticket: "EXMPT-0004"
+    expiry: "2027-06-13"
+    justification: "PSADT v4 localization resource file — not user code"
+    risk_accepted: "LOW - framework logic"
+
+  - id: exc-framework-05
+    rule_id: packed_binary
+    file_pattern: "*/Invoke-AppDeployToolkit.exe"
+    approved_by: "hemen"
+    approved_date: "2026-06-13"
+    ticket: "EXMPT-0005"
+    expiry: "2027-06-13"
+    justification: "PSADT v4 framework launcher — compiled binary with expected high entropy"
+    risk_accepted: "LOW - framework logic"
   # Example exception (uncomment and customize):
   # - id: exc-001
   #   rule_id: external_download
