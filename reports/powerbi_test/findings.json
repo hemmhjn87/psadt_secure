@@ -1,0 +1,1982 @@
+{
+  "timestamp": "2026-06-12T04:16:02.815824+00:00",
+  "package": "1.0",
+  "package_path": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0",
+  "scanner_version": "3.0 (CLI v3.0)",
+  "operator": "hemen",
+  "risk_score": 100.0,
+  "summary": {
+    "total_issues": 22,
+    "critical": 12,
+    "high": 5,
+    "medium": 5,
+    "low": 0,
+    "info": 0,
+    "suppressed": 0,
+    "approval_status": "REJECTED",
+    "files_scanned": 33,
+    "ps_files": 33,
+    "msi_files": 0,
+    "binaries_analyzed": 1,
+    "scan_duration": 7.64,
+    "framework_files_skipped": 36,
+    "false_positives_excluded": 1
+  },
+  "issues": [
+    {
+      "rule_id": "psadt_unvalidated_path",
+      "type": "PowerShell",
+      "subtype": "psadt_unvalidated_path",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Files\\Terraform_UserSetup.ps1",
+      "line": 5,
+      "pattern": "psadt_unvalidated_path",
+      "severity": "HIGH",
+      "match": "Copy-ADTFile -Path \"$env:ProgramData\\Terraform_User_Level_Install\\terraform.exe\" -Destination $",
+      "context": "New-ADTFolder -Path $dest\n\nCopy-ADTFile -Path \"$env:ProgramData\\Terraform_User_Level_Install\\terraform.exe\" -Destination $dest -Force\n\nif ($env:PATH -notlike \"*Terraform*\") {",
+      "description": "PSADT file/process cmdlet with non-ADT variable path - potential path traversal",
+      "remediation": "Validate all path parameters against known safe prefixes",
+      "mitre_id": "T1083",
+      "cwe_id": "CWE-22",
+      "cvss": {
+        "base_score": 6.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hardcoded_credential",
+      "type": "PowerShell",
+      "subtype": "hardcoded_credential",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 9,
+      "pattern": "hardcoded_credential",
+      "severity": "CRITICAL",
+      "match": "$password = 'Pr0duction_DB_P@ss!'",
+      "context": "\n# --- Test Case 2: Database password in variable ---\n$password = 'Pr0duction_DB_P@ss!'\n\n# --- Test Case 3: Connection string ---",
+      "description": "Hardcoded password literal found in script variable",
+      "remediation": "Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "secure_string_plaintext",
+      "type": "PowerShell",
+      "subtype": "secure_string_plaintext",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 15,
+      "pattern": "secure_string_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force",
+      "context": "\n# --- Test Case 4: PSCredential construction ---\n$credential = New-Object System.Management.Automation.PSCredential(\"deploy_user\", (ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force))\n\n# --- Test Case 5: Bearer token ---",
+      "description": "SecureString constructed from plaintext with -AsPlainText -Force",
+      "remediation": "Remove -AsPlainText -Force; use DPAPI or managed credential store",
+      "mitre_id": "T1552",
+      "cwe_id": "CWE-312",
+      "cvss": {
+        "base_score": 8.1,
+        "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\fr\\strings.psd1",
+      "line": 45,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`E",
+      "context": "            Install = \"Vous n'avez pas assez d'espace disque pour terminer l'installation de:`n{0}`n`space requis : {1}MB`n espace disponible : {2}MB`n`nVeuillez lib\u00e9rer suffisamment d'espace disque pour poursuivre l'installation.\"\n            Repair = \"Vous n'avez pas assez d'espace disque pour ter",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\nb\\strings.psd1",
+      "line": 43,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`P",
+      "context": "    DiskSpaceText = @{\n        Message = @{\n            Install = \"Du har ikke nok diskplass til \u00e5 fullf\u00f8re installasjonen av:`n{0}`n`n`Plass kreves: {1}MB`nTilgjengelig plass: {2}MB`n`nFrigj\u00f8r nok diskplass for \u00e5 kunne fortsette med installasjonen.\"\n            Repair = \"Du har ikke nok diskplass t",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\pt\\strings.psd1",
+      "line": 44,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`n",
+      "context": "        Message = @{\n            Install = \"N\u00e3o tem espa\u00e7o em disco suficiente para completar a instala\u00e7\u00e3o de:`n{0}`n`nEspa\u00e7o necess\u00e1rio: {1}MB`n`nEspa\u00e7o dispon\u00edvel: {2}MB`n`nPor favor, liberte espa\u00e7o suficiente no disco para poder prosseguir com a instala\u00e7\u00e3o.\"\n            Repair = \"N\u00e3o tem espa\u00e7o s",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\pt\\strings.psd1",
+      "line": 45,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`n",
+      "context": "            Install = \"N\u00e3o tem espa\u00e7o em disco suficiente para completar a instala\u00e7\u00e3o de:`n{0}`n`nEspa\u00e7o necess\u00e1rio: {1}MB`n`nEspa\u00e7o dispon\u00edvel: {2}MB`n`nPor favor, liberte espa\u00e7o suficiente no disco para poder prosseguir com a instala\u00e7\u00e3o.\"\n            Repair = \"N\u00e3o tem espa\u00e7o suficiente no disco pa",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "packed_binary",
+      "type": "Binary",
+      "subtype": "packed_binary",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Invoke-AppDeployToolkit.exe",
+      "line": 0,
+      "pattern": "Packed/Obfuscated Binary",
+      "severity": "MEDIUM",
+      "match": "High entropy (7.81) - likely packed or encrypted sections",
+      "context": "",
+      "description": "High entropy (7.81) - likely packed or encrypted sections",
+      "remediation": "Provide unpacked binary or source code for review",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-656",
+      "cvss": {
+        "base_score": 5.3,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.9
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 6,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "Password = \"Service@ccount#2024!\"",
+      "context": "\n# --- Test Case 1: Service account password ---\n$svcPassword = \"Service@ccount#2024!\"\n\n# --- Test Case 2: Database password in variable ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "Service@ccount#2024!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 9,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = 'Pr0duction_DB_P@ss!'",
+      "context": "\n# --- Test Case 2: Database password in variable ---\n$password = 'Pr0duction_DB_P@ss!'\n\n# --- Test Case 3: Connection string ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "Pr0duction_DB_P@ss!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "secure_string_plaintext",
+      "type": "Credential",
+      "subtype": "secure_string_plaintext",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 15,
+      "pattern": "secure_string_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force",
+      "context": "\n# --- Test Case 4: PSCredential construction ---\n$credential = New-Object System.Management.Automation.PSCredential(\"deploy_user\", (ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force))\n\n# --- Test Case 5: Bearer token ---",
+      "description": "SecureString from plaintext \u2014 password fully exposed in source",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "D3ploy_S3cret!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "connection_string_password",
+      "type": "Credential",
+      "subtype": "connection_string_password",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 12,
+      "pattern": "connection_string_password",
+      "severity": "CRITICAL",
+      "match": "connStr = \"Data Source=SQL01;Initial Catalog=PowerBI;User ID=pbi_admin;Password=PBI#Admin2024\"",
+      "context": "\n# --- Test Case 3: Connection string ---\n$connStr = \"Data Source=SQL01;Initial Catalog=PowerBI;User ID=pbi_admin;Password=PBI#Admin2024\"\n\n# --- Test Case 4: PSCredential construction ---",
+      "description": "Database connection string with embedded password",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "PBI#Admin2024",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "bearer_token",
+      "type": "Credential",
+      "subtype": "bearer_token",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 18,
+      "pattern": "bearer_token",
+      "severity": "CRITICAL",
+      "match": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U",
+      "context": "\n# --- Test Case 5: Bearer token ---\n$token = \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U\"",
+      "description": "JWT Bearer token detected",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 2cf89794762093229cae0b92bdb92b2722e2a97a",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 2cf89794762093229cae0b92bdb92b2722e2a97a",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 7035fd421dc763ba85d22016b9427c383358eae5",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "hemspect_sql_conn_string",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 12,
+      "pattern": "hemspect_sql_conn_string",
+      "severity": "CRITICAL",
+      "match": "Data Source=SQL01;Initial Catalog=PowerBI;User ID=pbi_admin;Password=PBI#****\"",
+      "context": "\n# --- Test Case 3: Connection string ---\n$connStr = \"Data Source=SQL01;Initial Catalog=PowerBI;User ID=pbi_admin;Password=PBI#Admin2024\"\n\n# --- Test Case 4: PSCredential construction ---",
+      "description": "HemSpect: SQL Connection String with embedded password",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_xml_password_attribute",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 6,
+      "pattern": "hemspect_xml_password_attribute",
+      "severity": "HIGH",
+      "match": "Password = \"Serv****\"",
+      "context": "\n# --- Test Case 1: Service account password ---\n$svcPassword = \"Service@ccount#2024!\"\n\n# --- Test Case 2: Database password in variable ---",
+      "description": "HemSpect: XML/Config attribute with credential value",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_ps_securestring_plaintext",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 15,
+      "pattern": "hemspect_ps_securestring_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText",
+      "context": "\n# --- Test Case 4: PSCredential construction ---\n$credential = New-Object System.Management.Automation.PSCredential(\"deploy_user\", (ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force))\n\n# --- Test Case 5: Bearer token ---",
+      "description": "HemSpect: ConvertTo-SecureString with plaintext input",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_xml_password_attribute",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "line": 6,
+      "pattern": "hemspect_xml_password_attribute",
+      "severity": "HIGH",
+      "match": "Token=\"b03f****\"",
+      "context": "    <assemblyBinding xmlns=\"urn:schemas-microsoft-com:asm.v1\">\n      <dependentAssembly>\n        <assemblyIdentity name=\"System.Numerics.Vectors\" publicKeyToken=\"b03f5f7f11d50a3a\" culture=\"neutral\" />\n        <bindingRedirect oldVersion=\"0.0.0.0-4.1.6.0\" newVersion=\"4.1.6.0\" />\n      </dependentAsse",
+      "description": "HemSpect: XML/Config attribute with credential value",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_xml_password_attribute",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "line": 6,
+      "pattern": "hemspect_xml_password_attribute",
+      "severity": "HIGH",
+      "match": "Token=\"b03f****\"",
+      "context": "    <assemblyBinding xmlns=\"urn:schemas-microsoft-com:asm.v1\">\n      <dependentAssembly>\n        <assemblyIdentity name=\"System.Numerics.Vectors\" publicKeyToken=\"b03f5f7f11d50a3a\" culture=\"neutral\" />\n        <bindingRedirect oldVersion=\"0.0.0.0-4.1.6.0\" newVersion=\"4.1.6.0\" />\n      </dependentAsse",
+      "description": "HemSpect: XML/Config attribute with credential value",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "privilege_escalation_api",
+      "type": "Malware",
+      "subtype": "privilege_escalation_api",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\PSAppDeployToolkit.psm1",
+      "line": 476,
+      "pattern": "privilege_escalation_api",
+      "severity": "HIGH",
+      "match": "SeDebugPrivilege",
+      "context": "    {\n        # If we're running as an interactive user that isn't the RunAsActiveUser, that's not SYSTEM, and doesn't have the permissions needed to create a process as another user, advise the caller and create an explicit RunAsActiveUser object for the caller instead.\n        if (!$runAsActiveUse",
+      "description": "Malware indicator: privilege_escalation_api",
+      "remediation": "BLOCK PACKAGE - IMMEDIATE SECURITY INVESTIGATION REQUIRED",
+      "mitre_id": "T1068",
+      "cwe_id": "CWE-506",
+      "cvss": {
+        "base_score": 7.5,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "SI-3",
+          "CM-7",
+          "CA-7"
+        ],
+        "cmmc_2": [
+          "SI.1.210",
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-10"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    }
+  ],
+  "suppressed_findings": [],
+  "ps_analysis": [
+    {
+      "rule_id": "psadt_unvalidated_path",
+      "type": "PowerShell",
+      "subtype": "psadt_unvalidated_path",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Files\\Terraform_UserSetup.ps1",
+      "line": 5,
+      "pattern": "psadt_unvalidated_path",
+      "severity": "HIGH",
+      "match": "Copy-ADTFile -Path \"$env:ProgramData\\Terraform_User_Level_Install\\terraform.exe\" -Destination $",
+      "context": "New-ADTFolder -Path $dest\n\nCopy-ADTFile -Path \"$env:ProgramData\\Terraform_User_Level_Install\\terraform.exe\" -Destination $dest -Force\n\nif ($env:PATH -notlike \"*Terraform*\") {",
+      "description": "PSADT file/process cmdlet with non-ADT variable path - potential path traversal",
+      "remediation": "Validate all path parameters against known safe prefixes",
+      "mitre_id": "T1083",
+      "cwe_id": "CWE-22",
+      "cvss": {
+        "base_score": 6.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hardcoded_credential",
+      "type": "PowerShell",
+      "subtype": "hardcoded_credential",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 9,
+      "pattern": "hardcoded_credential",
+      "severity": "CRITICAL",
+      "match": "$password = 'Pr0duction_DB_P@ss!'",
+      "context": "\n# --- Test Case 2: Database password in variable ---\n$password = 'Pr0duction_DB_P@ss!'\n\n# --- Test Case 3: Connection string ---",
+      "description": "Hardcoded password literal found in script variable",
+      "remediation": "Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "secure_string_plaintext",
+      "type": "PowerShell",
+      "subtype": "secure_string_plaintext",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 15,
+      "pattern": "secure_string_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force",
+      "context": "\n# --- Test Case 4: PSCredential construction ---\n$credential = New-Object System.Management.Automation.PSCredential(\"deploy_user\", (ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force))\n\n# --- Test Case 5: Bearer token ---",
+      "description": "SecureString constructed from plaintext with -AsPlainText -Force",
+      "remediation": "Remove -AsPlainText -Force; use DPAPI or managed credential store",
+      "mitre_id": "T1552",
+      "cwe_id": "CWE-312",
+      "cvss": {
+        "base_score": 8.1,
+        "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\fr\\strings.psd1",
+      "line": 45,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`E",
+      "context": "            Install = \"Vous n'avez pas assez d'espace disque pour terminer l'installation de:`n{0}`n`space requis : {1}MB`n espace disponible : {2}MB`n`nVeuillez lib\u00e9rer suffisamment d'espace disque pour poursuivre l'installation.\"\n            Repair = \"Vous n'avez pas assez d'espace disque pour ter",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\nb\\strings.psd1",
+      "line": 43,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`P",
+      "context": "    DiskSpaceText = @{\n        Message = @{\n            Install = \"Du har ikke nok diskplass til \u00e5 fullf\u00f8re installasjonen av:`n{0}`n`n`Plass kreves: {1}MB`nTilgjengelig plass: {2}MB`n`nFrigj\u00f8r nok diskplass for \u00e5 kunne fortsette med installasjonen.\"\n            Repair = \"Du har ikke nok diskplass t",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\pt\\strings.psd1",
+      "line": 44,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`n",
+      "context": "        Message = @{\n            Install = \"N\u00e3o tem espa\u00e7o em disco suficiente para completar a instala\u00e7\u00e3o de:`n{0}`n`nEspa\u00e7o necess\u00e1rio: {1}MB`n`nEspa\u00e7o dispon\u00edvel: {2}MB`n`nPor favor, liberte espa\u00e7o suficiente no disco para poder prosseguir com a instala\u00e7\u00e3o.\"\n            Repair = \"N\u00e3o tem espa\u00e7o s",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\pt\\strings.psd1",
+      "line": 45,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`n",
+      "context": "            Install = \"N\u00e3o tem espa\u00e7o em disco suficiente para completar a instala\u00e7\u00e3o de:`n{0}`n`nEspa\u00e7o necess\u00e1rio: {1}MB`n`nEspa\u00e7o dispon\u00edvel: {2}MB`n`nPor favor, liberte espa\u00e7o suficiente no disco para poder prosseguir com a instala\u00e7\u00e3o.\"\n            Repair = \"N\u00e3o tem espa\u00e7o suficiente no disco pa",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    }
+  ],
+  "binary_analysis": [
+    {
+      "rule_id": "packed_binary",
+      "type": "Binary",
+      "subtype": "packed_binary",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Invoke-AppDeployToolkit.exe",
+      "line": 0,
+      "pattern": "Packed/Obfuscated Binary",
+      "severity": "MEDIUM",
+      "match": "High entropy (7.81) - likely packed or encrypted sections",
+      "context": "",
+      "description": "High entropy (7.81) - likely packed or encrypted sections",
+      "remediation": "Provide unpacked binary or source code for review",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-656",
+      "cvss": {
+        "base_score": 5.3,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.9
+    }
+  ],
+  "credential_findings": [
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 6,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "Password = \"Service@ccount#2024!\"",
+      "context": "\n# --- Test Case 1: Service account password ---\n$svcPassword = \"Service@ccount#2024!\"\n\n# --- Test Case 2: Database password in variable ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "Service@ccount#2024!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 9,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = 'Pr0duction_DB_P@ss!'",
+      "context": "\n# --- Test Case 2: Database password in variable ---\n$password = 'Pr0duction_DB_P@ss!'\n\n# --- Test Case 3: Connection string ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "Pr0duction_DB_P@ss!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "secure_string_plaintext",
+      "type": "Credential",
+      "subtype": "secure_string_plaintext",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 15,
+      "pattern": "secure_string_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force",
+      "context": "\n# --- Test Case 4: PSCredential construction ---\n$credential = New-Object System.Management.Automation.PSCredential(\"deploy_user\", (ConvertTo-SecureString \"D3ploy_S3cret!\" -AsPlainText -Force))\n\n# --- Test Case 5: Bearer token ---",
+      "description": "SecureString from plaintext \u2014 password fully exposed in source",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "D3ploy_S3cret!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "connection_string_password",
+      "type": "Credential",
+      "subtype": "connection_string_password",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 12,
+      "pattern": "connection_string_password",
+      "severity": "CRITICAL",
+      "match": "connStr = \"Data Source=SQL01;Initial Catalog=PowerBI;User ID=pbi_admin;Password=PBI#Admin2024\"",
+      "context": "\n# --- Test Case 3: Connection string ---\n$connStr = \"Data Source=SQL01;Initial Catalog=PowerBI;User ID=pbi_admin;Password=PBI#Admin2024\"\n\n# --- Test Case 4: PSCredential construction ---",
+      "description": "Database connection string with embedded password",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "PBI#Admin2024",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "bearer_token",
+      "type": "Credential",
+      "subtype": "bearer_token",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "line": 18,
+      "pattern": "bearer_token",
+      "severity": "CRITICAL",
+      "match": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U",
+      "context": "\n# --- Test Case 5: Bearer token ---\n$token = \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U\"",
+      "description": "JWT Bearer token detected",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 2cf89794762093229cae0b92bdb92b2722e2a97a",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 2cf89794762093229cae0b92bdb92b2722e2a97a",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 7035fd421dc763ba85d22016b9427c383358eae5",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    }
+  ],
+  "excluded_credentials": [
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 15,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "pwd = '<CHANGE_ME>'",
+      "context": "\n# --- FP: Template placeholder ---\n$pwd = '<CHANGE_ME>'",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "<CHANGE_ME>",
+      "is_false_positive": true,
+      "fp_reason": "Template placeholder: <[A-Z_]+>"
+    }
+  ],
+  "malware_indicators": [
+    {
+      "rule_id": "privilege_escalation_api",
+      "type": "Malware",
+      "subtype": "privilege_escalation_api",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\PSAppDeployToolkit.psm1",
+      "line": 476,
+      "pattern": "privilege_escalation_api",
+      "severity": "HIGH",
+      "match": "SeDebugPrivilege",
+      "context": "    {\n        # If we're running as an interactive user that isn't the RunAsActiveUser, that's not SYSTEM, and doesn't have the permissions needed to create a process as another user, advise the caller and create an explicit RunAsActiveUser object for the caller instead.\n        if (!$runAsActiveUse",
+      "description": "Malware indicator: privilege_escalation_api",
+      "remediation": "BLOCK PACKAGE - IMMEDIATE SECURITY INVESTIGATION REQUIRED",
+      "mitre_id": "T1068",
+      "cwe_id": "CWE-506",
+      "cvss": {
+        "base_score": 7.5,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "SI-3",
+          "CM-7",
+          "CA-7"
+        ],
+        "cmmc_2": [
+          "SI.1.210",
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-10"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    }
+  ],
+  "obfuscation_detected": [],
+  "risky_behaviors": [
+    {
+      "behavior": "psadt_unvalidated_path",
+      "severity": "HIGH"
+    },
+    {
+      "behavior": "hardcoded_credential",
+      "severity": "CRITICAL"
+    },
+    {
+      "behavior": "secure_string_plaintext",
+      "severity": "CRITICAL"
+    },
+    {
+      "behavior": "obfuscation_detected",
+      "severity": "MEDIUM"
+    },
+    {
+      "behavior": "obfuscation_detected",
+      "severity": "MEDIUM"
+    },
+    {
+      "behavior": "obfuscation_detected",
+      "severity": "MEDIUM"
+    },
+    {
+      "behavior": "obfuscation_detected",
+      "severity": "MEDIUM"
+    }
+  ],
+  "mitre_mapping": [
+    {
+      "technique_id": "T1083",
+      "tactic": "Discovery",
+      "technique_name": "File and Directory Discovery",
+      "rule_id": "psadt_unvalidated_path",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Files\\Terraform_UserSetup.ps1",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Credential Access",
+      "technique_name": "Unsecured Credentials: Credentials in Files",
+      "rule_id": "hardcoded_credential",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552",
+      "tactic": "Credential Access",
+      "technique_name": "Unsecured Credentials",
+      "rule_id": "secure_string_plaintext",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Defense Evasion",
+      "technique_name": "Obfuscated Files or Information",
+      "rule_id": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\fr\\strings.psd1",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Defense Evasion",
+      "technique_name": "Obfuscated Files or Information",
+      "rule_id": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\nb\\strings.psd1",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Defense Evasion",
+      "technique_name": "Obfuscated Files or Information",
+      "rule_id": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\pt\\strings.psd1",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Defense Evasion",
+      "technique_name": "Obfuscated Files or Information",
+      "rule_id": "obfuscation_detected",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Strings\\pt\\strings.psd1",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Unknown",
+      "technique_name": "packed_binary",
+      "rule_id": "packed_binary",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\Invoke-AppDeployToolkit.exe",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "password_string",
+      "rule_id": "password_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "password_string",
+      "rule_id": "password_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Credential Access",
+      "technique_name": "Unsecured Credentials",
+      "rule_id": "secure_string_plaintext",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "connection_string_password",
+      "rule_id": "connection_string_password",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "bearer_token",
+      "rule_id": "bearer_token",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "dynamic_secret_hex_high_entropy_string",
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "dynamic_secret_hex_high_entropy_string",
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "dynamic_secret_hex_high_entropy_string",
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_false_positives.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_sql_conn_string",
+      "rule_id": "hemspect_sql_conn_string",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_xml_password_attribute",
+      "rule_id": "hemspect_xml_password_attribute",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_ps_securestring_plaintext",
+      "rule_id": "hemspect_ps_securestring_plaintext",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_xml_password_attribute",
+      "rule_id": "hemspect_xml_password_attribute",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_xml_password_attribute",
+      "rule_id": "hemspect_xml_password_attribute",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1068",
+      "tactic": "Unknown",
+      "technique_name": "privilege_escalation_api",
+      "rule_id": "privilege_escalation_api",
+      "file": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0\\PSAppDeployToolkit\\PSAppDeployToolkit.psm1",
+      "severity": "HIGH"
+    }
+  ],
+  "psadt_v4_findings": [],
+  "msi_findings": [],
+  "remediation": [],
+  "compliance_summary": {
+    "nist_800_53": [
+      "CA-7",
+      "CM-7",
+      "IA-5",
+      "SA-11",
+      "SI-3",
+      "SI-7"
+    ],
+    "cmmc_2": [
+      "CM.2.061",
+      "IA.3.083",
+      "SI.1.210"
+    ],
+    "cis_v8": [
+      "CIS-10",
+      "CIS-16",
+      "CIS-2",
+      "CIS-3"
+    ],
+    "iec_62443": [
+      "SR_3.2"
+    ],
+    "owasp": [
+      "A02:2021",
+      "A05:2021"
+    ]
+  },
+  "manifest": {
+    "hash_sha256": "550ebc377aaa8c87c7bc01390a844c77abb87fe6a4071c93a630216db8359874",
+    "timestamp": "2026-06-12T04:16:10.372681+00:00",
+    "signed": true
+  },
+  "metrics": {
+    "entropy_analysis": [
+      {
+        "file": "Invoke-AppDeployToolkit.exe",
+        "sha256": "8c32e7970a953d2f28e15d29076ef0578ccc18770ff23b752361b9271ad3cdab",
+        "entropy": 7.8131,
+        "packed": true
+      }
+    ],
+    "code_complexity": 0,
+    "risk_factors": []
+  }
+}

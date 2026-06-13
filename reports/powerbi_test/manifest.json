@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "timestamp": "2026-06-12T04:16:10.372681+00:00",
+  "operator": "SYSTEM",
+  "scanner_version": "3.0",
+  "package_path": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0",
+  "package_hash_sha256": "a3dc2cbc530a97b0e2c810297c9ae932597892a3bcb03ab5b520557791c34f47",
+  "total_findings": 22,
+  "suppressed_findings": 0,
+  "findings_hash_sha256": "930ca72ffcb5aa3fadedb545518eb39887508353850ad33141e0cd0a811c486d",
+  "risk_score": 100.0,
+  "approval_status": "REJECTED"
+}

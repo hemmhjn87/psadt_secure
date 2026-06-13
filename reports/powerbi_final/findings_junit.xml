@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites>
+  <testsuite name="PSADT-Security-Scan" package="1.0" timestamp="2026-06-13T14:15:49.563520+00:00" tests="33" failures="17" errors="12" skipped="0" time="0.0">
+    <testcase name="Security scan: strings.psd1" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\Strings\fr\strings.psd1">
+      <failure message="[MEDIUM] obfuscation_detected at line 45: Multiple obfuscation indicators in script body" type="MEDIUM">[MEDIUM] obfuscation_detected at line 45: Multiple obfuscation indicators in script body</failure>
+    </testcase>
+    <testcase name="Security scan: test_false_positives.ps1" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\_test_credentials\test_false_positives.ps1">
+      <error message="[CRITICAL] dynamic_secret_hex_high_entropy_string at line 6: Dynamic credential detection: Hex High Entropy String" type="CRITICAL">Rule:        dynamic_secret_hex_high_entropy_string
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       High entropy string or pattern detected (Hex High Entropy String)
+Remediation: Move to Azure Key Vault or SCCM Task Sequence Variable.</error>
+    </testcase>
+    <testcase name="Security scan: strings.psd1" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\Strings\pt\strings.psd1">
+      <failure message="[MEDIUM] obfuscation_detected at line 44: Multiple obfuscation indicators in script body" type="MEDIUM">[MEDIUM] obfuscation_detected at line 44: Multiple obfuscation indicators in script body</failure>
+      <failure message="[MEDIUM] obfuscation_detected at line 45: Multiple obfuscation indicators in script body" type="MEDIUM">[MEDIUM] obfuscation_detected at line 45: Multiple obfuscation indicators in script body</failure>
+    </testcase>
+    <testcase name="Security scan: PSADT.ClientServer.Client.exe.config" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\PSAppDeployToolkit\lib\PSADT.ClientServer.Client.exe.config">
+      <error message="[CRITICAL] dynamic_secret_hex_high_entropy_string at line 6: Dynamic credential detection: Hex High Entropy String" type="CRITICAL">Rule:        dynamic_secret_hex_high_entropy_string
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       High entropy string or pattern detected (Hex High Entropy String)
+Remediation: Move to Azure Key Vault or SCCM Task Sequence Variable.</error>
+      <failure message="[HIGH] hemspect_xml_password_attribute at line 6: HemSpect: XML/Config attribute with credential value" type="HIGH">Rule:        hemspect_xml_password_attribute
+Severity:    HIGH
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       Token="b03f****"
+Remediation: Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).</failure>
+    </testcase>
+    <testcase name="Security scan: PSAppDeployToolkit.psm1" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\PSAppDeployToolkit\PSAppDeployToolkit.psm1">
+      <failure message="[HIGH] privilege_escalation_api at line 476: Malware indicator: privilege_escalation_api" type="HIGH">Rule:        privilege_escalation_api
+Severity:    HIGH
+CVSS Score:  7.5
+MITRE:       T1068
+CWE:         CWE-506
+Match:       SeDebugPrivilege
+Remediation: BLOCK PACKAGE - IMMEDIATE SECURITY INVESTIGATION REQUIRED</failure>
+    </testcase>
+    <testcase name="Security scan: PSADT.ClientServer.Client.Launcher.exe.config" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\PSAppDeployToolkit\lib\PSADT.ClientServer.Client.Launcher.exe.config">
+      <error message="[CRITICAL] dynamic_secret_hex_high_entropy_string at line 6: Dynamic credential detection: Hex High Entropy String" type="CRITICAL">Rule:        dynamic_secret_hex_high_entropy_string
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       High entropy string or pattern detected (Hex High Entropy String)
+Remediation: Move to Azure Key Vault or SCCM Task Sequence Variable.</error>
+      <failure message="[HIGH] hemspect_xml_password_attribute at line 6: HemSpect: XML/Config attribute with credential value" type="HIGH">Rule:        hemspect_xml_password_attribute
+Severity:    HIGH
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       Token="b03f****"
+Remediation: Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).</failure>
+    </testcase>
+    <testcase name="Security scan: test_passwords.ps1" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\_test_credentials\test_passwords.ps1">
+      <error message="[CRITICAL] hardcoded_credential at line 9: Hardcoded password literal found in script variable" type="CRITICAL">Rule:        hardcoded_credential
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       $password = 'Pr0duction_DB_P@ss!'
+Remediation: Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault</error>
+      <error message="[CRITICAL] secure_string_plaintext at line 15: SecureString constructed from plaintext with -AsPlainText -Force" type="CRITICAL">Rule:        secure_string_plaintext
+Severity:    CRITICAL
+CVSS Score:  8.1
+MITRE:       T1552
+CWE:         CWE-312
+Match:       ConvertTo-SecureString "D3ploy_S3cret!" -AsPlainText -Force
+Remediation: Remove -AsPlainText -Force; use DPAPI or managed credential store</error>
+      <error message="[CRITICAL] password_string at line 6: Hardcoded password literal in script" type="CRITICAL">Rule:        password_string
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       Password = "Service@ccount#2024!"
+Remediation: Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.</error>
+      <error message="[CRITICAL] password_string at line 9: Hardcoded password literal in script" type="CRITICAL">Rule:        password_string
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       password = 'Pr0duction_DB_P@ss!'
+Remediation: Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.</error>
+      <error message="[CRITICAL] secure_string_plaintext at line 15: SecureString from plaintext — password fully exposed in source" type="CRITICAL">Rule:        secure_string_plaintext
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       ConvertTo-SecureString "D3ploy_S3cret!" -AsPlainText -Force
+Remediation: Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.</error>
+      <error message="[CRITICAL] connection_string_password at line 12: Database connection string with embedded password" type="CRITICAL">Rule:        connection_string_password
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       connStr = "Data Source=SQL01;Initial Catalog=PowerBI;User ID=pbi_admin;Password=PBI#Admin2024"
+Remediation: Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.</error>
+      <error message="[CRITICAL] bearer_token at line 18: JWT Bearer token detected" type="CRITICAL">Rule:        bearer_token
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U
+Remediation: Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.</error>
+      <error message="[CRITICAL] hemspect_sql_conn_string at line 12: HemSpect: SQL Connection String with embedded password" type="CRITICAL">Rule:        hemspect_sql_conn_string
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       Data Source=SQL01;Initial Catalog=PowerBI;User ID=pbi_admin;Password=PBI#****"
+Remediation: Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).</error>
+      <failure message="[HIGH] hemspect_xml_password_attribute at line 6: HemSpect: XML/Config attribute with credential value" type="HIGH">Rule:        hemspect_xml_password_attribute
+Severity:    HIGH
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       Password = "Serv****"
+Remediation: Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).</failure>
+      <error message="[CRITICAL] hemspect_ps_securestring_plaintext at line 15: HemSpect: ConvertTo-SecureString with plaintext input" type="CRITICAL">Rule:        hemspect_ps_securestring_plaintext
+Severity:    CRITICAL
+CVSS Score:  9.1
+MITRE:       T1552.001
+CWE:         CWE-798
+Match:       ConvertTo-SecureString "D3ploy_S3cret!" -AsPlainText
+Remediation: Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).</error>
+    </testcase>
+    <testcase name="Security scan: Invoke-AppDeployToolkit.exe" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\Invoke-AppDeployToolkit.exe">
+      <failure message="[MEDIUM] packed_binary at line 0: High entropy (7.81) - likely packed or encrypted sections" type="MEDIUM">[MEDIUM] packed_binary at line 0: High entropy (7.81) - likely packed or encrypted sections</failure>
+    </testcase>
+    <testcase name="Security scan: strings.psd1" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\Strings\nb\strings.psd1">
+      <failure message="[MEDIUM] obfuscation_detected at line 43: Multiple obfuscation indicators in script body" type="MEDIUM">[MEDIUM] obfuscation_detected at line 43: Multiple obfuscation indicators in script body</failure>
+    </testcase>
+    <testcase name="Security scan: Terraform_UserSetup.ps1" classname="HemSpectScanner" file="E:\packages\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\1.0\Files\Terraform_UserSetup.ps1">
+      <failure message="[HIGH] psadt_unvalidated_path at line 5: PSADT file/process cmdlet with non-ADT variable path - potential path traversal" type="HIGH">Rule:        psadt_unvalidated_path
+Severity:    HIGH
+CVSS Score:  6.5
+MITRE:       T1083
+CWE:         CWE-22
+Match:       Copy-ADTFile -Path "$env:ProgramData\Terraform_User_Level_Install\terraform.exe" -Destination $
+Remediation: Validate all path parameters against known safe prefixes</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

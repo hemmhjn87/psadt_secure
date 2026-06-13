@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "timestamp": "2026-06-12T04:17:19.226404+00:00",
+  "operator": "SYSTEM",
+  "scanner_version": "3.0",
+  "package_path": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0",
+  "package_hash_sha256": "9556fa399fc857fb10b60891478134435ef250d4153c21e6ef9af1dd8014545f",
+  "total_findings": 34,
+  "suppressed_findings": 0,
+  "findings_hash_sha256": "5c5f65f8c73cdfa8bae6fd570c9eadfc5ff2174a4910690dfe9ba9572b81b0eb",
+  "risk_score": 100.0,
+  "approval_status": "REJECTED"
+}

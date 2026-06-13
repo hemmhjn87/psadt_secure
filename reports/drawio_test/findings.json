@@ -1,0 +1,3188 @@
+{
+  "timestamp": "2026-06-12T04:17:13.742430+00:00",
+  "package": "JGraph-Draw.io-29.6.1-EN-1.0.0",
+  "package_path": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0",
+  "scanner_version": "3.0 (CLI v3.0)",
+  "operator": "hemen",
+  "risk_score": 100.0,
+  "summary": {
+    "total_issues": 34,
+    "critical": 22,
+    "high": 7,
+    "medium": 5,
+    "low": 0,
+    "info": 0,
+    "suppressed": 0,
+    "approval_status": "REJECTED",
+    "files_scanned": 32,
+    "ps_files": 32,
+    "msi_files": 0,
+    "binaries_analyzed": 1,
+    "scan_duration": 5.52,
+    "framework_files_skipped": 36,
+    "false_positives_excluded": 3
+  },
+  "issues": [
+    {
+      "rule_id": "hardcoded_credential",
+      "type": "PowerShell",
+      "subtype": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 17,
+      "pattern": "hardcoded_credential",
+      "severity": "CRITICAL",
+      "match": "$password = '<YOUR_PASSWORD_HERE>'",
+      "context": "\n# --- FP Case 4: Template placeholder ---\n$password = '<YOUR_PASSWORD_HERE>'\n$password = 'PLACEHOLDER'\n",
+      "description": "Hardcoded password literal found in script variable",
+      "remediation": "Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hardcoded_credential",
+      "type": "PowerShell",
+      "subtype": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 18,
+      "pattern": "hardcoded_credential",
+      "severity": "CRITICAL",
+      "match": "$password = 'PLACEHOLDER'",
+      "context": "# --- FP Case 4: Template placeholder ---\n$password = '<YOUR_PASSWORD_HERE>'\n$password = 'PLACEHOLDER'\n\n# --- FP Case 5: Variable reference (not literal) ---",
+      "description": "Hardcoded password literal found in script variable",
+      "remediation": "Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hardcoded_credential",
+      "type": "PowerShell",
+      "subtype": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 8,
+      "pattern": "hardcoded_credential",
+      "severity": "CRITICAL",
+      "match": "$password = 'MySuperSecretPassword123!'",
+      "context": "\n# --- Test Case 1: Simple hardcoded password variable ---\n$password = 'MySuperSecretPassword123!'\n\n# --- Test Case 2: Database connection password ---",
+      "description": "Hardcoded password literal found in script variable",
+      "remediation": "Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "secure_string_plaintext",
+      "type": "PowerShell",
+      "subtype": "secure_string_plaintext",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 14,
+      "pattern": "secure_string_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force",
+      "context": "\n# --- Test Case 3: PSCredential with plaintext SecureString ---\n$cred = New-Object System.Management.Automation.PSCredential(\"admin\", (ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force))\n\n# --- Test Case 4: API key embedded ---",
+      "description": "SecureString constructed from plaintext with -AsPlainText -Force",
+      "remediation": "Remove -AsPlainText -Force; use DPAPI or managed credential store",
+      "mitre_id": "T1552",
+      "cwe_id": "CWE-312",
+      "cvss": {
+        "base_score": 8.1,
+        "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "credential_creation",
+      "type": "PowerShell",
+      "subtype": "credential_creation",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 14,
+      "pattern": "credential_creation",
+      "severity": "HIGH",
+      "match": "$cred = New-Object System.Management.Automation.PSCredential",
+      "context": "\n# --- Test Case 3: PSCredential with plaintext SecureString ---\n$cred = New-Object System.Management.Automation.PSCredential(\"admin\", (ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force))\n\n# --- Test Case 4: API key embedded ---",
+      "description": "PSCredential object constructed inline - potential secret exposure",
+      "remediation": "Replace inline PSCredential with SCCM TS Variables or MSA",
+      "mitre_id": "T1078",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 7.5,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "registry_manipulation",
+      "type": "PowerShell",
+      "subtype": "registry_manipulation",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 39,
+      "pattern": "registry_manipulation",
+      "severity": "HIGH",
+      "match": "Set-ItemProperty -Path \"HKLM",
+      "context": "\n# --- Test Case 11: Password in registry write ---\nSet-ItemProperty -Path \"HKLM:\\SOFTWARE\\MyApp\" -Name \"ServicePassword\" -Value \"Registr7P@ssword!\"\n\n# --- Test Case 12: Multiple credentials in one line ---",
+      "description": "Modification of HKLM registry hive via Set-/New-ItemProperty",
+      "remediation": "Document justification; restrict via AppLocker and GPO",
+      "mitre_id": "T1112",
+      "cwe_id": "CWE-1104",
+      "cvss": {
+        "base_score": 6.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\fr\\strings.psd1",
+      "line": 45,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`E",
+      "context": "            Install = \"Vous n'avez pas assez d'espace disque pour terminer l'installation de:`n{0}`n`space requis : {1}MB`n espace disponible : {2}MB`n`nVeuillez lib\u00e9rer suffisamment d'espace disque pour poursuivre l'installation.\"\n            Repair = \"Vous n'avez pas assez d'espace disque pour ter",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\nb\\strings.psd1",
+      "line": 43,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`P",
+      "context": "    DiskSpaceText = @{\n        Message = @{\n            Install = \"Du har ikke nok diskplass til \u00e5 fullf\u00f8re installasjonen av:`n{0}`n`n`Plass kreves: {1}MB`nTilgjengelig plass: {2}MB`n`nFrigj\u00f8r nok diskplass for \u00e5 kunne fortsette med installasjonen.\"\n            Repair = \"Du har ikke nok diskplass t",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\pt\\strings.psd1",
+      "line": 44,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`n",
+      "context": "        Message = @{\n            Install = \"N\u00e3o tem espa\u00e7o em disco suficiente para completar a instala\u00e7\u00e3o de:`n{0}`n`nEspa\u00e7o necess\u00e1rio: {1}MB`n`nEspa\u00e7o dispon\u00edvel: {2}MB`n`nPor favor, liberte espa\u00e7o suficiente no disco para poder prosseguir com a instala\u00e7\u00e3o.\"\n            Repair = \"N\u00e3o tem espa\u00e7o s",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\pt\\strings.psd1",
+      "line": 45,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`n",
+      "context": "            Install = \"N\u00e3o tem espa\u00e7o em disco suficiente para completar a instala\u00e7\u00e3o de:`n{0}`n`nEspa\u00e7o necess\u00e1rio: {1}MB`n`nEspa\u00e7o dispon\u00edvel: {2}MB`n`nPor favor, liberte espa\u00e7o suficiente no disco para poder prosseguir com a instala\u00e7\u00e3o.\"\n            Repair = \"N\u00e3o tem espa\u00e7o suficiente no disco pa",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "packed_binary",
+      "type": "Binary",
+      "subtype": "packed_binary",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Invoke-AppDeployToolkit.exe",
+      "line": 0,
+      "pattern": "Packed/Obfuscated Binary",
+      "severity": "MEDIUM",
+      "match": "High entropy (7.81) - likely packed or encrypted sections",
+      "context": "",
+      "description": "High entropy (7.81) - likely packed or encrypted sections",
+      "remediation": "Provide unpacked binary or source code for review",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-656",
+      "cvss": {
+        "base_score": 5.3,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.9
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 8,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = 'MySuperSecretPassword123!'",
+      "context": "\n# --- Test Case 1: Simple hardcoded password variable ---\n$password = 'MySuperSecretPassword123!'\n\n# --- Test Case 2: Database connection password ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "MySuperSecretPassword123!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 11,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "Password = \"SqlServer@dmin2024\"",
+      "context": "\n# --- Test Case 2: Database connection password ---\n$dbPassword = \"SqlServer@dmin2024\"\n\n# --- Test Case 3: PSCredential with plaintext SecureString ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "SqlServer@dmin2024",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 23,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "Password = \"EmailP@ss789!\"",
+      "context": "\n# --- Test Case 6: SMTP password ---\n$smtpPassword = \"EmailP@ss789!\"\n$smtp_pass = 'SmtpSecret#456'\n",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "EmailP@ss789!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 24,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "pass = 'SmtpSecret#456'",
+      "context": "# --- Test Case 6: SMTP password ---\n$smtpPassword = \"EmailP@ss789!\"\n$smtp_pass = 'SmtpSecret#456'\n\n# --- Test Case 7: AWS Access Key (fake) ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "SmtpSecret#456",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 36,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = 'TXlTdXBlclNlY3JldFBhc3N3b3JkMTIzIQ=='",
+      "context": "\n# --- Test Case 10: Base64 encoded password ---\n$secret = \"password = 'TXlTdXBlclNlY3JldFBhc3N3b3JkMTIzIQ=='\"\n\n# --- Test Case 11: Password in registry write ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "TXlTdXBlclNlY3JldFBhc3N3b3JkMTIzIQ==",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 42,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "Password = \"MultiLine#Secret99\"",
+      "context": "\n# --- Test Case 12: Multiple credentials in one line ---\n$creds = @{ Username = \"svc_account\"; Password = \"MultiLine#Secret99\"; Domain = \"CORP\" }",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "MultiLine#Secret99",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "secure_string_plaintext",
+      "type": "Credential",
+      "subtype": "secure_string_plaintext",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 14,
+      "pattern": "secure_string_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force",
+      "context": "\n# --- Test Case 3: PSCredential with plaintext SecureString ---\n$cred = New-Object System.Management.Automation.PSCredential(\"admin\", (ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force))\n\n# --- Test Case 4: API key embedded ---",
+      "description": "SecureString from plaintext \u2014 password fully exposed in source",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "P@ssw0rd!2024",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "connection_string_password",
+      "type": "Credential",
+      "subtype": "connection_string_password",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 20,
+      "pattern": "connection_string_password",
+      "severity": "CRITICAL",
+      "match": "connectionString = \"Server=myServer;Database=myDB;User Id=sa;Password=Str0ngP@ss!2024\"",
+      "context": "\n# --- Test Case 5: Connection string with embedded password ---\n$connectionString = \"Server=myServer;Database=myDB;User Id=sa;Password=Str0ngP@ss!2024\"\n\n# --- Test Case 6: SMTP password ---",
+      "description": "Database connection string with embedded password",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "Str0ngP@ss!2024",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "api_key",
+      "type": "Credential",
+      "subtype": "api_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 17,
+      "pattern": "api_key",
+      "severity": "CRITICAL",
+      "match": "apiKey = \"sk-proj-abc123def456ghi789jkl012mno345pqr\"",
+      "context": "\n# --- Test Case 4: API key embedded ---\n$apiKey = \"sk-proj-abc123def456ghi789jkl012mno345pqr\"\n\n# --- Test Case 5: Connection string with embedded password ---",
+      "description": "API key or access token embedded in source",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "sk-proj-abc123def456ghi789jkl012mno345pqr",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "aws_access_key",
+      "type": "Credential",
+      "subtype": "aws_access_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 27,
+      "pattern": "aws_access_key",
+      "severity": "CRITICAL",
+      "match": "AKIAIOSFODNN7EXAMPLE",
+      "context": "\n# --- Test Case 7: AWS Access Key (fake) ---\n$awsKey = \"AKIAIOSFODNN7EXAMPLE\"\n\n# --- Test Case 8: Azure Storage Connection String ---",
+      "description": "AWS access key ID detected",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "azure_storage_key",
+      "type": "Credential",
+      "subtype": "azure_storage_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 30,
+      "pattern": "azure_storage_key",
+      "severity": "CRITICAL",
+      "match": "DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=",
+      "context": "\n# --- Test Case 8: Azure Storage Connection String ---\n$azureConn = \"DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=abc123def456ghi789jkl012mno345pqr==\"\n\n# --- Test Case 9: GitHub Personal Access Token (fake) ---",
+      "description": "Azure Storage connection string with account key",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "registry_password",
+      "type": "Credential",
+      "subtype": "registry_password",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 39,
+      "pattern": "registry_password",
+      "severity": "CRITICAL",
+      "match": "Set-ItemProperty -Path \"HKLM:\\SOFTWARE\\MyApp\" -Name \"ServicePassword\" -Value \"Registr7P@ssword!\"",
+      "context": "\n# --- Test Case 11: Password in registry write ---\nSet-ItemProperty -Path \"HKLM:\\SOFTWARE\\MyApp\" -Name \"ServicePassword\" -Value \"Registr7P@ssword!\"\n\n# --- Test Case 12: Multiple credentials in one line ---",
+      "description": "Password stored in Windows registry",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "Registr7P@ssword!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 2cf89794762093229cae0b92bdb92b2722e2a97a",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 2cf89794762093229cae0b92bdb92b2722e2a97a",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 7,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 7747ea7077a1451b5dfb6169b15b81b9ef4cc755",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_base64_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Base64 High Entropy String",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 33,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Base64 High Entropy String)",
+      "context": "Hash: e644adcdc4024791d0590b4c36f66cbc505990e5",
+      "description": "Dynamic credential detection: Base64 High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "hemspect_sql_conn_string",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 20,
+      "pattern": "hemspect_sql_conn_string",
+      "severity": "CRITICAL",
+      "match": "Server=myServer;Database=myDB;User Id=sa;Password=Str0****\"",
+      "context": "\n# --- Test Case 5: Connection string with embedded password ---\n$connectionString = \"Server=myServer;Database=myDB;User Id=sa;Password=Str0ngP@ss!2024\"\n\n# --- Test Case 6: SMTP password ---",
+      "description": "HemSpect: SQL Connection String with embedded password",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_xml_password_attribute",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 11,
+      "pattern": "hemspect_xml_password_attribute",
+      "severity": "HIGH",
+      "match": "Password = \"SqlS****\"",
+      "context": "\n# --- Test Case 2: Database connection password ---\n$dbPassword = \"SqlServer@dmin2024\"\n\n# --- Test Case 3: PSCredential with plaintext SecureString ---",
+      "description": "HemSpect: XML/Config attribute with credential value",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_ps_securestring_plaintext",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 14,
+      "pattern": "hemspect_ps_securestring_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText",
+      "context": "\n# --- Test Case 3: PSCredential with plaintext SecureString ---\n$cred = New-Object System.Management.Automation.PSCredential(\"admin\", (ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force))\n\n# --- Test Case 4: API key embedded ---",
+      "description": "HemSpect: ConvertTo-SecureString with plaintext input",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_smtp_credentials",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 22,
+      "pattern": "hemspect_smtp_credentials",
+      "severity": "HIGH",
+      "match": "SMTP password ---\n$smtpPassword = \"Emai****\"\n$smtp_pass = 'SmtpSecret#456'\n\n# --- Test Case 7: AWS Access Key (fake",
+      "context": "$connectionString = \"Server=myServer;Database=myDB;User Id=sa;Password=Str0ngP@ss!2024\"\n\n# --- Test Case 6: SMTP password ---\n$smtpPassword = \"EmailP@ss789!\"\n$smtp_pass = 'SmtpSecret#456'",
+      "description": "HemSpect: SMTP/Mail credentials",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_xml_password_attribute",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "line": 6,
+      "pattern": "hemspect_xml_password_attribute",
+      "severity": "HIGH",
+      "match": "Token=\"b03f****\"",
+      "context": "    <assemblyBinding xmlns=\"urn:schemas-microsoft-com:asm.v1\">\n      <dependentAssembly>\n        <assemblyIdentity name=\"System.Numerics.Vectors\" publicKeyToken=\"b03f5f7f11d50a3a\" culture=\"neutral\" />\n        <bindingRedirect oldVersion=\"0.0.0.0-4.1.6.0\" newVersion=\"4.1.6.0\" />\n      </dependentAsse",
+      "description": "HemSpect: XML/Config attribute with credential value",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hemspect_xml_password_attribute",
+      "type": "DataLeakage",
+      "subtype": "ContentMatch",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "line": 6,
+      "pattern": "hemspect_xml_password_attribute",
+      "severity": "HIGH",
+      "match": "Token=\"b03f****\"",
+      "context": "    <assemblyBinding xmlns=\"urn:schemas-microsoft-com:asm.v1\">\n      <dependentAssembly>\n        <assemblyIdentity name=\"System.Numerics.Vectors\" publicKeyToken=\"b03f5f7f11d50a3a\" culture=\"neutral\" />\n        <bindingRedirect oldVersion=\"0.0.0.0-4.1.6.0\" newVersion=\"4.1.6.0\" />\n      </dependentAsse",
+      "description": "HemSpect: XML/Config attribute with credential value",
+      "remediation": "Remove embedded credential. Use a secrets vault (Azure Key Vault / SCCM TS Variables).",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "privilege_escalation_api",
+      "type": "Malware",
+      "subtype": "privilege_escalation_api",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\PSAppDeployToolkit.psm1",
+      "line": 476,
+      "pattern": "privilege_escalation_api",
+      "severity": "HIGH",
+      "match": "SeDebugPrivilege",
+      "context": "    {\n        # If we're running as an interactive user that isn't the RunAsActiveUser, that's not SYSTEM, and doesn't have the permissions needed to create a process as another user, advise the caller and create an explicit RunAsActiveUser object for the caller instead.\n        if (!$runAsActiveUse",
+      "description": "Malware indicator: privilege_escalation_api",
+      "remediation": "BLOCK PACKAGE - IMMEDIATE SECURITY INVESTIGATION REQUIRED",
+      "mitre_id": "T1068",
+      "cwe_id": "CWE-506",
+      "cvss": {
+        "base_score": 7.5,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "SI-3",
+          "CM-7",
+          "CA-7"
+        ],
+        "cmmc_2": [
+          "SI.1.210",
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-10"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    }
+  ],
+  "suppressed_findings": [],
+  "ps_analysis": [
+    {
+      "rule_id": "hardcoded_credential",
+      "type": "PowerShell",
+      "subtype": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 17,
+      "pattern": "hardcoded_credential",
+      "severity": "CRITICAL",
+      "match": "$password = '<YOUR_PASSWORD_HERE>'",
+      "context": "\n# --- FP Case 4: Template placeholder ---\n$password = '<YOUR_PASSWORD_HERE>'\n$password = 'PLACEHOLDER'\n",
+      "description": "Hardcoded password literal found in script variable",
+      "remediation": "Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hardcoded_credential",
+      "type": "PowerShell",
+      "subtype": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 18,
+      "pattern": "hardcoded_credential",
+      "severity": "CRITICAL",
+      "match": "$password = 'PLACEHOLDER'",
+      "context": "# --- FP Case 4: Template placeholder ---\n$password = '<YOUR_PASSWORD_HERE>'\n$password = 'PLACEHOLDER'\n\n# --- FP Case 5: Variable reference (not literal) ---",
+      "description": "Hardcoded password literal found in script variable",
+      "remediation": "Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "hardcoded_credential",
+      "type": "PowerShell",
+      "subtype": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 8,
+      "pattern": "hardcoded_credential",
+      "severity": "CRITICAL",
+      "match": "$password = 'MySuperSecretPassword123!'",
+      "context": "\n# --- Test Case 1: Simple hardcoded password variable ---\n$password = 'MySuperSecretPassword123!'\n\n# --- Test Case 2: Database connection password ---",
+      "description": "Hardcoded password literal found in script variable",
+      "remediation": "Move secrets to SCCM TS Variable (mark Private) or Azure Key Vault",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "secure_string_plaintext",
+      "type": "PowerShell",
+      "subtype": "secure_string_plaintext",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 14,
+      "pattern": "secure_string_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force",
+      "context": "\n# --- Test Case 3: PSCredential with plaintext SecureString ---\n$cred = New-Object System.Management.Automation.PSCredential(\"admin\", (ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force))\n\n# --- Test Case 4: API key embedded ---",
+      "description": "SecureString constructed from plaintext with -AsPlainText -Force",
+      "remediation": "Remove -AsPlainText -Force; use DPAPI or managed credential store",
+      "mitre_id": "T1552",
+      "cwe_id": "CWE-312",
+      "cvss": {
+        "base_score": 8.1,
+        "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "credential_creation",
+      "type": "PowerShell",
+      "subtype": "credential_creation",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 14,
+      "pattern": "credential_creation",
+      "severity": "HIGH",
+      "match": "$cred = New-Object System.Management.Automation.PSCredential",
+      "context": "\n# --- Test Case 3: PSCredential with plaintext SecureString ---\n$cred = New-Object System.Management.Automation.PSCredential(\"admin\", (ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force))\n\n# --- Test Case 4: API key embedded ---",
+      "description": "PSCredential object constructed inline - potential secret exposure",
+      "remediation": "Replace inline PSCredential with SCCM TS Variables or MSA",
+      "mitre_id": "T1078",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 7.5,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "registry_manipulation",
+      "type": "PowerShell",
+      "subtype": "registry_manipulation",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 39,
+      "pattern": "registry_manipulation",
+      "severity": "HIGH",
+      "match": "Set-ItemProperty -Path \"HKLM",
+      "context": "\n# --- Test Case 11: Password in registry write ---\nSet-ItemProperty -Path \"HKLM:\\SOFTWARE\\MyApp\" -Name \"ServicePassword\" -Value \"Registr7P@ssword!\"\n\n# --- Test Case 12: Multiple credentials in one line ---",
+      "description": "Modification of HKLM registry hive via Set-/New-ItemProperty",
+      "remediation": "Document justification; restrict via AppLocker and GPO",
+      "mitre_id": "T1112",
+      "cwe_id": "CWE-1104",
+      "cvss": {
+        "base_score": 6.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\fr\\strings.psd1",
+      "line": 45,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`E",
+      "context": "            Install = \"Vous n'avez pas assez d'espace disque pour terminer l'installation de:`n{0}`n`space requis : {1}MB`n espace disponible : {2}MB`n`nVeuillez lib\u00e9rer suffisamment d'espace disque pour poursuivre l'installation.\"\n            Repair = \"Vous n'avez pas assez d'espace disque pour ter",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\nb\\strings.psd1",
+      "line": 43,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`P",
+      "context": "    DiskSpaceText = @{\n        Message = @{\n            Install = \"Du har ikke nok diskplass til \u00e5 fullf\u00f8re installasjonen av:`n{0}`n`n`Plass kreves: {1}MB`nTilgjengelig plass: {2}MB`n`nFrigj\u00f8r nok diskplass for \u00e5 kunne fortsette med installasjonen.\"\n            Repair = \"Du har ikke nok diskplass t",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\pt\\strings.psd1",
+      "line": 44,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`n",
+      "context": "        Message = @{\n            Install = \"N\u00e3o tem espa\u00e7o em disco suficiente para completar a instala\u00e7\u00e3o de:`n{0}`n`nEspa\u00e7o necess\u00e1rio: {1}MB`n`nEspa\u00e7o dispon\u00edvel: {2}MB`n`nPor favor, liberte espa\u00e7o suficiente no disco para poder prosseguir com a instala\u00e7\u00e3o.\"\n            Repair = \"N\u00e3o tem espa\u00e7o s",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    },
+    {
+      "rule_id": "obfuscation_detected",
+      "type": "PowerShell",
+      "subtype": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\pt\\strings.psd1",
+      "line": 45,
+      "pattern": "obfuscation_detected",
+      "severity": "MEDIUM",
+      "match": "`n`n`n",
+      "context": "            Install = \"N\u00e3o tem espa\u00e7o em disco suficiente para completar a instala\u00e7\u00e3o de:`n{0}`n`nEspa\u00e7o necess\u00e1rio: {1}MB`n`nEspa\u00e7o dispon\u00edvel: {2}MB`n`nPor favor, liberte espa\u00e7o suficiente no disco para poder prosseguir com a instala\u00e7\u00e3o.\"\n            Repair = \"N\u00e3o tem espa\u00e7o suficiente no disco pa",
+      "description": "Multiple obfuscation indicators in script body",
+      "remediation": "Deobfuscate script; verify source code is from trusted origin",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-701",
+      "cvss": {
+        "base_score": 5.5,
+        "vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    }
+  ],
+  "binary_analysis": [
+    {
+      "rule_id": "packed_binary",
+      "type": "Binary",
+      "subtype": "packed_binary",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Invoke-AppDeployToolkit.exe",
+      "line": 0,
+      "pattern": "Packed/Obfuscated Binary",
+      "severity": "MEDIUM",
+      "match": "High entropy (7.81) - likely packed or encrypted sections",
+      "context": "",
+      "description": "High entropy (7.81) - likely packed or encrypted sections",
+      "remediation": "Provide unpacked binary or source code for review",
+      "mitre_id": "T1027",
+      "cwe_id": "CWE-656",
+      "cvss": {
+        "base_score": 5.3,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "severity": "MEDIUM"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "CM-7",
+          "SI-3"
+        ],
+        "cmmc_2": [
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-2"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.9
+    }
+  ],
+  "credential_findings": [
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 8,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = 'MySuperSecretPassword123!'",
+      "context": "\n# --- Test Case 1: Simple hardcoded password variable ---\n$password = 'MySuperSecretPassword123!'\n\n# --- Test Case 2: Database connection password ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "MySuperSecretPassword123!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 11,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "Password = \"SqlServer@dmin2024\"",
+      "context": "\n# --- Test Case 2: Database connection password ---\n$dbPassword = \"SqlServer@dmin2024\"\n\n# --- Test Case 3: PSCredential with plaintext SecureString ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "SqlServer@dmin2024",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 23,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "Password = \"EmailP@ss789!\"",
+      "context": "\n# --- Test Case 6: SMTP password ---\n$smtpPassword = \"EmailP@ss789!\"\n$smtp_pass = 'SmtpSecret#456'\n",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "EmailP@ss789!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 24,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "pass = 'SmtpSecret#456'",
+      "context": "# --- Test Case 6: SMTP password ---\n$smtpPassword = \"EmailP@ss789!\"\n$smtp_pass = 'SmtpSecret#456'\n\n# --- Test Case 7: AWS Access Key (fake) ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "SmtpSecret#456",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 36,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = 'TXlTdXBlclNlY3JldFBhc3N3b3JkMTIzIQ=='",
+      "context": "\n# --- Test Case 10: Base64 encoded password ---\n$secret = \"password = 'TXlTdXBlclNlY3JldFBhc3N3b3JkMTIzIQ=='\"\n\n# --- Test Case 11: Password in registry write ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "TXlTdXBlclNlY3JldFBhc3N3b3JkMTIzIQ==",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 42,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "Password = \"MultiLine#Secret99\"",
+      "context": "\n# --- Test Case 12: Multiple credentials in one line ---\n$creds = @{ Username = \"svc_account\"; Password = \"MultiLine#Secret99\"; Domain = \"CORP\" }",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "MultiLine#Secret99",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "secure_string_plaintext",
+      "type": "Credential",
+      "subtype": "secure_string_plaintext",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 14,
+      "pattern": "secure_string_plaintext",
+      "severity": "CRITICAL",
+      "match": "ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force",
+      "context": "\n# --- Test Case 3: PSCredential with plaintext SecureString ---\n$cred = New-Object System.Management.Automation.PSCredential(\"admin\", (ConvertTo-SecureString \"P@ssw0rd!2024\" -AsPlainText -Force))\n\n# --- Test Case 4: API key embedded ---",
+      "description": "SecureString from plaintext \u2014 password fully exposed in source",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "P@ssw0rd!2024",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "connection_string_password",
+      "type": "Credential",
+      "subtype": "connection_string_password",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 20,
+      "pattern": "connection_string_password",
+      "severity": "CRITICAL",
+      "match": "connectionString = \"Server=myServer;Database=myDB;User Id=sa;Password=Str0ngP@ss!2024\"",
+      "context": "\n# --- Test Case 5: Connection string with embedded password ---\n$connectionString = \"Server=myServer;Database=myDB;User Id=sa;Password=Str0ngP@ss!2024\"\n\n# --- Test Case 6: SMTP password ---",
+      "description": "Database connection string with embedded password",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "Str0ngP@ss!2024",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "api_key",
+      "type": "Credential",
+      "subtype": "api_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 17,
+      "pattern": "api_key",
+      "severity": "CRITICAL",
+      "match": "apiKey = \"sk-proj-abc123def456ghi789jkl012mno345pqr\"",
+      "context": "\n# --- Test Case 4: API key embedded ---\n$apiKey = \"sk-proj-abc123def456ghi789jkl012mno345pqr\"\n\n# --- Test Case 5: Connection string with embedded password ---",
+      "description": "API key or access token embedded in source",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "sk-proj-abc123def456ghi789jkl012mno345pqr",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "aws_access_key",
+      "type": "Credential",
+      "subtype": "aws_access_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 27,
+      "pattern": "aws_access_key",
+      "severity": "CRITICAL",
+      "match": "AKIAIOSFODNN7EXAMPLE",
+      "context": "\n# --- Test Case 7: AWS Access Key (fake) ---\n$awsKey = \"AKIAIOSFODNN7EXAMPLE\"\n\n# --- Test Case 8: Azure Storage Connection String ---",
+      "description": "AWS access key ID detected",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "azure_storage_key",
+      "type": "Credential",
+      "subtype": "azure_storage_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 30,
+      "pattern": "azure_storage_key",
+      "severity": "CRITICAL",
+      "match": "DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=",
+      "context": "\n# --- Test Case 8: Azure Storage Connection String ---\n$azureConn = \"DefaultEndpointsProtocol=https;AccountName=myaccount;AccountKey=abc123def456ghi789jkl012mno345pqr==\"\n\n# --- Test Case 9: GitHub Personal Access Token (fake) ---",
+      "description": "Azure Storage connection string with account key",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "registry_password",
+      "type": "Credential",
+      "subtype": "registry_password",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 39,
+      "pattern": "registry_password",
+      "severity": "CRITICAL",
+      "match": "Set-ItemProperty -Path \"HKLM:\\SOFTWARE\\MyApp\" -Name \"ServicePassword\" -Value \"Registr7P@ssword!\"",
+      "context": "\n# --- Test Case 11: Password in registry write ---\nSet-ItemProperty -Path \"HKLM:\\SOFTWARE\\MyApp\" -Name \"ServicePassword\" -Value \"Registr7P@ssword!\"\n\n# --- Test Case 12: Multiple credentials in one line ---",
+      "description": "Password stored in Windows registry",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "Registr7P@ssword!",
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 2cf89794762093229cae0b92bdb92b2722e2a97a",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "line": 6,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 2cf89794762093229cae0b92bdb92b2722e2a97a",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Hex High Entropy String",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 7,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Hex High Entropy String)",
+      "context": "Hash: 7747ea7077a1451b5dfb6169b15b81b9ef4cc755",
+      "description": "Dynamic credential detection: Hex High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    },
+    {
+      "rule_id": "dynamic_secret_base64_high_entropy_string",
+      "type": "Credential",
+      "subtype": "Base64 High Entropy String",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "line": 33,
+      "pattern": "detect-secrets",
+      "severity": "CRITICAL",
+      "match": "High entropy string or pattern detected (Base64 High Entropy String)",
+      "context": "Hash: e644adcdc4024791d0590b4c36f66cbc505990e5",
+      "description": "Dynamic credential detection: Base64 High Entropy String",
+      "remediation": "Move to Azure Key Vault or SCCM Task Sequence Variable.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.95,
+      "extracted_value": null,
+      "is_false_positive": false,
+      "fp_reason": ""
+    }
+  ],
+  "excluded_credentials": [
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 17,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = '<YOUR_PASSWORD_HERE>'",
+      "context": "\n# --- FP Case 4: Template placeholder ---\n$password = '<YOUR_PASSWORD_HERE>'\n$password = 'PLACEHOLDER'\n",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "<YOUR_PASSWORD_HERE>",
+      "is_false_positive": true,
+      "fp_reason": "Template placeholder: <[A-Z_]+>"
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 18,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = 'PLACEHOLDER'",
+      "context": "# --- FP Case 4: Template placeholder ---\n$password = '<YOUR_PASSWORD_HERE>'\n$password = 'PLACEHOLDER'\n\n# --- FP Case 5: Variable reference (not literal) ---",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "PLACEHOLDER",
+      "is_false_positive": true,
+      "fp_reason": "Template placeholder: PLACEHOLDER"
+    },
+    {
+      "rule_id": "password_string",
+      "type": "Credential",
+      "subtype": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "line": 30,
+      "pattern": "password_string",
+      "severity": "CRITICAL",
+      "match": "password = 'this is just a comment and should not trigger'",
+      "context": "\n# --- FP Case 8: Comment-only password mention ---\n# password = 'this is just a comment and should not trigger'",
+      "description": "Hardcoded password literal in script",
+      "remediation": "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), or Windows Credential Manager. Never hardcode secrets in scripts.",
+      "mitre_id": "T1552.001",
+      "cwe_id": "CWE-798",
+      "cvss": {
+        "base_score": 9.1,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+        "severity": "CRITICAL"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "IA-5",
+          "SA-11",
+          "SI-7"
+        ],
+        "cmmc_2": [
+          "IA.3.083",
+          "SI.1.210"
+        ],
+        "cis_v8": [
+          "CIS-3",
+          "CIS-16"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A02:2021"
+        ]
+      },
+      "confidence": 0.99,
+      "extracted_value": "this is just a comment and should not trigger",
+      "is_false_positive": true,
+      "fp_reason": "Comment line"
+    }
+  ],
+  "malware_indicators": [
+    {
+      "rule_id": "privilege_escalation_api",
+      "type": "Malware",
+      "subtype": "privilege_escalation_api",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\PSAppDeployToolkit.psm1",
+      "line": 476,
+      "pattern": "privilege_escalation_api",
+      "severity": "HIGH",
+      "match": "SeDebugPrivilege",
+      "context": "    {\n        # If we're running as an interactive user that isn't the RunAsActiveUser, that's not SYSTEM, and doesn't have the permissions needed to create a process as another user, advise the caller and create an explicit RunAsActiveUser object for the caller instead.\n        if (!$runAsActiveUse",
+      "description": "Malware indicator: privilege_escalation_api",
+      "remediation": "BLOCK PACKAGE - IMMEDIATE SECURITY INVESTIGATION REQUIRED",
+      "mitre_id": "T1068",
+      "cwe_id": "CWE-506",
+      "cvss": {
+        "base_score": 7.5,
+        "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+        "severity": "HIGH"
+      },
+      "compliance": {
+        "nist_800_53": [
+          "SI-3",
+          "CM-7",
+          "CA-7"
+        ],
+        "cmmc_2": [
+          "SI.1.210",
+          "CM.2.061"
+        ],
+        "cis_v8": [
+          "CIS-10"
+        ],
+        "iec_62443": [
+          "SR_3.2"
+        ],
+        "owasp": [
+          "A05:2021"
+        ]
+      },
+      "confidence": 0.95
+    }
+  ],
+  "obfuscation_detected": [],
+  "risky_behaviors": [
+    {
+      "behavior": "hardcoded_credential",
+      "severity": "CRITICAL"
+    },
+    {
+      "behavior": "hardcoded_credential",
+      "severity": "CRITICAL"
+    },
+    {
+      "behavior": "hardcoded_credential",
+      "severity": "CRITICAL"
+    },
+    {
+      "behavior": "secure_string_plaintext",
+      "severity": "CRITICAL"
+    },
+    {
+      "behavior": "credential_creation",
+      "severity": "HIGH"
+    },
+    {
+      "behavior": "registry_manipulation",
+      "severity": "HIGH"
+    },
+    {
+      "behavior": "obfuscation_detected",
+      "severity": "MEDIUM"
+    },
+    {
+      "behavior": "obfuscation_detected",
+      "severity": "MEDIUM"
+    },
+    {
+      "behavior": "obfuscation_detected",
+      "severity": "MEDIUM"
+    },
+    {
+      "behavior": "obfuscation_detected",
+      "severity": "MEDIUM"
+    }
+  ],
+  "mitre_mapping": [
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Credential Access",
+      "technique_name": "Unsecured Credentials: Credentials in Files",
+      "rule_id": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Credential Access",
+      "technique_name": "Unsecured Credentials: Credentials in Files",
+      "rule_id": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Credential Access",
+      "technique_name": "Unsecured Credentials: Credentials in Files",
+      "rule_id": "hardcoded_credential",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552",
+      "tactic": "Credential Access",
+      "technique_name": "Unsecured Credentials",
+      "rule_id": "secure_string_plaintext",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1078",
+      "tactic": "Privilege Escalation",
+      "technique_name": "Valid Accounts",
+      "rule_id": "credential_creation",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1112",
+      "tactic": "Defense Evasion",
+      "technique_name": "Modify Registry",
+      "rule_id": "registry_manipulation",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Defense Evasion",
+      "technique_name": "Obfuscated Files or Information",
+      "rule_id": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\fr\\strings.psd1",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Defense Evasion",
+      "technique_name": "Obfuscated Files or Information",
+      "rule_id": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\nb\\strings.psd1",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Defense Evasion",
+      "technique_name": "Obfuscated Files or Information",
+      "rule_id": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\pt\\strings.psd1",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Defense Evasion",
+      "technique_name": "Obfuscated Files or Information",
+      "rule_id": "obfuscation_detected",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Strings\\pt\\strings.psd1",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1027",
+      "tactic": "Unknown",
+      "technique_name": "packed_binary",
+      "rule_id": "packed_binary",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\Invoke-AppDeployToolkit.exe",
+      "severity": "MEDIUM"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "password_string",
+      "rule_id": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "password_string",
+      "rule_id": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "password_string",
+      "rule_id": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "password_string",
+      "rule_id": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "password_string",
+      "rule_id": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "password_string",
+      "rule_id": "password_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Credential Access",
+      "technique_name": "Unsecured Credentials",
+      "rule_id": "secure_string_plaintext",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "connection_string_password",
+      "rule_id": "connection_string_password",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "api_key",
+      "rule_id": "api_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "aws_access_key",
+      "rule_id": "aws_access_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "azure_storage_key",
+      "rule_id": "azure_storage_key",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "registry_password",
+      "rule_id": "registry_password",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "dynamic_secret_hex_high_entropy_string",
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "dynamic_secret_hex_high_entropy_string",
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "dynamic_secret_hex_high_entropy_string",
+      "rule_id": "dynamic_secret_hex_high_entropy_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_false_positives.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "dynamic_secret_base64_high_entropy_string",
+      "rule_id": "dynamic_secret_base64_high_entropy_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_sql_conn_string",
+      "rule_id": "hemspect_sql_conn_string",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_xml_password_attribute",
+      "rule_id": "hemspect_xml_password_attribute",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_ps_securestring_plaintext",
+      "rule_id": "hemspect_ps_securestring_plaintext",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "CRITICAL"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_smtp_credentials",
+      "rule_id": "hemspect_smtp_credentials",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\_test_credentials\\test_passwords.ps1",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_xml_password_attribute",
+      "rule_id": "hemspect_xml_password_attribute",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.exe.config",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1552.001",
+      "tactic": "Unknown",
+      "technique_name": "hemspect_xml_password_attribute",
+      "rule_id": "hemspect_xml_password_attribute",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\lib\\PSADT.ClientServer.Client.Launcher.exe.config",
+      "severity": "HIGH"
+    },
+    {
+      "technique_id": "T1068",
+      "tactic": "Unknown",
+      "technique_name": "privilege_escalation_api",
+      "rule_id": "privilege_escalation_api",
+      "file": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0\\PSAppDeployToolkit\\PSAppDeployToolkit.psm1",
+      "severity": "HIGH"
+    }
+  ],
+  "psadt_v4_findings": [],
+  "msi_findings": [],
+  "remediation": [],
+  "compliance_summary": {
+    "nist_800_53": [
+      "CA-7",
+      "CM-7",
+      "IA-5",
+      "SA-11",
+      "SI-3",
+      "SI-7"
+    ],
+    "cmmc_2": [
+      "CM.2.061",
+      "IA.3.083",
+      "SI.1.210"
+    ],
+    "cis_v8": [
+      "CIS-10",
+      "CIS-16",
+      "CIS-2",
+      "CIS-3"
+    ],
+    "iec_62443": [
+      "SR_3.2"
+    ],
+    "owasp": [
+      "A02:2021",
+      "A05:2021"
+    ]
+  },
+  "manifest": {
+    "hash_sha256": "3c3d003a2e5da5ae9578959030ba42204a4a9ebe9b8b7cf450c472a01a00d8a1",
+    "timestamp": "2026-06-12T04:17:19.226404+00:00",
+    "signed": true
+  },
+  "metrics": {
+    "entropy_analysis": [
+      {
+        "file": "Invoke-AppDeployToolkit.exe",
+        "sha256": "8c32e7970a953d2f28e15d29076ef0578ccc18770ff23b752361b9271ad3cdab",
+        "entropy": 7.8131,
+        "packed": true
+      }
+    ],
+    "code_complexity": 0,
+    "risk_factors": []
+  }
+}

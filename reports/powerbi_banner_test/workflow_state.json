@@ -1,0 +1,29 @@
+{
+  "current_state": "AUTO_SCAN_REJECTED",
+  "package": "1.0",
+  "package_path": "E:\\packages\\Microsoft-PowerBI_Desktop-2.153.1206-ML-1.0.0\\1.0",
+  "created_at": "2026-06-13T14:31:29.268214+00:00",
+  "last_updated": "2026-06-13T14:31:29.268903+00:00",
+  "history": [
+    {
+      "from_state": "PENDING_SCAN",
+      "to_state": "AUTO_SCAN_REJECTED",
+      "actor": "AutoScanner",
+      "event": "scan_complete",
+      "timestamp": "2026-06-13T14:31:29.268903+00:00",
+      "data": {
+        "approval_status": "REJECTED",
+        "critical": 12,
+        "high": 5,
+        "medium": 5,
+        "low": 0,
+        "risk_score": 100.0,
+        "scanner_version": "3.0 (CLI v3.0)",
+        "operator": "hemen"
+      },
+      "prev_hash": "",
+      "hash": "fa2176cab343fc10b8b24fe81e297d7199f37884a4c44ea9e2099f32b5b4d5e5"
+    }
+  ],
+  "chain_tip": "fa2176cab343fc10b8b24fe81e297d7199f37884a4c44ea9e2099f32b5b4d5e5"
+}

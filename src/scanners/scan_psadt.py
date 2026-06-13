@@ -363,6 +363,22 @@ class HemSpectScanner:
         self._signing_private_key = None
         self._load_signing_key()
 
+        # File content cache to avoid re-reading files across steps
+        self._file_content_cache: Dict[str, str] = {}
+
+        # Credential deduplication: tracks (file, line) already flagged
+        self._seen_credential_locations: set = set()
+
+        # PSADT framework file patterns to skip (these are toolkit internals, not user code)
+        self._framework_patterns = [
+            "PSAppDeployToolkit.psm1",
+            "PSAppDeployToolkit.psd1",
+            "AppDeployToolkitMain.ps1",
+            "AppDeployToolkitExtensions.ps1",
+            "PSAppDeployToolkit.Extensions.psm1",
+            "PSAppDeployToolkit.Extensions.psd1",
+        ]
+
         # Initialise findings structure
         self.findings: Dict[str, Any] = {
             "timestamp":      datetime.now(timezone.utc).isoformat(),
@@ -385,12 +401,15 @@ class HemSpectScanner:
                 "msi_files":         0,
                 "binaries_analyzed": 0,
                 "scan_duration":     0.0,
+                "framework_files_skipped": 0,
+                "false_positives_excluded": 0,
             },
             "issues":               [],
             "suppressed_findings":  [],
             "ps_analysis":          [],
             "binary_analysis":      [],
             "credential_findings":  [],
+            "excluded_credentials": [],
             "malware_indicators":   [],
             "obfuscation_detected": [],
             "risky_behaviors":      [],
@@ -831,24 +850,154 @@ class HemSpectScanner:
             logger.warning("NVD cache init failed: %s", exc)
 
     # =========================================================================
+    # Helpers: Framework file detection, FP exclusion, password extraction
+    # =========================================================================
+
+    def _is_framework_file(self, file_path: Path) -> bool:
+        """Check if a file is a PSADT framework file (should be skipped for credential scans)."""
+        name = file_path.name
+        # Skip known framework files
+        if name in self._framework_patterns:
+            return True
+        # Skip files inside PSAppDeployToolkit module directories
+        parts = [p.lower() for p in file_path.parts]
+        if "psappdeploytoolkit" in parts and name.endswith((".psm1", ".psd1")):
+            return True
+        return False
+
+    def _is_user_script(self, file_path: Path) -> bool:
+        """Check if a file is the user's deployment script (Invoke-AppDeployToolkit.ps1 or Deploy-Application.ps1)."""
+        name = file_path.name.lower()
+        return name in ("invoke-appdeploytoolkit.ps1", "deploy-application.ps1")
+
+    def _read_file_cached(self, file_path: Path) -> Optional[str]:
+        """Read file content with caching to avoid re-reading across scan steps."""
+        key = str(file_path)
+        if key not in self._file_content_cache:
+            try:
+                self._file_content_cache[key] = file_path.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                return None
+        return self._file_content_cache[key]
+
+    def _is_false_positive_credential(self, match_text: str, line_text: str, file_path: Path) -> Tuple[bool, str]:
+        """
+        Check if a credential match is a false positive.
+        Returns (is_fp, reason).
+        """
+        line_stripped = line_text.strip()
+
+        # 1. Line is a comment
+        if line_stripped.startswith("#"):
+            return True, "Comment line"
+
+        # 2. Encrypted SecureString with -Key (DPAPI encrypted, not plaintext)
+        if re.search(r"ConvertTo-SecureString.*-(?:Secure)?Key", line_text, re.IGNORECASE):
+            return True, "Encrypted SecureString with -Key parameter"
+
+        # 3. Encrypted DPAPI blob pattern (hex string starting with 01000000d08c9ddf)
+        if re.search(r"['\"]01000000d08c9ddf", match_text, re.IGNORECASE):
+            return True, "DPAPI encrypted blob"
+
+        # 4. Template placeholders
+        placeholder_patterns = [
+            r"<[A-Z_]+>",  # <YOUR_PASSWORD_HERE>
+            r"PLACEHOLDER",
+            r"CHANGE_ME",
+            r"TODO",
+            r"xxx+",
+        ]
+        for pp in placeholder_patterns:
+            if re.search(pp, match_text, re.IGNORECASE):
+                return True, f"Template placeholder: {pp}"
+
+        # 5. Variable reference instead of literal (e.g. $env:PASSWORD)
+        if re.search(r"=\s*\$(?:env:|[A-Za-z]+\b(?!\s*['\"]))", line_text):
+            if not re.search(r"=\s*['\"][^'\"]+['\"]", line_text):
+                return True, "Variable reference, not literal string"
+
+        # 6. Read-Host (interactive input, not hardcoded)
+        if re.search(r"Read-Host", line_text, re.IGNORECASE):
+            return True, "Interactive input via Read-Host"
+
+        # 7. Framework file
+        if self._is_framework_file(file_path):
+            return True, f"PSADT framework file: {file_path.name}"
+
+        return False, ""
+
+    def _extract_password_value(self, match_text: str, pattern_name: str) -> Optional[str]:
+        """
+        Extract the actual password/secret value from a regex match.
+        Returns the extracted value or None.
+        """
+        # password/pwd/pass = 'value' or = "value"
+        m = re.search(r"(?i)(?:password|pwd|passwd|pass|secret|token)\s*[=:]\s*['\"]([^'\"]+)['\"]", match_text)
+        if m:
+            return m.group(1)
+
+        # Connection string Password=value
+        m = re.search(r"(?i)Password=([^;\"']+)", match_text)
+        if m:
+            return m.group(1)
+
+        # ConvertTo-SecureString "value" -AsPlainText
+        m = re.search(r'ConvertTo-SecureString\s+["\']([^"\']+)["\']\s+.*-AsPlainText', match_text, re.IGNORECASE)
+        if m:
+            return m.group(1)
+
+        # -Value "password" for registry
+        m = re.search(r'-Value\s+["\']([^"\']+)["\']', match_text)
+        if m:
+            val = m.group(1)
+            if len(val) >= 6 and not val.startswith("$"):
+                return val
+
+        # Generic key = 'value' pattern
+        m = re.search(r"[=:]\s*['\"]([^'\"]{8,})['\"]", match_text)
+        if m:
+            return m.group(1)
+
+        return None
+
+    def _get_line_at_offset(self, content: str, offset: int) -> str:
+        """Get the full line of text at a given character offset."""
+        line_start = content.rfind("\n", 0, offset) + 1
+        line_end = content.find("\n", offset)
+        if line_end == -1:
+            line_end = len(content)
+        return content[line_start:line_end]
+
+    # =========================================================================
     # Public: Main Scan Orchestrator
     # =========================================================================
 
-    def scan(self) -> Dict:
+    def scan(self, generate_reports: bool = True, show_banner: bool = True) -> Dict:
         """
-        Execute all 8 scan steps and generate all report formats.
+        Execute all 8 scan steps and optionally generate all report formats.
+
+        Parameters
+        ----------
+        generate_reports : bool
+            If True (default), generate HTML/JSON/CSV/SARIF reports after scanning.
+            Set False when called from the CLI, which handles its own report generation
+            with enriched SBOM data, avoiding duplicate work.
+        show_banner : bool
+            If True (default), print the HemSpect banner. Set False when called from
+            the CLI, which prints its own banner.
 
         Returns the complete findings dictionary.
         """
-        print("\n" + "=" * 90)
-        print("🔐 HEMSPECT v3.0: PACKAGE SECURITY SCANNER")
-        print("   Powered by HemSpect™ Data Leakage Intelligence Engine")
-        print("=" * 90)
-        print(f"\n  Package  : {self.package_path.name}")
-        print(f"  Path     : {self.package_path}")
-        print(f"  Operator : {self.operator}")
-        print(f"  Scan Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"  Output   : {self.output_dir}")
+        if show_banner:
+            print("\n" + "=" * 90)
+            print("🔐 HEMSPECT v3.0: PACKAGE SECURITY SCANNER")
+            print("   Powered by HemSpect™ Data Leakage Intelligence Engine")
+            print("=" * 90)
+            print(f"\n  Package  : {self.package_path.name}")
+            print(f"  Path     : {self.package_path}")
+            print(f"  Operator : {self.operator}")
+            print(f"  Scan Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            print(f"  Output   : {self.output_dir}")
 
         self._generate_audit_log_entry("SCAN_START", {
             "package": str(self.package_path),
@@ -856,67 +1005,64 @@ class HemSpectScanner:
         })
 
         # ── Step 1: PowerShell advanced analysis ─────────────────────────────
-        print("\n[Step 1/9] Advanced PowerShell Script Analysis...")
+        print("\n[Step 1/8] Advanced PowerShell Script Analysis...")
         try:
             self._scan_powershell_scripts_advanced()
         except Exception as exc:
             logger.error("Step 1 failed: %s", exc)
 
         # ── Step 2: Binary analysis ───────────────────────────────────────────
-        print("[Step 2/9] Comprehensive Binary & Chain-of-Trust Analysis...")
+        print("[Step 2/8] Comprehensive Binary & Chain-of-Trust Analysis...")
         try:
             self._scan_binaries_advanced()
         except Exception as exc:
             logger.error("Step 2 failed: %s", exc)
 
-        # ── Step 3: Credential detection ─────────────────────────────────────
-        print("[Step 3/9] Enhanced Credential & Data Leakage Detection...")
+        # ── Step 3: Credential detection (PASSWORD-FOCUSED) ──────────────────
+        print("[Step 3/8] 🔑 Enhanced Password & Credential Detection...")
         try:
             self._scan_credentials_advanced()
         except Exception as exc:
             logger.error("Step 3 failed: %s", exc)
 
         # ── Step 4: HemSpect Data Leakage Engine ─────────────────────────────
-        print("[Step 4/9] HemSpect Data Leakage Intelligence Sweep...")
+        print("[Step 4/8] HemSpect Data Leakage Intelligence Sweep...")
         try:
             self._scan_data_leakage_hemspect()
         except Exception as exc:
             logger.error("Step 4 (HemSpect) failed: %s", exc)
 
         # ── Step 5: Malware patterns ──────────────────────────────────────────
-        print("[Step 5/9] Malware Patterns & Obfuscation Detection...")
+        print("[Step 5/8] Malware Patterns & Obfuscation Detection...")
         try:
             self._scan_malware_patterns_advanced()
         except Exception as exc:
             logger.error("Step 5 failed: %s", exc)
 
         # ── Step 6: Configuration scanning ───────────────────────────────────
-        print("[Step 6/9] Configuration & Dependency Analysis...")
+        print("[Step 6/8] Configuration & Dependency Analysis...")
         try:
             self._scan_configurations_and_dependencies()
         except Exception as exc:
             logger.error("Step 6 failed: %s", exc)
 
         # ── Step 7: PSADT v4 specific cmdlet analysis ─────────────────────────
-        print("[Step 7/9] PSADT v4.1 Cmdlet & API Compliance Analysis...")
+        print("[Step 7/8] PSADT v4.1 Cmdlet & API Compliance Analysis...")
         try:
             self._scan_psadt_v4_cmdlets()
         except Exception as exc:
             logger.error("Step 7 failed: %s", exc)
 
-        # ── Step 8: MSI/MSP/MSIX analysis ────────────────────────────────────
-        print("[Step 8/9] MSI/MSP/MSIX Custom Action Security Analysis...")
-        try:
-            self._scan_msi_packages()
-        except Exception as exc:
-            logger.error("Step 8 failed: %s", exc)
+        # ── Step 8 (MSI) REMOVED for performance ─────────────────────────────
+        # MSI custom action analysis via COM automation was too slow.
+        # Use --format sarif for MSI analysis with external tools.
 
-        # ── Step 9: Risk scoring + MITRE mapping ──────────────────────────────
-        print("[Step 9/9] Computing Risk Scores, MITRE Mapping & Generating Reports...")
+        # ── Step 8: Risk scoring + MITRE mapping ──────────────────────────────
+        print("[Step 8/8] Computing Risk Scores, MITRE Mapping & Generating Reports...")
         try:
             self._compute_risk_scores()
         except Exception as exc:
-            logger.error("Step 9 risk scoring failed: %s", exc)
+            logger.error("Step 8 risk scoring failed: %s", exc)
 
         # ── Apply allowlist BEFORE report generation ──────────────────────────
         active_issues, suppressed = self._apply_allowlist(self.findings["issues"])
@@ -924,11 +1070,23 @@ class HemSpectScanner:
         self.findings["suppressed_findings"] = suppressed
         self.findings["summary"]["suppressed"] = len(suppressed)
 
-        # ── Generate all reports ──────────────────────────────────────────────
-        try:
-            self._generate_report()
-        except Exception as exc:
-            logger.error("Report generation failed: %s", exc)
+        # ── Generate all reports (only when not called from CLI) ──────────────
+        if generate_reports:
+            try:
+                self._generate_report()
+            except Exception as exc:
+                logger.error("Report generation failed: %s", exc)
+        else:
+            # Compute approval status without generating reports
+            summary = self.findings["summary"]
+            risk    = self.findings["risk_score"]
+            if summary["critical"] > 0 or risk > 75:
+                summary["approval_status"] = "REJECTED"
+            elif summary["high"] > 0 or (30 <= risk <= 75):
+                summary["approval_status"] = "REVIEW_REQUIRED"
+            else:
+                summary["approval_status"] = "APPROVED"
+            print(f"\n   [*] Approval status: {summary['approval_status']}")
 
         # ── Finalise scan duration ────────────────────────────────────────────
         self.findings["summary"]["scan_duration"] = round(time.time() - self.start_time, 2)
@@ -941,6 +1099,7 @@ class HemSpectScanner:
             "risk_score":     self.findings["risk_score"],
             "status":         self.findings["summary"]["approval_status"],
             "suppressed":     self.findings["summary"]["suppressed"],
+            "false_positives_excluded": self.findings["summary"]["false_positives_excluded"],
             "duration_s":     self.findings["summary"]["scan_duration"],
         })
 
@@ -963,12 +1122,22 @@ class HemSpectScanner:
             print("   [!] No PowerShell scripts found")
             return
 
-        print(f"   [*] Found {len(ps_files)} PowerShell file(s)")
-        self.findings["summary"]["ps_files"] = len(ps_files)
+        # Filter out PSADT framework files (scan only user-authored scripts)
+        user_ps_files = [f for f in ps_files if not self._is_framework_file(f)]
+        framework_skipped = len(ps_files) - len(user_ps_files)
+        self.findings["summary"]["framework_files_skipped"] += framework_skipped
+
+        print(f"   [*] Found {len(ps_files)} PowerShell file(s), scanning {len(user_ps_files)} user scripts (skipped {framework_skipped} framework files)")
+        self.findings["summary"]["ps_files"] = len(user_ps_files)
+
+        # Replace ps_files with filtered list
+        ps_files = user_ps_files
 
         for ps_file in ps_files:
             try:
-                content = ps_file.read_text(encoding="utf-8", errors="ignore")
+                content = self._read_file_cached(ps_file)
+                if content is None:
+                    continue
                 self.findings["summary"]["files_scanned"] += 1
             except Exception as exc:
                 logger.warning("Cannot read %s: %s", ps_file, exc)
@@ -1055,6 +1224,10 @@ class HemSpectScanner:
         """Comprehensive binary and chain-of-trust analysis."""
         print("   [*] Performing comprehensive binary analysis...")
 
+        # Only scan user-deployed binaries, NOT the PSAppDeployToolkit framework
+        FRAMEWORK_DIRS = {"psappdeploytoolkit", "psappdeploytoolkit.extensions"}
+        MAX_BINARIES = 30  # Cap to prevent slow scans on large packages
+
         search_dirs = [
             self.package_path / "SupportFiles",
             self.package_path / "Files",
@@ -1063,9 +1236,13 @@ class HemSpectScanner:
         binary_files: List[Path] = []
         for d in search_dirs:
             if d.exists():
-                binary_files.extend(d.rglob("*.exe"))
-                binary_files.extend(d.rglob("*.dll"))
-                binary_files.extend(d.rglob("*.sys"))
+                for ext in ("*.exe", "*.dll", "*.sys"):
+                    for bf in d.rglob(ext):
+                        # Skip binaries inside PSADT framework directories
+                        parts_lower = [p.lower() for p in bf.relative_to(self.package_path).parts]
+                        if any(p in FRAMEWORK_DIRS for p in parts_lower):
+                            continue
+                        binary_files.append(bf)
 
         # Deduplicate
         seen: set = set()
@@ -1077,10 +1254,15 @@ class HemSpectScanner:
         binary_files = unique_bins
 
         if not binary_files:
-            print("   [!] No binaries found for analysis")
+            print("   [!] No user-deployed binaries found for analysis")
             return
 
-        print(f"   [*] Found {len(binary_files)} binary file(s)")
+        skipped = 0
+        if len(binary_files) > MAX_BINARIES:
+            skipped = len(binary_files) - MAX_BINARIES
+            binary_files = binary_files[:MAX_BINARIES]
+
+        print(f"   [*] Found {len(binary_files)} binary file(s) for analysis{f' (skipped {skipped} over cap)' if skipped else ''}")
         self.findings["summary"]["binaries_analyzed"] = len(binary_files)
 
         for binary_file in binary_files:
@@ -1240,57 +1422,85 @@ class HemSpectScanner:
     # =========================================================================
 
     def _scan_credentials_advanced(self) -> None:
-        """Enhanced credential and data leakage detection."""
-        print("   [*] Scanning for credentials and data leakage...")
+        """Enhanced credential and data leakage detection with FP exclusion and password extraction."""
+        print("   [*] 🔑 Scanning for passwords and credentials...")
+        print("   [*] False positive exclusion: encrypted SecureStrings, framework files, comments, placeholders")
 
         credential_patterns: Dict[str, Dict] = {
             "password_string": {
-                "pattern":  r"(?i)(password|pwd|passwd|pass)\s*[=:]\s*['\"]([^'\"]{8,})['\"]",
+                "pattern":  r"(?i)(password|pwd|passwd|pass)\s*[=:]\s*['\"]([^'\"]{6,})['\"]",
                 "severity": "CRITICAL",
+                "description": "Hardcoded password literal in script",
             },
-            "unstructured_credential": {
-                "pattern":  r"(?i)\b(?:passwrd|password|passwd|credentials?|secret|pwd)\s*[=:\s>]*([A-Za-z0-9@#$%^&+=_]{6,})\b",
-                "severity": "HIGH",
+            "secure_string_plaintext": {
+                "pattern":  r"ConvertTo-SecureString\s+['\"]([^'\"]+)['\"]\s+.*-AsPlainText.*-Force",
+                "severity": "CRITICAL",
+                "description": "SecureString from plaintext — password fully exposed in source",
+            },
+            "pscredential_inline": {
+                "pattern":  r"New-Object\s+(?:System\.Management\.Automation\.)?PSCredential.*['\"]([^'\"]+)['\"]",
+                "severity": "CRITICAL",
+                "description": "PSCredential constructed with inline credentials",
+            },
+            "connection_string_password": {
+                "pattern":  r"(?i)(?:connection[_\s]?string|connstr|Data\s+Source)\s*[=:]\s*['\"]([^'\"]*(?:Password|pwd)=[^'\"]*)['\"]",
+                "severity": "CRITICAL",
+                "description": "Database connection string with embedded password",
             },
             "api_key": {
                 "pattern":  r"(?i)(api[_-]?key|apikey|api_secret|access_token)\s*[=:]\s*['\"]([A-Za-z0-9\-_]{20,})['\"]",
                 "severity": "CRITICAL",
-            },
-            "connection_string": {
-                "pattern":  r"(?i)(connectionstring|connection_string)\s*[=:]\s*['\"]([^'\"]*(?:password|pwd)[^'\"]*)['\"]",
-                "severity": "CRITICAL",
+                "description": "API key or access token embedded in source",
             },
             "private_key_pem": {
                 "pattern":  r"-----BEGIN (?:RSA |DSA |EC )?PRIVATE KEY-----",
                 "severity": "CRITICAL",
+                "description": "PEM private key embedded in package",
             },
             "aws_access_key": {
                 "pattern":  r"AKIA[0-9A-Z]{16}",
                 "severity": "CRITICAL",
+                "description": "AWS access key ID detected",
             },
             "azure_storage_key": {
                 "pattern":  r"(?i)(DefaultEndpointsProtocol=https.*AccountName=.*AccountKey=)",
                 "severity": "CRITICAL",
+                "description": "Azure Storage connection string with account key",
             },
             "email_smtp_password": {
                 "pattern":  r"(?i)(smtp|email).*(?:password|pwd|pass)\s*[=:]\s*['\"]([^'\"]{6,})['\"]",
                 "severity": "HIGH",
+                "description": "SMTP/email password in configuration",
             },
             "database_password": {
-                "pattern":  r"(?i)(server|host).*(?:password|pwd)\s*[=:]\s*['\"]([^'\"]{6,})['\"]",
+                "pattern":  r"(?i)(?:server|host|database).*(?:password|pwd)\s*[=:]\s*['\"]([^'\"]{6,})['\"]",
                 "severity": "CRITICAL",
+                "description": "Database server password in script",
             },
             "github_token": {
                 "pattern":  r"ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{82}",
                 "severity": "CRITICAL",
+                "description": "GitHub Personal Access Token detected",
             },
             "slack_token": {
                 "pattern":  r"xox[baprs]-[0-9A-Za-z\-]{10,}",
                 "severity": "HIGH",
+                "description": "Slack API token detected",
             },
-            "base64_secret": {
-                "pattern":  r"(?i)(password|secret|key|token)\s*=\s*['\"][A-Za-z0-9+/]{30,}={0,2}['\"]",
-                "severity": "HIGH",
+            "bearer_token": {
+                "pattern":  r"(?i)Bearer\s+eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+",
+                "severity": "CRITICAL",
+                "description": "JWT Bearer token detected",
+            },
+            "registry_password": {
+                "pattern":  r"(?i)(?:Set-ItemProperty|Set-ADTRegistryKey).*(?:password|pwd|pass|secret).*-Value\s+['\"]([^'\"]{6,})['\"]",
+                "severity": "CRITICAL",
+                "description": "Password stored in Windows registry",
+            },
+            "hashtable_password": {
+                "pattern":  r"(?i)(?:Password|Secret|Credential)\s*=\s*['\"]([^'\"]{6,})['\"]",
+                "severity": "CRITICAL",
+                "description": "Password in hashtable or parameter",
             },
         }
 
@@ -1299,48 +1509,88 @@ class HemSpectScanner:
             ".json", ".yaml", ".yml", ".bat", ".cmd", ".psm1", ".env", ".txt"
         }
 
+        total_found = 0
+        total_excluded = 0
+
         for file_path in self.package_path.rglob("*"):
             if not file_path.is_file():
                 continue
             if file_path.suffix.lower() not in scan_extensions:
                 continue
-            try:
-                content = file_path.read_text(encoding="utf-8", errors="ignore")
-                self.findings["summary"]["files_scanned"] += 1
-            except Exception:
+
+            content = self._read_file_cached(file_path)
+            if content is None:
                 continue
 
             for pat_name, pat_info in credential_patterns.items():
                 try:
                     for match in re.finditer(pat_info["pattern"], content, re.IGNORECASE | re.MULTILINE):
                         line_num = content[: match.start()].count("\n") + 1
+                        match_text = match.group(0)
+                        line_text = self._get_line_at_offset(content, match.start())
+
+                        # ── Deduplication: skip if this (file, line) already flagged ──
+                        dedup_key = (str(file_path), line_num)
+                        if dedup_key in self._seen_credential_locations:
+                            continue
+
+                        # ── False positive detection ──
+                        is_fp, fp_reason = self._is_false_positive_credential(match_text, line_text, file_path)
+
+                        # ── Extract actual password value ──
+                        extracted = self._extract_password_value(match_text, pat_name)
+
+                        # ── Determine confidence ──
+                        confidence = 0.95
+                        if extracted and len(extracted) >= 8:
+                            confidence = 0.99
+                        elif pat_name in ("hashtable_password",):
+                            confidence = 0.85
+
                         issue = {
-                            "rule_id":     pat_name,
-                            "type":        "Credential",
-                            "subtype":     pat_name,
-                            "file":        str(file_path),
-                            "line":        line_num,
-                            "pattern":     pat_name,
-                            "severity":    pat_info["severity"],
-                            "match":       match.group(0)[:80] + ("..." if len(match.group(0)) > 80 else ""),
-                            "context":     self._get_context(content, match.start()),
-                            "description": f"Credential pattern '{pat_name}' detected",
-                            "remediation": (
-                                "Move to Azure Key Vault or SCCM Task Sequence Variable "
-                                "(mark Private). Base64 is NOT encryption."
+                            "rule_id":          pat_name,
+                            "type":             "Credential",
+                            "subtype":          pat_name,
+                            "file":             str(file_path),
+                            "line":             line_num,
+                            "pattern":          pat_name,
+                            "severity":         pat_info["severity"],
+                            "match":            match_text[:120] + ("..." if len(match_text) > 120 else ""),
+                            "context":          self._get_context(content, match.start()),
+                            "description":      pat_info.get("description", f"Credential pattern '{pat_name}' detected"),
+                            "remediation":      (
+                                "Move to Azure Key Vault, SCCM Task Sequence Variable (Private), "
+                                "or Windows Credential Manager. Never hardcode secrets in scripts."
                             ),
-                            "mitre_id":    "T1552.001",
-                            "cwe_id":      "CWE-798",
-                            "cvss":        self._compute_cvss_score("hardcoded_credential", {}),
-                            "compliance":  self._get_compliance_tags("hardcoded_credential"),
-                            "confidence":  0.99,
+                            "mitre_id":         "T1552.001",
+                            "cwe_id":           "CWE-798",
+                            "cvss":             self._compute_cvss_score("hardcoded_credential", {}),
+                            "compliance":       self._get_compliance_tags("hardcoded_credential"),
+                            "confidence":       confidence,
+                            "extracted_value":  extracted,
+                            "is_false_positive": is_fp,
+                            "fp_reason":        fp_reason if is_fp else "",
                         }
-                        self.findings["issues"].append(issue)
-                        self.findings["credential_findings"].append(issue)
-                        self._update_summary(pat_info["severity"])
-                        print(f"   [!] {pat_name} in {file_path.name}:{line_num}")
+
+                        self._seen_credential_locations.add(dedup_key)
+
+                        if is_fp:
+                            # Store excluded FPs separately
+                            self.findings["excluded_credentials"].append(issue)
+                            self.findings["summary"]["false_positives_excluded"] += 1
+                            total_excluded += 1
+                            print(f"   [~] EXCLUDED (FP): {pat_name} in {file_path.name}:{line_num} — {fp_reason}")
+                        else:
+                            self.findings["issues"].append(issue)
+                            self.findings["credential_findings"].append(issue)
+                            self._update_summary(pat_info["severity"])
+                            total_found += 1
+                            pw_display = f" → '{extracted[:20]}..." if extracted and len(extracted) > 20 else (f" → '{extracted}'" if extracted else "")
+                            print(f"   [!] 🔑 {pat_name} in {file_path.name}:{line_num}{pw_display}")
                 except re.error as exc:
                     logger.debug("Regex error %s: %s", pat_name, exc)
+
+        print(f"   [*] Password scan complete: {total_found} credentials found, {total_excluded} false positives excluded")
 
         # -------------------------------------------------------------------------
         # Dynamic Heuristic Credential Scanning (detect-secrets)
@@ -1363,10 +1613,15 @@ class HemSpectScanner:
                     secrets = SecretsCollection()
                     for file_path in self.package_path.rglob("*"):
                         if file_path.is_file() and file_path.suffix.lower() in scan_extensions:
-                            secrets.scan_file(str(file_path))
+                            if not self._is_framework_file(file_path):
+                                secrets.scan_file(str(file_path))
 
                     for file_path_str, secret_list in secrets.json().items():
                         for secret in secret_list:
+                            dedup_key = (file_path_str, secret['line_number'])
+                            if dedup_key in self._seen_credential_locations:
+                                continue
+
                             rule_id = f"dynamic_secret_{secret['type'].replace(' ', '_').lower()}"
                             issue = {
                                 "rule_id":     rule_id,
@@ -1385,18 +1640,16 @@ class HemSpectScanner:
                                 "cvss":        self._compute_cvss_score("hardcoded_credential", {}),
                                 "compliance":  self._get_compliance_tags("hardcoded_credential"),
                                 "confidence":  0.95,
+                                "extracted_value": None,
+                                "is_false_positive": False,
+                                "fp_reason":   "",
                             }
-                            # Check if we already flagged this line statically to avoid duplicates
-                            duplicate = any(
-                                i["file"] == file_path_str and i["line"] == secret['line_number']
-                                for i in self.findings["credential_findings"]
-                            )
-                            if not duplicate:
-                                self.findings["issues"].append(issue)
-                                self.findings["credential_findings"].append(issue)
-                                self._update_summary("CRITICAL")
-                                fname = Path(file_path_str).name
-                                print(f"   [!] {rule_id} in {fname}:{secret['line_number']}")
+                            self._seen_credential_locations.add(dedup_key)
+                            self.findings["issues"].append(issue)
+                            self.findings["credential_findings"].append(issue)
+                            self._update_summary("CRITICAL")
+                            fname = Path(file_path_str).name
+                            print(f"   [!] {rule_id} in {fname}:{secret['line_number']}")
 
             except Exception as e:
                 logger.debug("detect-secrets scan failed: %s", e)
@@ -1647,9 +1900,14 @@ class HemSpectScanner:
                 continue
             if file_path.suffix.lower() not in CONTENT_SCAN_EXTENSIONS:
                 continue
-            # Skip very large files (>5MB) for performance
+            
+            # Skip PSADT framework files (avoids catastrophic regex hangs on 1.3MB main toolkit script)
+            if self._is_framework_file(file_path):
+                continue
+
+            # Skip large files (>50KB) for performance - credentials are in small config files
             try:
-                if file_path.stat().st_size > 5 * 1024 * 1024:
+                if file_path.stat().st_size > 50 * 1024:
                     continue
             except OSError:
                 continue
@@ -1883,6 +2141,10 @@ class HemSpectScanner:
         }
 
         for ps_file in ps_files:
+            # Skip toolkit framework files to prevent regex hangs on large files
+            if self._is_framework_file(ps_file):
+                continue
+                
             try:
                 content = ps_file.read_text(encoding="utf-8", errors="ignore")
             except Exception as exc:
@@ -1919,35 +2181,8 @@ class HemSpectScanner:
                 except re.error as exc:
                     logger.debug("Regex error %s: %s", chk_name, exc)
 
-            # V3 deprecated API: check if any found from main patterns
-            v3_pattern = r"(?i)(Show-InstallationProgress|Execute-Process\b|Copy-File\b|Remove-File\b|Set-RegistryKey\b)"
-            try:
-                for match in re.finditer(v3_pattern, content, re.IGNORECASE):
-                    line_num = content[: match.start()].count("\n") + 1
-                    issue = {
-                        "rule_id":     "psadt_v3_deprecated_api",
-                        "type":        "psadt_v4",
-                        "subtype":     "deprecated_api",
-                        "file":        str(ps_file),
-                        "line":        line_num,
-                        "pattern":     "PSADT v3 Deprecated API",
-                        "severity":    "MEDIUM",
-                        "match":       match.group(0)[:80],
-                        "context":     self._get_context(content, match.start()),
-                        "description": f"Deprecated PSADT v3 cmdlet '{match.group(0).strip()}' found - bypasses v4 audit controls",
-                        "remediation": "Migrate to PSADT v4 equivalent cmdlet (e.g. Execute-Process → Execute-ADTProcess)",
-                        "mitre_id":    "T1059.001",
-                        "cwe_id":      "CWE-1104",
-                        "cvss":        self._compute_cvss_score("psadt_deprecated_v3_appdeployment", {}),
-                        "compliance":  self._get_compliance_tags("psadt_deprecated_v3_appdeployment"),
-                        "confidence":  0.90,
-                    }
-                    self.findings["issues"].append(issue)
-                    self.findings["psadt_v4_findings"].append(issue)
-                    self._update_summary("MEDIUM")
-                    print(f"   [!] Deprecated PSADT v3 API in {ps_file.name}:{line_num} → {match.group(0).strip()}")
-            except re.error as exc:
-                logger.debug("V3 API regex error: %s", exc)
+            # V3 deprecated API check REMOVED — already handled by Step 1 pattern
+            # 'psadt_deprecated_v3_appdeployment'. Keeping it here caused duplicates.
 
     # =========================================================================
     # Step 7: MSI/MSP/MSIX Package Analysis

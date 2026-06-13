@@ -58,14 +58,124 @@ except ImportError:
 
 # -----------------------------------------------------------------------------------------
 
-BANNER = """
-+==================================================================+
-|  HEMSPECT v3.0  --  Package Security Scanner  |
-|  NIST 800-53 | CMMC 2.0 | IEC 62443 | CIS v8 | MITRE ATT&CK    |
-|------------------------------------------------------------------|
-|  Powered by ⚡ HemSpect™ Data Leakage Intelligence Engine       |
-+==================================================================+
-"""
+
+def _make_banner() -> str:
+    """
+    Generate the cinematic HemSpect 3D hologram CLI banner.
+
+    Renders a futuristic anti-gravity lab aesthetic with:
+      · Large HEMSPECT block-art letters in a cyan glow gradient
+      · Floating particle field (dim blue dots)
+      · Decorative frame with ◈ corner glyphs and ━ separators
+      · Compliance & framework info bar
+
+    Falls back to plain ASCII when stdout is not a TTY, NO_COLOR is set,
+    or VT100 ANSI processing cannot be enabled (Windows legacy consoles).
+    """
+    import sys as _sys
+    import os as _os
+
+    # ── Detect colour support ────────────────────────────────────────────────
+    _color = (
+        hasattr(_sys.stdout, 'isatty') and _sys.stdout.isatty()
+        and _os.environ.get('NO_COLOR') is None
+        and _os.environ.get('TERM', '') != 'dumb'
+    )
+    if _os.name == 'nt' and _color:
+        try:                           # Enable VT100 + UTF-8 on Windows 10+ console
+            import ctypes
+            _k32 = ctypes.windll.kernel32
+            _k32.SetConsoleMode(_k32.GetStdHandle(-11), 7)  # enable ANSI VT100
+            _k32.SetConsoleOutputCP(65001)                  # set UTF-8 code page
+            # Also reconfigure sys.stdout to use UTF-8
+            import io
+            _sys.stdout = io.TextIOWrapper(
+                _sys.stdout.buffer, encoding='utf-8', errors='replace',
+                line_buffering=_sys.stdout.line_buffering
+            )
+        except Exception:
+            _color = False
+
+    if not _color:
+        return (
+            "\n"
+            "+==================================================================+\n"
+            "|  HEMSPECT v3.0  --  Package Security Scanner                     |\n"
+            "|  NIST 800-53 | CMMC 2.0 | IEC 62443 | CIS v8 | MITRE ATT&CK    |\n"
+            "|------------------------------------------------------------------|\n"
+            "|  Powered by HemSpect\u2122 Data Leakage Intelligence Engine           |\n"
+            "+==================================================================+\n"
+        )
+
+    # ── ANSI palette (standard 16-colour for maximum compatibility) ──────────
+    R    = '\033[0m'    # reset
+    B    = '\033[1m'    # bold
+    DIM  = '\033[2m'    # dim  / shadow depth
+    CY1  = '\033[96m'   # bright cyan  — nearest plane  (highest glow)
+    CY2  = '\033[36m'   # cyan         — mid plane
+    CY3  = '\033[34m'   # blue         — deep shadow
+    CY4  = '\033[94m'   # bright blue  — accent / subtitle
+
+    # ── HEMSPECT in figlet "Double" block-art — 6-row cyan glow gradient ─────
+    #    Row 1-2 → bright cyan bold  (closest to viewer, hottest glow)
+    #    Row 3-4 → regular cyan      (mid-field)
+    #    Row 5-6 → dim blue          (receding into holographic mist)
+    _art = [
+        f"{CY1}{B}  \u2588\u2588\u256d  \u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d\u2588\u2588\u2588\u256d   \u2588\u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u256d \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d \u2588\u2588\u2588\u2588\u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d{R}",
+        f"{CY1}{B}  \u2588\u2588\u2551  \u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u2588\u2588\u2588\u2588\u256d \u2588\u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u256d\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u255a\u2550\u2550\u2588\u2588\u2554\u2550\u2550\u255d{R}",
+        f"{CY2}  \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2551\u2588\u2588\u2588\u2588\u2588\u256d  \u2588\u2588\u2554\u2588\u2588\u2588\u2588\u2554\u2588\u2588\u2551\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d\u2588\u2588\u2588\u2588\u2588\u2588\u2554\u255d\u2588\u2588\u2588\u2588\u2588\u256d  \u2588\u2588\u2551        \u2588\u2588\u2551   {R}",
+        f"{CY2}  \u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u255d  \u2588\u2588\u2551\u255a\u2588\u2588\u2554\u255d\u2588\u2588\u2551\u255a\u2550\u2550\u2550\u2550\u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2550\u255d \u2588\u2588\u2554\u2550\u2550\u255d  \u2588\u2588\u2551        \u2588\u2588\u2551   {R}",
+        f"{DIM}{CY3}  \u2588\u2588\u2551  \u2588\u2588\u2551\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d\u2588\u2588\u2551 \u255a\u2550\u255d \u2588\u2588\u2551\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2551\u2588\u2588\u2551     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u256d\u255a\u2588\u2588\u2588\u2588\u2588\u2588\u256d   \u2588\u2588\u2551   {R}",
+        f"{DIM}{CY3}  \u255a\u2550\u255d  \u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u255d\u255a\u2550\u255d     \u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u255d\u255a\u2550\u255d     \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u255d \u255a\u2550\u2550\u2550\u2550\u2550\u255d   \u255a\u2550\u255d   {R}",
+    ]
+
+    # ── Decorative elements ───────────────────────────────────────────────────
+    _W  = 70
+    SEP = f"  {CY1}\u25c8{CY2}{'━' * (_W - 2)}{CY1}\u25c8{R}"
+    SEP2= f"  {CY3}\u25c8{CY3}{'─' * (_W - 2)}{CY3}\u25c8{R}"
+    PTC = (
+        f"  {DIM}{CY3}"
+        f"\u00b7 \u00b7 \u00b7   \u00b7  \u00b7 \u00b7    \u00b7      "
+        f"\u00b7  \u00b7 \u00b7    \u00b7   \u00b7  \u00b7 \u00b7    \u00b7   \u00b7   \u00b7 \u00b7 \u00b7"
+        f"{R}"
+    )
+    SUB = (
+        f"  {CY4}\u2b21  {CY2}ANTI-GRAVITY SECURITY LAB"
+        f"{R}  {CY3}\u00b7{R}  "
+        f"{CY2}HOLOGRAPHIC INTELLIGENCE ENGINE  "
+        f"{CY4}\u2b21{R}"
+    )
+    INF = f"  {CY1}\u26a1 {CY2}Powered by HemSpect\u2122 Data Leakage Intelligence Engine  \u00b7  v3.0{R}"
+    TGS = (
+        f"  {DIM}{CY3}\u25b8 "
+        f"{CY2}NIST 800-53  {CY3}\u25c8  "
+        f"{CY2}CMMC 2.0  {CY3}\u25c8  "
+        f"{CY2}IEC 62443  {CY3}\u25c8  "
+        f"{CY2}CIS v8  {CY3}\u25c8  "
+        f"{CY2}MITRE ATT&CK{R}"
+    )
+
+    return (
+        "\n"
+        f"{PTC}\n"
+        "\n"
+        f"{SEP}\n"
+        f"{SUB}\n"
+        f"{SEP}\n"
+        "\n"
+        + "\n".join(_art) + "\n"
+        "\n"
+        f"{SEP2}\n"
+        f"{INF}\n"
+        f"{TGS}\n"
+        f"{SEP2}\n"
+        "\n"
+        f"{PTC}\n"
+    )
+
+
+BANNER = _make_banner()
+
 
 SCANNER_VERSION = "3.0"
 
@@ -541,31 +651,31 @@ def cmd_scan(args, logger) -> int:
     fail_on  = [f.strip().upper() for f in (args.fail_on or "critical,high").split(",")]
 
     if not args.ci:
-        print(BANNER)
         print(f"  Package   : {package_path}")
         print(f"  Output    : {output_dir}")
         print(f"  Operator  : {operator}")
         print(f"  Formats   : {', '.join(formats)}")
         print(f"  Fail-on   : {', '.join(fail_on)}")
         print(f"  Network   : {'OFFLINE' if args.no_network else 'ONLINE'}")
+        print(f"  Note      : MSI custom action analysis skipped for performance")
         print()
 
     try:
         # --- Step 1: Core scan ---
         if not args.ci:
-            print("[1/5] Running security scan...")
+            print("[1/4] Running security scan...")
 
         scanner = HemSpectScanner(str(package_path), str(output_dir))
         scanner.findings["operator"] = operator
         scanner.findings["scanner_version"] = f"{scanner.findings.get('scanner_version', '')} (CLI v{SCANNER_VERSION})"
 
-        findings = scanner.scan()
+        findings = scanner.scan(generate_reports=False, show_banner=False)
 
         # --- Step 2: Apply allowlist ---
         allowlist = {}
         if args.allowlist:
             if not args.ci:
-                print("[2/5] Applying allowlist exceptions...")
+                print("[2/4] Applying allowlist exceptions...")
             allowlist = _load_allowlist(args.allowlist)
             findings  = _apply_allowlist(findings, allowlist)
             # Recompute approval status after allowlist suppression
@@ -591,7 +701,7 @@ def cmd_scan(args, logger) -> int:
         sbom_data = {}
         if not args.no_network and ("sbom" in formats or "all" in formats or "html" in formats):
             if not args.ci:
-                print("[3/5] Generating SBOM...")
+                print("[3/4] Generating SBOM...")
             try:
                 from scanners.sbom_generator import SBOMGenerator
                 sbom_gen  = SBOMGenerator(package_path, output_dir, nvd_key)
@@ -608,11 +718,11 @@ def cmd_scan(args, logger) -> int:
                     print(f"      [!] SBOM generation failed: {exc}")
         else:
             if not args.ci:
-                print("[3/5] Skipping SBOM (--no-network or format not requested).")
+                print("[3/4] Skipping SBOM (--no-network or format not requested).")
 
         # --- Step 5: Report generation ---
         if not args.ci:
-            print("[4/5] Generating reports...")
+            print("[4/4] Generating reports...")
 
         report_files = []
 
@@ -683,7 +793,7 @@ def cmd_scan(args, logger) -> int:
 
         # --- Step 5b: Approval workflow bootstrap ---
         if not args.ci:
-            print("[4/5] Recording workflow state...")
+            print("[4/4] Recording workflow state...")
         try:
             from scanners.approval_workflow import ApprovalWorkflow
             wf = ApprovalWorkflow(package_path, output_dir)
@@ -695,11 +805,11 @@ def cmd_scan(args, logger) -> int:
         # --- Step 5c: Sign manifest ---
         if args.sign_report:
             if not args.ci:
-                print("[5/5] Signing report manifest...")
+                print("      Signing report manifest...")
             _sign_manifest(output_dir, args.signing_key, logger)
         else:
             if not args.ci:
-                print("[5/5] (Manifest signing skipped; use --sign-report to enable)")
+                print("      (Manifest signing skipped; use --sign-report to enable)")
 
         # --- Print summary ---
         _print_summary(findings, output_dir, args.ci)

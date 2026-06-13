@@ -1,0 +1,29 @@
+{
+  "current_state": "AUTO_SCAN_REJECTED",
+  "package": "JGraph-Draw.io-29.6.1-EN-1.0.0",
+  "package_path": "E:\\packages\\JGraph-Draw.io-29.6.1-EN-1.0.0",
+  "created_at": "2026-06-12T04:13:41.055367+00:00",
+  "last_updated": "2026-06-12T04:13:41.055930+00:00",
+  "history": [
+    {
+      "from_state": "PENDING_SCAN",
+      "to_state": "AUTO_SCAN_REJECTED",
+      "actor": "AutoScanner",
+      "event": "scan_complete",
+      "timestamp": "2026-06-12T04:13:41.055930+00:00",
+      "data": {
+        "approval_status": "REJECTED",
+        "critical": 22,
+        "high": 7,
+        "medium": 5,
+        "low": 0,
+        "risk_score": 100.0,
+        "scanner_version": "3.0 (CLI v3.0)",
+        "operator": "hemen"
+      },
+      "prev_hash": "",
+      "hash": "23bfd594423592faa7bc3f59615aeeef6e2184e810f2e32e09c832914638dc00"
+    }
+  ],
+  "chain_tip": "23bfd594423592faa7bc3f59615aeeef6e2184e810f2e32e09c832914638dc00"
+}
