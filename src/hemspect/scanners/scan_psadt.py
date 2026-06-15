@@ -782,39 +782,68 @@ class HemSpectScanner:
 
     def _load_yaml_config(self) -> None:
         """Load rules.yaml from config directory and merge into self.config."""
+        import pkgutil
+        
         rules_path = Path("config") / "rules.yaml"
         if not rules_path.exists():
             rules_path = self.package_path.parent / "config" / "rules.yaml"
-        if not rules_path.exists():
-            return
-        if not _YAML_AVAILABLE:
-            logger.warning("PyYAML not installed - skipping rules.yaml load")
-            return
-        try:
-            with open(rules_path, "r", encoding="utf-8") as fh:
-                extra = yaml.safe_load(fh) or {}
-            self.config.update(extra)
-            logger.info("Loaded rules from %s", rules_path)
-        except Exception as exc:
-            logger.warning("Could not load rules.yaml: %s", exc)
+            
+        content = None
+        if rules_path.exists():
+            try:
+                with open(rules_path, "r", encoding="utf-8") as fh:
+                    content = fh.read()
+                logger.info("Loaded custom rules from %s", rules_path)
+            except Exception as exc:
+                logger.warning("Could not load rules.yaml: %s", exc)
+        else:
+            try:
+                raw = pkgutil.get_data("hemspect.config", "rules.yaml")
+                if raw:
+                    content = raw.decode("utf-8")
+                    logger.info("Loaded default rules from package resources")
+            except Exception as exc:
+                logger.warning("Could not load default rules.yaml: %s", exc)
+
+        if content and _YAML_AVAILABLE:
+            try:
+                extra = yaml.safe_load(content) or {}
+                self.config.update(extra)
+            except Exception as exc:
+                logger.warning("Error parsing rules.yaml: %s", exc)
 
     def _load_allowlist(self) -> None:
         """Load allowlist.yaml exception entries."""
+        import pkgutil
+        
         al_path = Path("config") / "allowlist.yaml"
         if not al_path.exists():
             al_path = self.package_path.parent / "config" / "allowlist.yaml"
-        if not al_path.exists():
-            return
-        if not _YAML_AVAILABLE:
-            logger.warning("PyYAML not installed - allowlist skipped")
-            return
-        try:
-            with open(al_path, "r", encoding="utf-8") as fh:
-                data = yaml.safe_load(fh) or {}
-            self.allowlist = data.get("exceptions", [])
-            logger.info("Loaded %d allowlist entries", len(self.allowlist))
-        except Exception as exc:
-            logger.warning("Could not load allowlist.yaml: %s", exc)
+            
+        content = None
+        if al_path.exists():
+            try:
+                with open(al_path, "r", encoding="utf-8") as fh:
+                    content = fh.read()
+                logger.info("Loaded custom allowlist from %s", al_path)
+            except Exception as exc:
+                logger.warning("Could not load allowlist.yaml: %s", exc)
+        else:
+            try:
+                raw = pkgutil.get_data("hemspect.config", "allowlist.yaml")
+                if raw:
+                    content = raw.decode("utf-8")
+                    logger.info("Loaded default allowlist from package resources")
+            except Exception as exc:
+                logger.warning("Could not load default allowlist.yaml: %s", exc)
+
+        if content and _YAML_AVAILABLE:
+            try:
+                data = yaml.safe_load(content) or {}
+                self.allowlist = data.get("exceptions", [])
+                logger.info("Loaded %d allowlist entries", len(self.allowlist))
+            except Exception as exc:
+                logger.warning("Error parsing allowlist.yaml: %s", exc)
 
     def _load_signing_key(self) -> None:
         """Load ECDSA private key from PSADT_SIGNING_KEY_PATH env var if set."""

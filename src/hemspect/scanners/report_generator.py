@@ -2558,26 +2558,30 @@ document.addEventListener('DOMContentLoaded', function() {{
             </tr>
             <tr class="detail-row hidden" id="{detail_id}">
               <td colspan="6">
-                <div class="detail-content">
-                  <div class="detail-grid">
-                    <div class="detail-field">
+                <div class="pwd-detail-content">
+                  <div class="pwd-detail-grid">
+                    <div class="pwd-detail-field">
                       <label>Description</label>
                       <p>{html_mod.escape(desc) if desc else '—'}</p>
                     </div>
-                    <div class="detail-field">
-                      <label>Remediation / Advice</label>
+                    <div class="pwd-detail-field">
+                      <label>Remediation</label>
                       <p>{html_mod.escape(rem)}</p>
                     </div>
+                    <div class="pwd-detail-field">
+                      <label>File Path</label>
+                      <p style="font-family:monospace;font-size:0.72rem;color:var(--info);word-break:break-all">{html_mod.escape(str(issue.get("file", "")))}</p>
+                    </div>
                   </div>
-                  <div class="detail-field" style="margin-bottom:10px">
-                    <label>Context / Match Content</label>
-                    <div class="detail-code" style="white-space:pre-wrap">{html_mod.escape(ctx[:400])}</div>
+                  <div class="pwd-detail-field" style="margin-bottom:12px">
+                    <label>Context</label>
+                    <div class="pwd-context-code" style="white-space:pre-wrap">{html_mod.escape(ctx[:400])}</div>
                   </div>
-                  <div class="detail-field">
-                    <label>Tags & MITRE</label>
-                    <div class="compliance-tags">
-                      <span class="compliance-tag" style="background:rgba(240,165,0,0.1);color:var(--accent);border-color:rgba(240,165,0,0.3)">{html_mod.escape(mitre)}</span>
-                      {tags_html}
+                  <div class="pwd-detail-field">
+                    <label>Tags</label>
+                    <div class="pwd-detail-tags">
+                      <span class="pwd-detail-tag tag-mitre">{html_mod.escape(mitre)}</span>
+                      {"".join(f'<span class="pwd-detail-tag tag-compliance">{html_mod.escape(str(t))}</span>' for t in tags_list)}
                     </div>
                   </div>
                 </div>

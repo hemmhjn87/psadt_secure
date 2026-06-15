@@ -1,0 +1,2 @@
+[console_scripts]
+hemspect = hemspect.cli:main

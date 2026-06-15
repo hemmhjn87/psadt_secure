@@ -19,7 +19,7 @@ reviewed_by: "Security Operations"
 exceptions:
   - id: exc-framework-01
     rule_id: privilege_escalation_api
-    file_pattern: "*/PSAppDeployToolkit.psm1"
+    file_pattern: "PSAppDeployToolkit.psm1"
     approved_by: "hemen"
     approved_date: "2026-06-13"
     ticket: "EXMPT-0001"
@@ -28,8 +28,8 @@ exceptions:
     risk_accepted: "LOW - framework logic"
 
   - id: exc-framework-02
-    rule_id: xml_password_attribute
-    file_pattern: "*/PSADT.ClientServer.Client*.exe.config"
+    rule_id: hemspect_xml_password_attribute
+    file_pattern: "PSADT.ClientServer.Client*.exe.config"
     approved_by: "hemen"
     approved_date: "2026-06-13"
     ticket: "EXMPT-0002"
@@ -39,7 +39,7 @@ exceptions:
 
   - id: exc-framework-03
     rule_id: dynamic_secret_hex_high_entropy_string
-    file_pattern: "*/PSADT.ClientServer.Client*.exe.config"
+    file_pattern: "PSADT.ClientServer.Client*.exe.config"
     approved_by: "hemen"
     approved_date: "2026-06-13"
     ticket: "EXMPT-0003"
@@ -49,7 +49,7 @@ exceptions:
 
   - id: exc-framework-04
     rule_id: obfuscation_detected
-    file_pattern: "*/strings.psd1"
+    file_pattern: "strings.psd1"
     approved_by: "hemen"
     approved_date: "2026-06-13"
     ticket: "EXMPT-0004"
@@ -59,7 +59,7 @@ exceptions:
 
   - id: exc-framework-05
     rule_id: packed_binary
-    file_pattern: "*/Invoke-AppDeployToolkit.exe"
+    file_pattern: "Invoke-AppDeployToolkit.exe"
     approved_by: "hemen"
     approved_date: "2026-06-13"
     ticket: "EXMPT-0005"

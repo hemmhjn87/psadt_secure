@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hemspect"
+version = "3.0.0"
+authors = [
+  { name="Hemendra Mahajan" },
+]
+description = "Enterprise package security scanner for PSADT"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pyyaml>=6.0",
+    "cryptography>=41.0.0",
+    "pefile>=2023.2.7"
+]
+
+[project.scripts]
+hemspect = "hemspect.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"hemspect.config" = ["*.yaml"]

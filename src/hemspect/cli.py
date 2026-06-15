@@ -35,9 +35,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Optional, Dict, Any
 
-# --- Add src/ to path first -----------------------------------------------------------
-_HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(_HERE / "src"))
+# -----------------------------------------------------------------------------------------
 
 # --- Optional crypto for signing ---------------------------------------------------------
 try:
@@ -606,7 +604,7 @@ def _exit_code(findings: dict, fail_on: List[str]) -> int:
 # ---- Subcommand: scan ---------------------------------------------------------------
 
 def cmd_scan(args, logger) -> int:
-    from scanners.scan_psadt import HemSpectScanner
+    from hemspect.scanners.scan_psadt import HemSpectScanner
 
     package_path = Path(args.package_path)
     if not package_path.is_dir():
@@ -676,7 +674,7 @@ def cmd_scan(args, logger) -> int:
             if not args.ci:
                 print("[3/4] Generating SBOM...")
             try:
-                from scanners.sbom_generator import SBOMGenerator
+                from hemspect.scanners.sbom_generator import SBOMGenerator
                 sbom_gen  = SBOMGenerator(package_path, output_dir, nvd_key)
                 sbom_data = sbom_gen.generate()
                 findings["sbom_summary"] = {
@@ -735,12 +733,12 @@ def cmd_scan(args, logger) -> int:
             if not args.ci:
                 print("      Generating HTML report...")
             try:
-                from scanners.report_generator import ReportGenerator
+                from hemspect.scanners.report_generator import ReportGenerator
                 workflow_summary = {}
                 wf_path = output_dir / "workflow_state.json"
                 if wf_path.exists():
                     try:
-                        from scanners.approval_workflow import ApprovalWorkflow
+                        from hemspect.scanners.approval_workflow import ApprovalWorkflow
                         wf = ApprovalWorkflow(package_path, output_dir)
                         workflow_summary = wf.get_workflow_summary()
                     except Exception:
@@ -768,7 +766,7 @@ def cmd_scan(args, logger) -> int:
         if not args.ci:
             print("[4/4] Recording workflow state...")
         try:
-            from scanners.approval_workflow import ApprovalWorkflow
+            from hemspect.scanners.approval_workflow import ApprovalWorkflow
             wf = ApprovalWorkflow(package_path, output_dir)
             if wf._state.get("current_state") == "PENDING_SCAN":
                 wf.record_scan_result(findings)
@@ -828,7 +826,7 @@ def cmd_verify(args, logger) -> int:
 
 def cmd_workflow(args, logger) -> int:
     try:
-        from scanners.approval_workflow import ApprovalWorkflow
+        from hemspect.scanners.approval_workflow import ApprovalWorkflow
     except ImportError as exc:
         print(f"[✖] Could not import ApprovalWorkflow: {exc}", file=sys.stderr)
         return 3
@@ -1130,7 +1128,7 @@ def _generate_factory_html(results: List[dict], output_dir: Path, operator: str,
 
 def cmd_factory_scan(args, logger) -> int:
     """Batch-scan an entire package factory directory."""
-    from scanners.scan_psadt import HemSpectScanner
+    from hemspect.scanners.scan_psadt import HemSpectScanner
 
     root = Path(args.factory_path)
     if not root.is_dir():

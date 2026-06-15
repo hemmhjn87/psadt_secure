@@ -248,12 +248,13 @@ class SBOMGenerator:
     def _check_authenticode(self, file_path: Path) -> bool:
         """Return True if the file has a valid Authenticode signature."""
         try:
-            cmd = [
-                "powershell", "-NoProfile", "-NonInteractive", "-Command",
-                f'(Get-AuthenticodeSignature "{file_path}").Status -eq "Valid"'
-            ]
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=8)
-            return result.stdout.strip().lower() == "true"
+            if not PEFILE_AVAILABLE:
+                return False
+            pe = pefile.PE(str(file_path), fast_load=True)
+            # IMAGE_DIRECTORY_ENTRY_SECURITY is index 4
+            sec_dir = pe.OPTIONAL_HEADER.DATA_DIRECTORY[4]
+            pe.close()
+            return sec_dir.VirtualAddress != 0 and sec_dir.Size > 0
         except Exception:
             return False
 
