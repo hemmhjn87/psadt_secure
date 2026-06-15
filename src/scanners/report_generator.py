@@ -138,6 +138,7 @@ class ReportGenerator:
         sec_findings  = self._section_findings_explorer()
         sec_mitre     = self._section_mitre_heatmap()
         sec_sbom      = self._section_sbom()
+        sec_suppressed = self._section_suppressed()
         sec_workflow  = self._section_workflow()
         sec_audit     = self._section_audit_trail()
         sec_remediation = self._section_remediation_tracker()
@@ -180,6 +181,11 @@ class ReportGenerator:
       <section id="sec-pwdintel" class="report-section">
         <h2 class="section-title"><span class="section-icon">🔑</span> Password Intelligence</h2>
         {sec_pwdintel}
+      </section>
+
+      <section id="sec-suppressed" class="report-section">
+        <h2 class="section-title"><span class="section-icon">🛡</span> Allowlisted Exceptions</h2>
+        {sec_suppressed}
       </section>
 
       <section id="sec-risk" class="report-section">
@@ -2514,6 +2520,92 @@ document.addEventListener('DOMContentLoaded', function() {{
     # ------------------------------------------------------------------ #
     #  Utility                                                             #
     # ------------------------------------------------------------------ #
+
+    def _section_suppressed(self) -> str:
+        suppressed = self.findings.get("suppressed_findings", [])
+        if not suppressed:
+            return '<div style="color: var(--text-muted); font-style: italic; padding: 20px;">No findings were suppressed by the allowlist.</div>'
+
+        rows_html = []
+        import html as html_mod
+        for idx, issue in enumerate(suppressed):
+            sev = issue.get("severity", "LOW")
+            file_name = __import__("pathlib").Path(issue.get("file", "")).name
+            line = str(issue.get("line", ""))
+            rule = issue.get("rule_id", issue.get("pattern", "unknown"))
+            entry = issue.get("allowlist_entry", {})
+            reason = entry.get("justification", entry.get("reason", "No reason provided"))
+            ticket = entry.get("ticket", "N/A")
+
+            desc = str(issue.get("desc", issue.get("description", "")))
+            rem  = str(issue.get("remediation", issue.get("rem", "No remediation advice")))
+            ctx  = str(issue.get("context", issue.get("match", "")))
+            mitre = str(issue.get("mitre_id", "—"))
+            tags_list = issue.get("tags", [])
+            tags_html = "".join(f'<span class="compliance-tag">{html_mod.escape(str(t))}</span>' for t in tags_list)
+
+            detail_id = f"supp-detail-{idx}"
+            row_id    = f"supp-row-{idx}"
+
+            row = f'''
+            <tr class="finding-row row-{sev.lower()}" onclick="toggleDetail('{detail_id}', this)" id="{row_id}">
+                <td><span class="sev-badge sev-{sev}">{sev}</span></td>
+                <td><strong>{html_mod.escape(file_name)}</strong></td>
+                <td>{html_mod.escape(line)}</td>
+                <td><code>{html_mod.escape(rule)}</code></td>
+                <td>{html_mod.escape(reason)} <br/><small style="color:var(--info);">Ticket: {html_mod.escape(ticket)}</small></td>
+                <td><span class="expand-icon">▼</span></td>
+            </tr>
+            <tr class="detail-row hidden" id="{detail_id}">
+              <td colspan="6">
+                <div class="detail-content">
+                  <div class="detail-grid">
+                    <div class="detail-field">
+                      <label>Description</label>
+                      <p>{html_mod.escape(desc) if desc else '—'}</p>
+                    </div>
+                    <div class="detail-field">
+                      <label>Remediation / Advice</label>
+                      <p>{html_mod.escape(rem)}</p>
+                    </div>
+                  </div>
+                  <div class="detail-field" style="margin-bottom:10px">
+                    <label>Context / Match Content</label>
+                    <div class="detail-code" style="white-space:pre-wrap">{html_mod.escape(ctx[:400])}</div>
+                  </div>
+                  <div class="detail-field">
+                    <label>Tags & MITRE</label>
+                    <div class="compliance-tags">
+                      <span class="compliance-tag" style="background:rgba(240,165,0,0.1);color:var(--accent);border-color:rgba(240,165,0,0.3)">{html_mod.escape(mitre)}</span>
+                      {tags_html}
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>'''
+            rows_html.append(row)
+
+        table_body = "".join(rows_html)
+
+        return f'''
+        <div class="findings-table-wrap" style="margin-top: 10px;">
+            <table class="findings-table">
+                <thead>
+                    <tr>
+                        <th>Severity</th>
+                        <th>File</th>
+                        <th>Line</th>
+                        <th>Rule ID</th>
+                        <th>Suppression Reason</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {table_body}
+                </tbody>
+            </table>
+        </div>
+        '''
 
     def _report_hash(self) -> str:
         payload = json.dumps(self.findings, sort_keys=True, default=str).encode("utf-8")

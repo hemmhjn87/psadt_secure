@@ -1057,18 +1057,25 @@ class HemSpectScanner:
         # MSI custom action analysis via COM automation was too slow.
         # Use --format sarif for MSI analysis with external tools.
 
+        # ── Apply allowlist BEFORE risk scoring ───────────────────────────────
+        active_issues, suppressed = self._apply_allowlist(self.findings["issues"])
+        self.findings["issues"] = active_issues
+        self.findings["suppressed_findings"] = suppressed
+        self.findings["summary"]["suppressed"] = len(suppressed)
+        
+        # Recalculate summary counts based on active issues
+        self.findings["summary"]["critical"] = sum(1 for i in active_issues if i.get("severity") == "CRITICAL")
+        self.findings["summary"]["high"] = sum(1 for i in active_issues if i.get("severity") == "HIGH")
+        self.findings["summary"]["medium"] = sum(1 for i in active_issues if i.get("severity") == "MEDIUM")
+        self.findings["summary"]["low"] = sum(1 for i in active_issues if i.get("severity") == "LOW")
+        self.findings["summary"]["total_issues"] = len(active_issues)
+
         # ── Step 8: Risk scoring + MITRE mapping ──────────────────────────────
         print("[Step 8/8] Computing Risk Scores, MITRE Mapping & Generating Reports...")
         try:
             self._compute_risk_scores()
         except Exception as exc:
             logger.error("Step 8 risk scoring failed: %s", exc)
-
-        # ── Apply allowlist BEFORE report generation ──────────────────────────
-        active_issues, suppressed = self._apply_allowlist(self.findings["issues"])
-        self.findings["issues"] = active_issues
-        self.findings["suppressed_findings"] = suppressed
-        self.findings["summary"]["suppressed"] = len(suppressed)
 
         # ── Generate all reports (only when not called from CLI) ──────────────
         if generate_reports:
