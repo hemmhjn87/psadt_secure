@@ -1,8 +1,8 @@
-# HemSpect Project Overview (Manager View)
+# Executive Summary
 
-This presentation chart is built specifically for a **non-technical manager**. It completely avoids technical jargon and instead focuses on the "Why": the business problem, the solution your project provides, and the return on investment (ROI).
+HemSpect provides an automated, comprehensive security analysis for enterprise software deployments (specifically focusing on the PowerShell App Deployment Toolkit - PSADT). This project aims to bridge the gap between rapid software deployment and strict enterprise security compliance.
 
-You can use this to easily justify the project's value and demonstrate how it protects the organization.
+## Core Value Proposition
 
 ```mermaid
 mindmap
@@ -27,8 +27,8 @@ mindmap
       Executive Dashboard
 ```
 
-> [!TIP]
-> **Talking Points for your Manager:**
-> * **Time = Money:** Emphasize that what used to take days of manual security review now takes literally *seconds*.
-> * **Risk Mitigation:** Explain that this tool acts as an automated "gatekeeper" that physically prevents developers from deploying code containing hardcoded passwords or malware.
-> * **Audit Readiness:** Managers love compliance. Show them that the HTML report automatically maps issues to compliance standards (like NIST or CIS), making the next audit a breeze.
+## Strategic Benefits
+
+* **Operational Efficiency:** Transforms manual, multi-day security code reviews into automated scans that complete in seconds, accelerating software delivery.
+* **Risk Mitigation:** Acts as an automated enforcement gate, preventing deployments that contain hardcoded credentials, malware patterns, or data leakage vulnerabilities from reaching production endpoints.
+* **Audit Readiness:** Automatically maps security findings to industry compliance standards (NIST SP 800-53, CMMC 2.0, CIS Controls v8), providing clear, demonstrable evidence for auditors.

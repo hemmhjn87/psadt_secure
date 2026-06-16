@@ -1,19 +1,15 @@
-# HemSpect Project Architecture
+# High-Level Architecture
 
-This interactive diagram provides a high-level conceptual overview of the `psadt-secure` project's architecture. It visualizes how the CLI entrypoint connects to the core scanner engine, and how the various specialized modules interact to produce the final enterprise HTML reports. 
-
-You can use this directly in your team presentation to explain the tool's workflow!
+This diagram provides a conceptual overview of the HemSpect architecture. It visualizes how the CLI entrypoint coordinates the core scanner engines and how various specialized modules interact to produce enterprise-grade security reports.
 
 ```mermaid
 graph TD
-    %% Styling
     classDef cli fill:#0a1628,stroke:#00ff88,stroke-width:2px,color:#fff,font-weight:bold
     classDef core fill:#1c2a42,stroke:#f0a500,stroke-width:2px,color:#fff
     classDef module fill:#162032,stroke:#4895ef,stroke-width:1px,color:#e8edf5
     classDef config fill:#2a9d8f,stroke:#1a472a,stroke-width:1px,color:#fff
     classDef output fill:#422010,stroke:#f4a261,stroke-width:1px,color:#fff
 
-    %% Nodes
     CLI["hemspect<br/>(Rich CLI UI & Arguments)"]:::cli
     
     subgraph "Core Scanning Engine (src/scanners)"
@@ -23,7 +19,7 @@ graph TD
         Report["report_generator.py<br/>(Enterprise HTML Renderer)"]:::module
     end
     
-    subgraph "Configuration (config/)"
+    subgraph "Configuration"
         Rules[("rules.yaml<br/>(Threat Signatures)")]:::config
         Allowlist[("allowlist.yaml<br/>(Exceptions & Exclusions)")]:::config
     end
@@ -33,7 +29,6 @@ graph TD
         JSON["findings.json<br/>(Raw Data)"]:::output
     end
 
-    %% Dependencies & Data Flow
     CLI -->|Initializes & Runs| Engine
     
     Rules -.->|Loads Definitions| Engine
@@ -51,5 +46,8 @@ graph TD
 
 ```
 
-> [!TIP]
-> **Presentation Tip:** You can hover over this diagram and use the zoom/pan tools in the bottom corner. In your presentation, you can explain that `scan_psadt.py` is the "brain" of the operation, pulling threat rules from `rules.yaml`, running the 8-step scan, and then tossing the results over to `report_generator.py` to build the beautiful UI.
+## Key Components
+
+1. **CLI Orchestrator:** The primary interface for operators and CI/CD pipelines. It parses arguments, initializes the environment, and invokes the core engine.
+2. **HemSpectScanner:** The "brain" of the operation. It ingests threat signatures from `rules.yaml`, executes the multi-stage scanning process, and evaluates files against the `allowlist.yaml` definitions.
+3. **Report Generator:** Transforms raw JSON telemetry and security findings into an interactive, zero-dependency HTML dashboard for security analysts.

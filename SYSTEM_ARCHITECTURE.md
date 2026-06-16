@@ -1,6 +1,6 @@
-# HemSpect System Architecture
+# System Architecture
 
-This document provides a comprehensive overview of the HemSpect package security scanner, including its internal architecture, the underlying technology stack, and a glossary of common terminology.
+This document provides a comprehensive technical overview of the HemSpect package security scanner, detailing its internal architecture, technology stack, and standard terminology used throughout the codebase.
 
 ## System Architecture Diagram
 

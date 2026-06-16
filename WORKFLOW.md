@@ -1,19 +1,17 @@
-# HemSpect Process Flow (Business View)
+# Process Workflow
 
-This flowchart is designed for non-technical stakeholders (management, auditors, project managers). It strips away the technical code structure and focuses entirely on the **business value** and **decision-making workflow** of the scanner.
+This flowchart outlines the automated decision-making process within HemSpect. It details the journey of a software package from submission to final approval, illustrating how security policies are enforced at each stage.
 
-You can use this in presentations to explain *why* the tool exists and *what* it does for the organization!
+## Package Security Lifecycle
 
 ```mermaid
 graph TD
-    %% Styling for a non-tech audience
     classDef input fill:#e8edf5,stroke:#8ba0be,stroke-width:2px,color:#0a1628,font-weight:bold
     classDef action fill:#2a9d8f,stroke:#1a472a,stroke-width:2px,color:#fff,font-weight:bold
     classDef decision fill:#f4a261,stroke:#422010,stroke-width:2px,color:#000,font-weight:bold
     classDef pass fill:#1a472a,stroke:#6ee7b7,stroke-width:2px,color:#fff,font-weight:bold
     classDef fail fill:#e63946,stroke:#3b0a0a,stroke-width:2px,color:#fff,font-weight:bold
 
-    %% Flow Steps
     Start([1. New Software Package Submitted]):::input
     Scan[2. Automated Security Scan<br/>Checks for passwords, malware, & data leaks]:::action
     Policy[3. Policy & Exceptions Check<br/>Ignores known safe files]:::action
@@ -23,7 +21,6 @@ graph TD
     Fail([Rejected / Review Required]):::fail
     Report[5. Generate Dashboard Report<br/>For Auditing & Tracking]:::input
 
-    %% Connections
     Start --> Scan
     Scan --> Policy
     Policy --> Decide
@@ -35,8 +32,8 @@ graph TD
     Fail --> Report
 ```
 
-> [!TIP]
-> **Talking Points for this Chart:**
-> 1. **Automation:** Emphasize that Step 2 saves countless hours of manual code review.
-> 2. **Smart Filtering:** Highlight Step 3 (Policy & Exceptions) as the feature that prevents "alert fatigue" by ignoring known false positives.
-> 3. **Clear Decisions:** Explain that the tool gives a definitive Yes/No answer (Step 4), enforcing strict deployment security standards.
+## Workflow Phases
+
+1. **Automated Analysis:** HemSpect performs a deep, multi-engine scan without requiring human intervention, identifying structural flaws, malware signatures, and hardcoded secrets.
+2. **Policy Adherence:** Utilizing the configurable `allowlist.yaml`, the engine intelligently filters out known false positives to prevent alert fatigue.
+3. **Decisive Action:** Packages failing to meet organizational security thresholds are automatically blocked, generating alerts for the security team, while safe packages are cleared for deployment.

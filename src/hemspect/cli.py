@@ -101,7 +101,7 @@ def _make_banner() -> str:
             "|  HEMSPECT v3.0  --  Package Security Scanner                     |\n"
             "|  NIST 800-53 | CMMC 2.0 | IEC 62443 | CIS v8 | MITRE ATT&CK    |\n"
             "|------------------------------------------------------------------|\n"
-            "|  Powered by HemSpect\u2122 Data Leakage Intelligence Engine           |\n"
+            "|  Designed and developed by Hemendra Mahajan                      |\n"
             "+==================================================================+\n"
         )
 
@@ -135,6 +135,8 @@ def _make_banner() -> str:
         f"{R}"
     )
 
+    AUTHOR_CREDIT = f"  {DIM}{CY3}Designed and developed by {R}{B}{CY1}Hemendra Mahajan{R}"
+
     return (
         "\n"
         f"{PTC}\n"
@@ -142,6 +144,7 @@ def _make_banner() -> str:
         + "\n".join(_art) + "\n"
         "\n"
         f"{PTC}\n"
+        f"{AUTHOR_CREDIT}\n\n"
     )
 
 

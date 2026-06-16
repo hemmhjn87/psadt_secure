@@ -244,8 +244,8 @@ class ReportGenerator:
           NIST SP 800-53 Rev5 &nbsp;|&nbsp; CMMC 2.0 &nbsp;|&nbsp;
           IEC 62443-2-4 &nbsp;|&nbsp; CIS Controls v8
         </div>
-        <div style="margin-top: 18px; text-align: center; font-family: monospace; font-size: 0.85rem; color: var(--accent); padding-top: 12px; border-top: 1px dashed var(--border);">
-          <span style="opacity: 0.5;">//</span> Designed by <span style="color: #6dffb9; font-weight: bold; text-shadow: 0 0 5px rgba(109,255,185,0.5);">Hem</span>
+        <div class="footer-credit">
+          Designed and developed by <span class="author-name">Hemendra Mahajan</span>
         </div>
       </footer>
     </main>
@@ -680,6 +680,18 @@ table.mitre-table {
 }
 .footer-compliance { color: var(--accent); font-weight: 600; font-size: 0.72rem; }
 .report-footer code { color: #6dffb9; font-family: monospace; }
+.footer-credit {
+  margin-top: 24px; text-align: center; font-size: 0.82rem;
+  color: var(--text-muted); padding-top: 16px; 
+  border-top: 1px solid rgba(255,255,255,0.05);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.footer-credit .author-name {
+  color: #00ff88; font-weight: 800; letter-spacing: 0.1em;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+  background: linear-gradient(135deg, #00ff88, #00d4ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
 
 /* ---- Password Intelligence Section ---- */
 .pwd-section-header {
