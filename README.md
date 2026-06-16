@@ -199,20 +199,21 @@ Scans file contents for:
 
 ## 📁 Project Structure
 
-```
+```text
 hemspect/
-├── main.py                          # CLI entry point
-├── requirements.txt                 # Python dependencies
-├── config/
-│   ├── rules.yaml                   # Custom detection rules
-│   └── allowlist.yaml               # Exception management
-├── src/
-│   └── scanners/
-│       ├── scan_psadt.py            # Core scanner engine + HemSpect
-│       ├── report_generator.py      # Enterprise HTML report generator
-│       ├── sbom_generator.py        # CycloneDX + SPDX SBOM generator
-│       └── approval_workflow.py     # 3-stage approval workflow
-
+├── pyproject.toml                   # Packaging configuration
+├── README.md                        # Documentation
+└── src/
+    └── hemspect/
+        ├── cli.py                   # Global terminal command entry point
+        ├── config/
+        │   ├── rules.yaml           # Threat detection patterns
+        │   └── allowlist.yaml       # Global exceptions
+        └── scanners/
+            ├── scan_psadt.py        # Core scanner engine + HemSpect
+            ├── report_generator.py  # Enterprise HTML report generator
+            ├── sbom_generator.py    # CycloneDX + SPDX SBOM generator
+            └── approval_workflow.py # 3-stage approval workflow
 ```
 
 ---
@@ -253,7 +254,7 @@ exceptions:
 
 ```powershell
 # Create a nightly scheduled task
-$action = New-ScheduledTaskAction -Execute "python" -Argument "main.py factory-scan \\server\PackageFactory -o C:\HemSpect\Nightly"
+$action = New-ScheduledTaskAction -Execute "hemspect" -Argument "factory-scan \\server\PackageFactory -o C:\HemSpect\Nightly"
 $trigger = New-ScheduledTaskTrigger -Daily -At "02:00AM"
 Register-ScheduledTask -TaskName "HemSpect-Nightly" -Action $action -Trigger $trigger
 ```
