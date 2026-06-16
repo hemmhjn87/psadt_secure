@@ -14,7 +14,7 @@ graph TD
     classDef output fill:#422010,stroke:#f4a261,stroke-width:1px,color:#fff
 
     %% Nodes
-    CLI["main.py<br/>(Rich CLI UI & Arguments)"]:::cli
+    CLI["hemspect<br/>(Rich CLI UI & Arguments)"]:::cli
     
     subgraph "Core Scanning Engine (src/scanners)"
         Engine["scan_psadt.py<br/>(HemSpectScanner Orchestrator)"]:::core

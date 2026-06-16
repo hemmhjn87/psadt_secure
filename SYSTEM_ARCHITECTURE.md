@@ -16,7 +16,7 @@ flowchart TB
     User((Security Operator)):::user
     
     subgraph "Command Line Interface (CLI)"
-        Main[main.py<br/>Argument Parsing & UI]:::engine
+        Main[hemspect<br/>Argument Parsing & UI]:::engine
     end
 
     subgraph "Core Scanning Engine (src/scanners/scan_psadt.py)"

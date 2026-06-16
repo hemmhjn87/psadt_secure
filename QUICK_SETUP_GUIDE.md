@@ -4,13 +4,12 @@
 
 ### Step 1: Install (2 min)
 ```bash
-cd d:\project\hemspect
-pip install -r requirements.txt
+pip install hemspect
 ```
 
 ### Step 2: Scan Package (2 min)
 ```bash
-python main.py scan "C:\SCCM\Packages\MyPackage"
+hemspect scan "C:\SCCM\Packages\MyPackage"
 ```
 
 ### Step 3: Review Report (1 min)
@@ -25,20 +24,20 @@ open psadt_scan_[timestamp]/report.html
 
 ### Scan with custom output directory
 ```bash
-python main.py scan "C:\Packages\App" -o "C:\Reports"
+hemspect scan "C:\Packages\App" -o "C:\Reports"
 ```
 
 ### Scan all packages
 ```bash
 for pkg in C:\SCCM\Packages\*; do
   echo "Scanning: $pkg"
-  python main.py scan "$pkg"
+  hemspect scan "$pkg"
 done
 ```
 
 ### Integration with CI/CD
 ```bash
-python main.py scan "$1" && echo "APPROVED" || echo "REJECTED"
+hemspect scan "$1" && echo "APPROVED" || echo "REJECTED"
 ```
 
 ---
@@ -113,7 +112,7 @@ Run PowerShell as Administrator.
 
 | Command | Purpose |
 |---------|---------|
-| `python main.py scan <path>` | Scan single package |
+| `hemspect scan <path>` | Scan single package |
 | `report.html` | View results in browser |
 | `findings.json` | Machine-readable results |
 | Exit code 0 | APPROVED |

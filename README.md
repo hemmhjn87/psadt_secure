@@ -38,33 +38,25 @@ HemSpect is an enterprise security scanner purpose-built for organizations that 
 ### Installation
 
 ```powershell
-# Clone the repository
-git clone https://github.com/hemmhjn87/psadt_secure.git
-cd psadt_secure
-
-# Create a virtual environment (recommended)
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-
-# Install dependencies
-pip install -r requirements.txt
+# Install the latest version from PyPI
+pip install hemspect
 ```
 
 ### Scan a Single Package
 
 ```powershell
 # Interactive mode (prompts for report folder name)
-python main.py scan "C:\Packages\MyApp" --format all
+hemspect scan "C:\Packages\MyApp" --format all
 
 # Specify output directory
-python main.py scan "C:\Packages\MyApp" -o "C:\HemSpect\MyApp" --format all --sign-report
+hemspect scan "C:\Packages\MyApp" -o "C:\HemSpect\MyApp" --format all --sign-report
 ```
 
 ### Factory Scan (Batch Mode)
 
 ```powershell
 # Scan your entire package factory in one shot
-python main.py factory-scan "\\server\PackageFactory" -o "C:\HemSpect\FactoryReport"
+hemspect factory-scan "\\server\PackageFactory" -o "C:\HemSpect\FactoryReport"
 ```
 
 ---
@@ -74,7 +66,7 @@ python main.py factory-scan "\\server\PackageFactory" -o "C:\HemSpect\FactoryRep
 ### `scan` — Scan a Single Package
 
 ```
-python main.py scan <PACKAGE_PATH> [OPTIONS]
+hemspect scan <PACKAGE_PATH> [OPTIONS]
 ```
 
 | Option | Description | Default |
@@ -94,7 +86,7 @@ python main.py scan <PACKAGE_PATH> [OPTIONS]
 ### `factory-scan` — Batch Scan Entire Package Factory
 
 ```
-python main.py factory-scan <FACTORY_PATH> [OPTIONS]
+hemspect factory-scan <FACTORY_PATH> [OPTIONS]
 ```
 
 | Option | Description | Default |
@@ -112,17 +104,17 @@ python main.py factory-scan <FACTORY_PATH> [OPTIONS]
 ### `verify` — Verify Signed Manifest
 
 ```powershell
-python main.py verify "C:\HemSpect\MyApp"
+hemspect verify "C:\HemSpect\MyApp"
 ```
 
 ### `workflow` — Manage Approval Workflow
 
 ```powershell
 # Analyst review
-python main.py workflow analyst-review "C:\HemSpect\MyApp" "Jane.Smith" --approve --notes "All FPs validated"
+hemspect workflow analyst-review "C:\HemSpect\MyApp" "Jane.Smith" --approve --notes "All FPs validated"
 
 # CISO approval
-python main.py workflow ciso-approve "C:\HemSpect\MyApp" "CEO.Name" "AUTH-20260601" --approve
+hemspect workflow ciso-approve "C:\HemSpect\MyApp" "CEO.Name" "AUTH-20260601" --approve
 ```
 
 ---
